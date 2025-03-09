@@ -110,4 +110,10 @@ resource "kubernetes_manifest" "minio_tenant" {
       "users"   = local.users
     }
   }
+
+  wait {
+    fields = {
+      "status.healthStatus" = "green"
+    }
+  }
 }
