@@ -129,3 +129,27 @@ variable "operator_tenant_certificate_name" {
   default     = "operator-ca-tls-tenant"
 }
 
+# --------------- MINIO TENANT CONFIGURATION VARIABLES --------------- #
+variable "storage_configuration_name" {
+  description = "Name of the secret for storing MinIO Storage Configuration"
+  type        = string
+  default     = "storage-configuration"
+}
+
+variable "admin_user" {
+  description = "Name of the admin user for accessing MinIO Tenant"
+  type        = string
+  default     = "minio.admin"
+}
+
+variable "users" {
+  description = "List of users for which MinIO Tenant needs to be deployed with"
+  type        = list(string)
+  default     = []
+}
+
+variable "buckets" {
+  description = "List of buckets for which MinIO Tenant needs to be deployed with"
+  type        = list(string)
+  default     = []
+}
