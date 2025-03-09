@@ -21,6 +21,4 @@ resource "kubernetes_manifest" "cluster_self_signed_issuer" {
       status = "True"
     }
   }
-
-  depends_on = [helm_release.cert-manager]
 }
