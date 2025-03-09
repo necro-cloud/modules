@@ -49,3 +49,77 @@ variable "operator_internal_certificate_name" {
   default     = "sts-certmanager-cert"
 }
 
+# --------------- MINIO CERTIFICATE VARIABLES --------------- #
+variable "cluster_issuer_name" {
+  description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
+  type        = string
+  nullable    = false
+}
+
+variable "certificate_authority_name" {
+  description = "Name of the Certificate Authority to be associated with MinIO Storage Solution"
+  type        = string
+  default     = "minio-certificate-authority"
+}
+
+variable "issuer_name" {
+  description = "Name of the Issuer to be associated with MinIO Storage Solution"
+  type        = string
+  default     = "minio-certificate-issuer"
+}
+
+variable "internal_certificate_name" {
+  description = "Name of the Internal Certificate to be associated with MinIO Storage Solution"
+  type        = string
+  default     = "minio-internal-certificate"
+}
+
+variable "cloudflare_token" {
+  description = "Token for generating Ingress Certificates to be associated with MinIO Storage Solution"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_email" {
+  description = "Email for generating Ingress Certificates to be associated with MinIO Storage Solution"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_issuer_name" {
+  description = "Name of the Cloudflare Issuer to be associated with MinIO Storage Solution"
+  type        = string
+  default     = "minio-cloudflare-issuer"
+}
+
+variable "ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with MinIO Storage Solution"
+  type        = string
+  default     = "minio-ingress-certificate"
+}
+
+variable "api_ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with MinIO API Storage Solution"
+  type        = string
+  default     = "minio-api-ingress-certificate"
+}
+
+variable "host_name" {
+  description = "Host name for which Ingress Certificate is to be generated for"
+  type        = string
+  default     = "storage"
+}
+
+variable "domain" {
+  description = "Domain for which Ingress Certificate is to be generated for"
+  type        = string
+  nullable    = false
+}
+
+# --------------- REPLICATION VARIABLES --------------- #
+variable "database_replication_namespaces" {
+  description = "Namespaces to which Certificate Authority can be replicated to"
+  type        = string
+  default     = "postgres"
+}
+
