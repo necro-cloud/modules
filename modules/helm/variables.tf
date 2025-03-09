@@ -27,3 +27,32 @@ variable "nginx_configuration" {
     "create_namespace" = true
   }
 }
+
+# -------------- CERT MANAGER HELM CHART VARIABLES -------------- #
+variable "cert_manager_configuration" {
+  description = "Dictionary filled with Cert Manager Operator Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "cert-manager"
+    "namespace"        = "cert-manager"
+    "repository"       = "https://charts.jetstack.io"
+    "chart"            = "cert-manager"
+    "version"          = "v1.17.1"
+    "create_namespace" = true
+  }
+}
+
+# --------------- MINIO OPERATOR VARIABLES --------------- #
+variable "minio_operator_configuration" {
+  description = "Dictionary filled with MinIO Operator Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "minio-operator"
+    "namespace"        = "minio-operator"
+    "repository"       = "https://operator.min.io"
+    "chart"            = "operator"
+    "version"          = "7.0.0"
+    "create_namespace" = true
+  }
+}
+
