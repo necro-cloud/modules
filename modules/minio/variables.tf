@@ -123,3 +123,9 @@ variable "database_replication_namespaces" {
   default     = "postgres"
 }
 
+variable "operator_tenant_certificate_name" {
+  description = "Name of the Certificate of the Tenant to be used by the MinIO Operator"
+  type        = string
+  default     = "operator-ca-tls-tenant"
+}
+

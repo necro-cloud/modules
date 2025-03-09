@@ -114,3 +114,39 @@ resource "kubernetes_manifest" "operator_internal_certificate" {
   }
 }
 
+resource "kubernetes_secret" "tenant_certificate" {
+  metadata {
+    name      = var.operator_tenant_certificate_name
+    namespace = var.operator_namespace
+    annotations = {
+      "reflector.v1.k8s.emberstack.com/reflects" : "${kubernetes_namespace.namespace.metadata[0].name}/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
+    }
+  }
+
+  type = "kubernetes.io/tls"
+
+  data = {
+    "tls.key" = ""
+    "tls.crt" = ""
+    "ca.crt"  = ""
+  }
+
+  lifecycle {
+    ignore_changes = [metadata[0].annotations]
+  }
+}
+
+# Restart MinIO Operator Deployment to pickup new certificates
+resource "null_resource" "restart_deployment" {
+  triggers = {
+    "operator-certificate" : kubernetes_manifest.operator_internal_certificate.object.metadata.uid
+    "tenant-certificate" : kubernetes_secret.tenant_certificate.id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+    kubectl rollout restart deployments.apps/minio-operator -n minio-operator
+    kubectl rollout status deployments.apps/minio-operator -n minio-operator
+    EOF
+  }
+}
