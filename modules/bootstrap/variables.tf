@@ -12,3 +12,18 @@ variable "reflector_configuration" {
     "create_namespace" = true
   }
 }
+
+# -------------- NGINX INGRESS VARIABLES -------------- #
+
+variable "nginx_configuration" {
+  description = "Dictionary filled with NGINX Controller Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "ingress-nginx"
+    "namespace"        = "ingress-nginx"
+    "repository"       = "https://kubernetes.github.io/ingress-nginx"
+    "chart"            = "ingress-nginx"
+    "version"          = "4.12.0"
+    "create_namespace" = true
+  }
+}
