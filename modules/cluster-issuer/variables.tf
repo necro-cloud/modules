@@ -12,3 +12,9 @@ variable "cert_manager_configuration" {
   }
 }
 
+# -------------- CERT MANAGER HELM CHART VARIABLES -------------- #
+variable "cluster_issuer_name" {
+  description = "Name of the Self Signed Cluster Issuer"
+  type        = string
+  default     = "private-cluster-issuer"
+}
