@@ -99,3 +99,21 @@ variable "clients" {
   }
 }
 
+# --------------- CLUSTER VARIABLES VARIABLES --------------- #
+variable "postgres_user_minio_configuration" {
+  description = "MinIO Configuration for storing PITR Backups"
+  type        = string
+  nullable    = false
+}
+
+variable "cluster_name" {
+  description = "Name of the PostgreSQL Database Cluster to be created"
+  type        = string
+  default     = "postgresql-cluster"
+}
+
+variable "backup_bucket_name" {
+  description = "Name of the bucket for storing PITR Backups in MinIO"
+  type        = string
+  nullable    = false
+}
