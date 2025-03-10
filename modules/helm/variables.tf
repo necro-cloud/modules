@@ -56,3 +56,16 @@ variable "minio_operator_configuration" {
   }
 }
 
+# --------------- CLOUDNATIVE PG OPERATOR VARIABLES --------------- #
+variable "cnpg_configuration" {
+  description = "Dictionary filled with Cloud Native PG Operator Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "cnpg"
+    "namespace"        = "cnpg-system"
+    "repository"       = "https://cloudnative-pg.github.io/charts"
+    "chart"            = "cloudnative-pg"
+    "version"          = "v0.23.2"
+    "create_namespace" = true
+  }
+}

@@ -45,6 +45,12 @@ resource "kubernetes_manifest" "certificate_authority" {
       status = "True"
     }
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 // Issuer for the MinIO Tenant Cluster
@@ -72,6 +78,12 @@ resource "kubernetes_manifest" "issuer" {
       type   = "Ready"
       status = "True"
     }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
 
@@ -123,6 +135,11 @@ resource "kubernetes_manifest" "internal_certificate" {
       status = "True"
     }
   }
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 // Kubernetes Secret for Cloudflare Tokens
@@ -159,7 +176,7 @@ resource "kubernetes_manifest" "public_issuer" {
     "spec" = {
       "acme" = {
         "email"  = var.cloudflare_email
-        "server" = "https://acme-v02.api.letsencrypt.org/directory"
+        "server" = var.acme_server
         "privateKeySecretRef" = {
           "name" = var.cloudflare_issuer_name
         }
@@ -187,6 +204,12 @@ resource "kubernetes_manifest" "public_issuer" {
       type   = "Ready"
       status = "True"
     }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
 
@@ -233,6 +256,12 @@ resource "kubernetes_manifest" "ingress_certificate" {
       status = "True"
     }
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 # Certificate to be used for MinIO API Ingress
@@ -277,5 +306,11 @@ resource "kubernetes_manifest" "api_ingress_certificate" {
       type   = "Ready"
       status = "True"
     }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }

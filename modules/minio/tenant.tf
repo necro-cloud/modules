@@ -1,6 +1,6 @@
 locals {
   users   = [for secret in concat(kubernetes_secret.user_configuration, [kubernetes_secret.postgres_user_configuration]) : { "name" : secret.metadata[0].name }]
-  buckets = [for bucket in concat(var.buckets, ["postgres"]) : { "name" : bucket }]
+  buckets = [for bucket in concat(var.buckets, [var.postgresql_backup_bucket]) : { "name" : bucket }]
 }
 
 resource "kubernetes_manifest" "minio_tenant" {

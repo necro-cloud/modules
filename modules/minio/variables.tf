@@ -92,6 +92,12 @@ variable "cloudflare_issuer_name" {
   default     = "minio-cloudflare-issuer"
 }
 
+variable "acme_server" {
+  description = "URL for the ACME Server to be used, defaults to production URL for LetsEncrypt"
+  type        = string
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 variable "ingress_certificate_name" {
   description = "Name of the Ingress Certificate to be associated with MinIO Storage Solution"
   type        = string
@@ -146,6 +152,12 @@ variable "users" {
   description = "List of users for which MinIO Tenant needs to be deployed with"
   type        = list(string)
   default     = []
+}
+
+variable "postgresql_backup_bucket" {
+  description = "Bucket to be used for storing PostgreSQL PITR Backups"
+  type        = string
+  default     = "postgres"
 }
 
 variable "buckets" {
