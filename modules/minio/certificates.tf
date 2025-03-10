@@ -79,6 +79,12 @@ resource "kubernetes_manifest" "issuer" {
       status = "True"
     }
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 // Internal Certificate for MinIO Tenant Cluster
@@ -250,6 +256,12 @@ resource "kubernetes_manifest" "ingress_certificate" {
       status = "True"
     }
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 # Certificate to be used for MinIO API Ingress
@@ -294,5 +306,11 @@ resource "kubernetes_manifest" "api_ingress_certificate" {
       type   = "Ready"
       status = "True"
     }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
