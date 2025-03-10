@@ -45,6 +45,12 @@ resource "kubernetes_manifest" "certificate_authority" {
       status = "True"
     }
   }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 // Issuer for the MinIO Tenant Cluster
@@ -123,6 +129,11 @@ resource "kubernetes_manifest" "internal_certificate" {
       status = "True"
     }
   }
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
 }
 
 // Kubernetes Secret for Cloudflare Tokens
@@ -187,6 +198,12 @@ resource "kubernetes_manifest" "public_issuer" {
       type   = "Ready"
       status = "True"
     }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
 
