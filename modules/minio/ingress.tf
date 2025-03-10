@@ -74,9 +74,9 @@ resource "kubernetes_ingress_v1" "api_ingress" {
           path = "/"
           backend {
             service {
-              name = "minio"
+              name = "minio-hl"
               port {
-                number = 443
+                number = 9000
               }
             }
           }
