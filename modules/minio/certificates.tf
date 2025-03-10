@@ -176,7 +176,7 @@ resource "kubernetes_manifest" "public_issuer" {
     "spec" = {
       "acme" = {
         "email"  = var.cloudflare_email
-        "server" = "https://acme-v02.api.letsencrypt.org/directory"
+        "server" = var.acme_server
         "privateKeySecretRef" = {
           "name" = var.cloudflare_issuer_name
         }
