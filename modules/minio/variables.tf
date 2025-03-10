@@ -154,6 +154,12 @@ variable "users" {
   default     = []
 }
 
+variable "postgresql_backup_bucket" {
+  description = "Bucket to be used for storing PostgreSQL PITR Backups"
+  type        = string
+  default     = "postgres"
+}
+
 variable "buckets" {
   description = "List of buckets for which MinIO Tenant needs to be deployed with"
   type        = list(string)
