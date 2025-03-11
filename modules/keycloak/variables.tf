@@ -110,3 +110,31 @@ variable "domain" {
   nullable    = false
 }
 
+# --------------- SECRET VARIABLES --------------- #
+
+variable "database_credentials" {
+  description = "Name of the secret which contains the database credentials for Keycloak"
+  type        = string
+  nullable    = false
+}
+
+variable "keycloak_credentials" {
+  description = "Name of the secret which contains the credentials for the Keycloak Cluster"
+  type        = string
+  default     = "default-credentials"
+}
+
+variable "realm_settings" {
+  description = "Realm Settings for pre-installing a realm with Keycloak"
+  type = object({
+    application_name = string
+    smtp_host        = string
+    smtp_port        = number
+    smtp_mail        = string
+    smtp_username    = string
+    smtp_password    = string
+  })
+  nullable  = false
+  sensitive = true
+}
+
