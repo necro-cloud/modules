@@ -138,3 +138,91 @@ variable "realm_settings" {
   sensitive = true
 }
 
+# --------------- CLUSTER VARIABLES --------------- #
+
+variable "keycloak_environment_variables" {
+  default = [
+    {
+      name  = "KC_HTTP_PORT"
+      value = "8080"
+    },
+    {
+      name  = "KC_HTTPS_PORT"
+      value = "8443"
+    },
+    {
+      name  = "KC_HTTPS_CERTIFICATE_FILE"
+      value = "/mnt/certs/tls/tls.crt"
+    },
+    {
+      name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
+      value = "/mnt/certs/tls/tls.key"
+    },
+    {
+      name  = "KC_DB_URL"
+      value = "jdbc:postgresql://postgresql-cluster-rw.postgres.svc/keycloak?ssl=true&sslmode=verify-full&sslrootcert=/mnt/certs/database/certificate-authority/ca.crt&sslcert=/mnt/certs/database/certificate/tls.crt&sslkey=/mnt/certs/database/certificate/key.der"
+    },
+    {
+      name  = "KC_DB_POOL_INITIAL_SIZE"
+      value = "1"
+    },
+    {
+      name  = "KC_DB_POOL_MIN_SIZE"
+      value = "1"
+    },
+    {
+      name  = "KC_DB_POOL_MAX_SIZE"
+      value = "3"
+    },
+    {
+      name  = "KC_HEALTH_ENABLED"
+      value = "true"
+    },
+    {
+      name  = "KC_CACHE"
+      value = "ispn"
+    },
+    {
+      name  = "KC_CACHE_STACK"
+      value = "kubernetes"
+    },
+    {
+      name  = "KC_PROXY"
+      value = "passthrough"
+    },
+    {
+      name  = "KC_TRUSTSTORE_PATHS"
+      value = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    }
+  ]
+
+  description = "Environment variables for Keycloak Configuration"
+}
+
+variable "keycloak_ports" {
+  default = [
+
+    {
+      name          = "https"
+      containerPort = "8443"
+      protocol      = "TCP"
+    },
+    {
+      name          = "http"
+      containerPort = "8080"
+      protocol      = "TCP"
+    },
+    {
+      name          = "management"
+      containerPort = "9000"
+      protocol      = "TCP"
+    },
+    {
+      name          = "discovery"
+      containerPort = "7800"
+      protocol      = "TCP"
+    },
+  ]
+
+  description = "Keycloak Ports Configuration"
+}
