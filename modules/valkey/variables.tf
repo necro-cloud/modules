@@ -56,3 +56,15 @@ variable "replication_namespaces" {
   nullable    = false
 }
 
+# --------------- VALKEY CLUSTER VARIABLES --------------- #
+variable "valkey_configuration" {
+  description = "Dictionary filled with Valkey Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "valkey"
+    "repository"       = "oci://registry-1.docker.io/bitnamicharts"
+    "chart"            = "valkey"
+    "version"          = "2.4.6"
+    "create_namespace" = false
+  }
+}
