@@ -78,6 +78,7 @@ resource "kubernetes_secret" "realm_secrets" {
   }
 
   data = {
+    DISPLAY_NAME     = var.realm_settings["display_name"]
     APPLICATION_NAME = var.realm_settings["application_name"]
     SMTP_HOST        = var.realm_settings["smtp_host"]
     SMTP_PORT        = var.realm_settings["smtp_port"]

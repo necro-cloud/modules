@@ -127,6 +127,7 @@ variable "keycloak_credentials" {
 variable "realm_settings" {
   description = "Realm Settings for pre-installing a realm with Keycloak"
   type = object({
+    display_name     = string
     application_name = string
     smtp_host        = string
     smtp_port        = number
