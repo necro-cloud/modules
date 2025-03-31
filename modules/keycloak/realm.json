@@ -654,16 +654,16 @@
       "description": "Client for SSO Authentication",
       "rootUrl": "",
       "adminUrl": "",
-      "baseUrl": "http://localhost:5173",
+      "baseUrl": "${BASE_URL}",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:5173/*"
+        "${BASE_URL}${VALID_LOGIN_REDIRECT_PATH}"
       ],
       "webOrigins": [
-        "http://localhost:5173"
+        "${BASE_URL}"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -677,7 +677,7 @@
       "protocol": "openid-connect",
       "attributes": {
         "client.introspection.response.allow.jwt.claim.enabled": "false",
-        "post.logout.redirect.uris": "http://localhost:5173/",
+        "post.logout.redirect.uris": "${BASE_URL}${VALID_LOGOUT_REDIRECT_PATH}",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
