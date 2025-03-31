@@ -1,6 +1,6 @@
 {
   "id": "e1ef68f2-9a26-4b56-aa20-9f7d8abd680b",
-  "realm": "${APPLICATION_NAME}",
+  "realm": "${DISPLAY_NAME}",
   "displayName": "",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -302,8 +302,8 @@
           "attributes": {}
         }
       ],
-      "${APPLICATION_NAME}-frontend": [],
-      "${APPLICATION_NAME}-tester": [],
+      "sso": [],
+      "tester": [],
       "security-admin-console": [],
       "admin-cli": [],
       "account-console": [],
@@ -330,8 +330,8 @@
         },
         {
           "id": "ce786998-2ecc-49af-9c8f-6164aee3cc85",
-          "name": "view-${APPLICATION_NAME}s",
-          "description": "${role_view-${APPLICATION_NAME}s}",
+          "name": "view-${APPLICATION_NAME}",
+          "description": "${role_view-${APPLICATION_NAME}}",
           "composite": false,
           "clientRole": true,
           "containerId": "dce27bed-f903-4a9e-af21-b1e8198326ce",
@@ -464,12 +464,12 @@
   "users": [
     {
       "id": "4c5e2da0-07c8-431a-9ac4-4bcc5377e75a",
-      "username": "service-account-${APPLICATION_NAME}-tester",
+      "username": "service-account-tester",
       "emailVerified": false,
       "createdTimestamp": 1741712671847,
       "enabled": true,
       "totp": false,
-      "serviceAccountClientId": "${APPLICATION_NAME}-tester",
+      "serviceAccountClientId": "tester",
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
@@ -649,9 +649,9 @@
     },
     {
       "id": "9b5d999c-7f12-4bac-8ba8-c592c5b118c1",
-      "clientId": "${APPLICATION_NAME}-frontend",
-      "name": "${APPLICATION_NAME} Frontend",
-      "description": "Client for Frontend Authentication",
+      "clientId": "sso",
+      "name": "${DISPLAY_NAME} SSO Authentication",
+      "description": "Client for SSO Authentication",
       "rootUrl": "",
       "adminUrl": "",
       "baseUrl": "http://localhost:5173",
@@ -714,8 +714,8 @@
     },
     {
       "id": "bdb69e73-94d0-4144-b0bc-d246734abd99",
-      "clientId": "${APPLICATION_NAME}-tester",
-      "name": "${APPLICATION_NAME} Tester",
+      "clientId": "tester",
+      "name": "${DISPLAY_NAME} Tester",
       "description": "Client of generating JWT Tokens to test against secured APIs",
       "rootUrl": "",
       "adminUrl": "",
@@ -1628,7 +1628,7 @@
     "host": "${SMTP_HOST}",
     "replyTo": "",
     "from": "${SMTP_MAIL}",
-    "fromDisplayName": "${APPLICATION_NAME}",
+    "fromDisplayName": "${DISPLAY_NAME}",
     "envelopeFrom": "",
     "ssl": "true",
     "user": "${SMTP_USERNAME}"
