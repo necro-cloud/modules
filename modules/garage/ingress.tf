@@ -39,6 +39,4 @@ resource "kubernetes_ingress_v1" "api_ingress" {
       }
     }
   }
-
-  depends_on = [kubernetes_manifest.minio_tenant]
 }
