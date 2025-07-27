@@ -9,7 +9,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
     annotations = {
       "nginx.ingress.kubernetes.io/proxy-ssl-verify" : "on"
       "nginx.ingress.kubernetes.io/proxy-ssl-secret" : "${kubernetes_namespace.namespace.metadata[0].name}/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
-      "nginx.ingress.kubernetes.io/proxy-ssl-name" : "garage.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+      "nginx.ingress.kubernetes.io/proxy-ssl-name" : "garage-service.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
       "nginx.ingress.kubernetes.io/backend-protocol" : "HTTPS"
       "nginx.ingress.kubernetes.io/rewrite-target" : "/"
       "nginx.ingress.kubernetes.io/proxy-body-size" : 0
@@ -29,7 +29,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
           path = "/"
           backend {
             service {
-              name = "garage-service"
+              name = kubernetes_service.garage-service.metadata[0].name
               port {
                 name = "proxy-api"
               }
