@@ -63,10 +63,11 @@ resource "kubernetes_config_map" "nginx_config" {
       scgi_temp_path        /tmp/scgi_temp;
     
       server {
-        listen [::]:3940 ssl;
+        listen 3940 ssl;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
+        server_name *.garage.garage.svc.cluster.local garage-headless.garage.svc.cluster.local *.garage-headless.garage.svc.cluster.local *.garage-service.garage.svc.cluster.local garage-service.garage.svc.cluster.local 127.0.0.1 localhost
 
         # HSTS (ngx_http_headers_module is required) (63072000 seconds)
         add_header Strict-Transport-Security "max-age=63072000" always; 
@@ -82,10 +83,11 @@ resource "kubernetes_config_map" "nginx_config" {
       }
 
       server {
-        listen [::]:3942 ssl;
+        listen 3942 ssl;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
+        server_name *.garage.garage.svc.cluster.local garage-headless.garage.svc.cluster.local *.garage-headless.garage.svc.cluster.local *.garage-service.garage.svc.cluster.local garage-service.garage.svc.cluster.local 127.0.0.1 localhost
 
         # HSTS (ngx_http_headers_module is required) (63072000 seconds)
         add_header Strict-Transport-Security "max-age=63072000" always; 
@@ -101,10 +103,11 @@ resource "kubernetes_config_map" "nginx_config" {
       }
 
       server {
-        listen [::]:3943 ssl;
+        listen 3943 ssl;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
+        server_name *.garage.garage.svc.cluster.local garage-headless.garage.svc.cluster.local *.garage-headless.garage.svc.cluster.local *.garage-service.garage.svc.cluster.local garage-service.garage.svc.cluster.local 127.0.0.1 localhost
 
         # HSTS (ngx_http_headers_module is required) (63072000 seconds)
         add_header Strict-Transport-Security "max-age=63072000" always; 
