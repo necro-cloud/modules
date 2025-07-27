@@ -61,7 +61,7 @@ resource "kubernetes_config_map" "nginx_config" {
       fastcgi_temp_path     /tmp/fastcgi_temp;
       uwsgi_temp_path       /tmp/uwsgi_temp;
       scgi_temp_path        /tmp/scgi_temp;
-      client_max_body_size 20M;
+      client_max_body_size 500M;
     
       server {
         listen 3940 ssl;

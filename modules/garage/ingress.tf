@@ -13,7 +13,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
       "nginx.ingress.kubernetes.io/backend-protocol" : "HTTPS"
       "nginx.ingress.kubernetes.io/rewrite-target" : "/"
       "nginx.ingress.kubernetes.io/proxy-body-size" : 0
-      "nginx.ingress.kubernetes.io/client-body-buffer-size" : "20M"
+      "nginx.ingress.kubernetes.io/client-body-buffer-size" : "500M"
     }
   }
 
