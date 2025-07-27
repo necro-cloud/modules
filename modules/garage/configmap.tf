@@ -64,7 +64,6 @@ resource "kubernetes_config_map" "nginx_config" {
     
       server {
         listen [::]:3940 ssl;
-        http2 on;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
@@ -84,7 +83,6 @@ resource "kubernetes_config_map" "nginx_config" {
 
       server {
         listen [::]:3942 ssl;
-        http2 on;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
@@ -104,7 +102,6 @@ resource "kubernetes_config_map" "nginx_config" {
 
       server {
         listen [::]:3943 ssl;
-        http2 on;
 
         ssl_certificate     /mnt/crt/tls.crt;
         ssl_certificate_key /mnt/crt/tls.key;
