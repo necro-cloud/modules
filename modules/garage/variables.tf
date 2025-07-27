@@ -29,7 +29,6 @@ variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
   type        = string
   nullable    = false
-  default     = "private-cluster-issuer"
 }
 
 variable "certificate_authority_name" {
