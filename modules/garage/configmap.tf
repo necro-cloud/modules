@@ -32,7 +32,7 @@ resource "kubernetes_config_map" "garage_config" {
       [s3_api]
       api_bind_addr = "[::]:3900"
       s3_region = "garage"
-      root_domain = ".svc.cluster.local"
+      root_domain = ".${var.host_name}.${var.domain}"
 
       [admin]
       api_bind_addr = "[::]:3903"
