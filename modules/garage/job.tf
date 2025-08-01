@@ -9,6 +9,8 @@ resource "kubernetes_job" "configurator" {
   }
 
   spec {
+    completions                = 1
+    ttl_seconds_after_finished = 5 * 60
     template {
       metadata {
         labels = {
