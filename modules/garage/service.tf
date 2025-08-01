@@ -24,6 +24,12 @@ resource "kubernetes_service" "garage-headless" {
       name        = "web"
     }
 
+    port {
+      port        = 3903
+      target_port = 3903
+      name        = "admin"
+    }
+
     selector = {
       app       = var.app_name
       component = "pod"
@@ -58,6 +64,12 @@ resource "kubernetes_service" "garage-service" {
     }
 
     port {
+      port        = 3903
+      target_port = 3903
+      name        = "admin"
+    }
+
+    port {
       port        = 3940
       target_port = 3940
       name        = "proxy-api"
@@ -67,6 +79,12 @@ resource "kubernetes_service" "garage-service" {
       port        = 3942
       target_port = 3942
       name        = "proxy-web"
+    }
+
+    port {
+      port        = 3943
+      target_port = 3943
+      name        = "proxy-admin"
     }
 
     selector = {
