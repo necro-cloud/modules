@@ -126,3 +126,18 @@ resource "kubernetes_config_map" "nginx_config" {
     EOF
   }
 }
+
+resource "kubernetes_config_map" "configurator-options" {
+  metadata {
+    name      = "configurator-options"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "configmap"
+    }
+  }
+
+  data = {
+    "configurator.json" = file(var.configuration_file)
+  }
+}

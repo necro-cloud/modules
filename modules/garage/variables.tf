@@ -99,32 +99,9 @@ variable "replication_namespaces" {
 }
 
 # --------------- GARAGE CONFIGURATION VARIABLES --------------- #
-variable "storage_configuration_name" {
-  description = "Name of the secret for storing Garage Storage Configuration"
+variable "configuration_file" {
+  description = "Path of the file for Garage Storage Configuration"
   type        = string
-  default     = "storage-configuration"
+  default     = "configuration.json"
 }
 
-variable "admin_user" {
-  description = "Name of the admin user for accessing Garage Tenant"
-  type        = string
-  default     = "garage.admin"
-}
-
-variable "users" {
-  description = "List of users for which Garage Tenant needs to be deployed with"
-  type        = list(string)
-  default     = []
-}
-
-variable "postgresql_backup_bucket" {
-  description = "Bucket to be used for storing PostgreSQL PITR Backups"
-  type        = string
-  default     = "postgres"
-}
-
-variable "buckets" {
-  description = "List of buckets for which Garage Tenant needs to be deployed with"
-  type        = list(string)
-  default     = []
-}
