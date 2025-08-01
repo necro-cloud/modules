@@ -25,6 +25,12 @@ resource "kubernetes_job" "configurator" {
           name  = "garage-configurator"
           image = "quay.io/necronizerslab/garage-configurator:0.7.9"
 
+          security_context {
+            run_as_non_root = true
+            run_as_group    = 1001
+            run_as_user     = 1001
+          }
+
           env {
             name  = "CONFIGURATOR_JSON"
             value = "/mnt/config/configurator.json"
