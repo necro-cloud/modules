@@ -59,7 +59,7 @@ resource "kubernetes_cluster_role_binding" "garage_crds_rolebindings" {
 resource "kubernetes_role" "garage_configurator_role" {
   metadata {
     name      = "garage-configurator-role"
-    namespace = kubernetes_namespace.namespace[0].name
+    namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
       component = "role"
@@ -83,7 +83,7 @@ resource "kubernetes_role" "garage_configurator_role" {
 resource "kubernetes_service_account" "garage_configurator_service_account" {
   metadata {
     name      = "garage-configurator-service-account"
-    namespace = kubernetes_namespace.namespace[0].name
+    namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
       component = "serviceaccount"
