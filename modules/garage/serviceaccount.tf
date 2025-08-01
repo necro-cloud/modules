@@ -94,7 +94,7 @@ resource "kubernetes_service_account" "garage_configurator_service_account" {
 resource "kubernetes_role_binding" "garage_configurator_role_binding" {
   metadata {
     name      = "garage-configurator-role-binding"
-    namespace = kubernetes_namespace.namespace[0].name
+    namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
       component = "rolebinding"
