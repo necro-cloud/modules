@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "cluster" {
               "name" = kubernetes_secret.postgres_user_garage_configuration.metadata[0].name
             }
             "secretAccessKey" = {
-              "key"  = "SECRET_ACESS_KEY"
+              "key"  = "SECRET_ACCESS_KEY"
               "name" = kubernetes_secret.postgres_user_garage_configuration.metadata[0].name
             }
             "region" = {
