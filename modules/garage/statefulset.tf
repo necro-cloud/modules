@@ -1,6 +1,7 @@
+// Garage Cluster StatefulSet Deployment
 resource "kubernetes_stateful_set" "statefulset" {
   metadata {
-    name      = "garage"
+    name      = var.garage_cluster_name
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
@@ -17,7 +18,7 @@ resource "kubernetes_stateful_set" "statefulset" {
       }
     }
 
-    replicas = 3
+    replicas = var.cluster_nodes
 
     service_name = kubernetes_service.garage-headless.metadata[0].name
 
@@ -188,7 +189,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         access_modes       = ["ReadWriteOnce"]
         resources {
           requests = {
-            storage = "5Gi"
+            storage = var.required_storage
           }
         }
       }
@@ -203,7 +204,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         access_modes       = ["ReadWriteOnce"]
         resources {
           requests = {
-            storage = "5Gi"
+            storage = var.required_storage
           }
         }
       }
