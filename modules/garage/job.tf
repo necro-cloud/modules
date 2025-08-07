@@ -1,3 +1,5 @@
+// Kubernetes Job which will configure Garage Storage Solution
+// by setting up the cluster nodes, buckets, users and permissions
 resource "kubernetes_job" "configurator" {
   metadata {
     name      = "garage-configurator"

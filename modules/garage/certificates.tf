@@ -209,7 +209,6 @@ resource "kubernetes_manifest" "public_issuer" {
 
 # Certificate to be used for Garage API Ingress
 resource "kubernetes_manifest" "api_ingress_certificate" {
-
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"

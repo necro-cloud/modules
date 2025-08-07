@@ -55,7 +55,6 @@ resource "kubernetes_cluster_role_binding" "garage_crds_rolebindings" {
 }
 
 # ---------- SERVICE ACCOUNT TO BE USED BY GARAGE CONFIGURATOR FOR GARAGE SETUP ---------- #
-
 resource "kubernetes_role" "garage_configurator_role" {
   metadata {
     name      = "garage-configurator-role"

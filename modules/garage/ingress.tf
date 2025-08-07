@@ -1,3 +1,4 @@
+// Kubernetes Ingress for API Access
 resource "kubernetes_ingress_v1" "api_ingress" {
   metadata {
     name      = "api-ingress"

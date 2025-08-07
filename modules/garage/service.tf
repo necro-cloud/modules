@@ -1,3 +1,4 @@
+// StatefulSet Headless Service
 resource "kubernetes_service" "garage-headless" {
   metadata {
     name      = "garage-headless"
@@ -38,6 +39,7 @@ resource "kubernetes_service" "garage-headless" {
   }
 }
 
+// Garage Service for Ingress Usage and Cluster Discovery
 resource "kubernetes_service" "garage-service" {
   metadata {
     name      = "garage-service"
