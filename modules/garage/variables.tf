@@ -91,6 +91,25 @@ variable "domain" {
   nullable    = false
 }
 
+# --------------- GARAGE CLUSTER VARIABLES --------------- #
+variable "garage_cluster_name" {
+  description = "Name of the Garage Cluster"
+  type        = string
+  default     = "garage"
+}
+
+variable "cluster_nodes" {
+  description = "Number of nodes to deploy Garage Cluster with"
+  type        = number
+  default     = 3
+}
+
+variable "required_storage" {
+  description = "Size of the disks to configure Garage Storage with"
+  type        = string
+  default     = "5Gi"
+}
+
 # --------------- REPLICATION VARIABLES --------------- #
 variable "replication_namespaces" {
   description = "Namespaces to which Certificate Authority can be replicated to"
@@ -105,3 +124,34 @@ variable "configuration_file" {
   default     = "configuration.json"
 }
 
+variable "garage_region" {
+  description = "Region to be used for the Garage Storage"
+  type        = string
+  default     = "garage"
+}
+
+variable "garage_node_tags" {
+  description = "Node Tags to use to configure Garage nodes with"
+  type        = list(string)
+  default     = ["garage", "node"]
+}
+
+variable "required_buckets" {
+  description = "Buckets to deploy in the Garage Cluster"
+  type        = list(string)
+  nullable    = false
+}
+
+variable "required_access_keys" {
+  description = "Access Keys required to be configured within the Garage Cluster"
+  type = list(object({
+    name         = string
+    createBucket = bool
+    permissions = list(object({
+      bucket = string
+      owner  = bool
+      read   = bool
+      write  = bool
+    }))
+  }))
+}
