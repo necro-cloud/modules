@@ -1,3 +1,4 @@
+// Garage Storage Configuration
 resource "kubernetes_config_map" "garage_config" {
   metadata {
     name      = "garage-config"
@@ -16,7 +17,7 @@ resource "kubernetes_config_map" "garage_config" {
       db_engine = "lmdb"
       block_size = 1048576
 
-      replication_factor = 3
+      replication_factor = ${var.cluster_nodes}
       consistency_mode = "consistent"
       compression_level = 1
 
@@ -31,7 +32,7 @@ resource "kubernetes_config_map" "garage_config" {
 
       [s3_api]
       api_bind_addr = "[::]:3900"
-      s3_region = "garage"
+      s3_region = ${var.garage_region}
       root_domain = "api.${var.host_name}.${var.domain}"
 
       [admin]
@@ -40,6 +41,7 @@ resource "kubernetes_config_map" "garage_config" {
   }
 }
 
+// Garage Storage NGINX Reverse Proxy Settings
 resource "kubernetes_config_map" "nginx_config" {
   metadata {
     name      = "nginx-config"
@@ -127,6 +129,7 @@ resource "kubernetes_config_map" "nginx_config" {
   }
 }
 
+// Garage Configrator Options
 resource "kubernetes_config_map" "configurator-options" {
   metadata {
     name      = "configurator-options"
@@ -138,6 +141,6 @@ resource "kubernetes_config_map" "configurator-options" {
   }
 
   data = {
-    "configurator.json" = file(var.configuration_file)
+    "configurator.json" = jsonencode(local.configurator_options)
   }
 }
