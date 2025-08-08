@@ -1,7 +1,7 @@
 // Garage Credentials for storing PostgreSQL PITR Backups
-resource "kubernetes_secret" "postgres_user_garage_configuration" {
+resource "kubernetes_secret" "garage_configuration" {
   metadata {
-    name      = "garage-credentials"
+    name      = var.garage_configuration
     namespace = kubernetes_namespace.namespace.metadata[0].name
 
     labels = {
@@ -10,7 +10,7 @@ resource "kubernetes_secret" "postgres_user_garage_configuration" {
     }
 
     annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "garage/walbackups-credentials"
+      "reflector.v1.k8s.emberstack.com/reflects" = "${var.garage_namespace}/${var.garage_configuration}"
     }
   }
 

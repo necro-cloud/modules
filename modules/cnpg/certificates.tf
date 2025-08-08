@@ -1,7 +1,7 @@
 // Fetch Garage Certificate Authority for PITR Backups
 resource "kubernetes_secret" "garage_certificate_authority" {
   metadata {
-    name      = "garage-internal-certificate"
+    name      = var.garage_certificate_authority
     namespace = kubernetes_namespace.namespace.metadata[0].name
 
     labels = {
@@ -10,7 +10,7 @@ resource "kubernetes_secret" "garage_certificate_authority" {
     }
 
     annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" : "garage/garage-internal-certificate"
+      "reflector.v1.k8s.emberstack.com/reflects" : "${var.garage_namespace}/${var.garage_certificate_authority}"
     }
   }
 
