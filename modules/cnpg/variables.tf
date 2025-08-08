@@ -24,15 +24,15 @@ variable "namespace" {
   default     = "postgres"
 }
 
-variable "minio_namespace" {
-  description = "Namespace for the MinIO Deployment for storing PITR Backups"
+variable "garage_namespace" {
+  description = "Namespace for the Garage Deployment for storing PITR Backups"
   type        = string
   nullable    = false
 }
 
 # --------------- CERTIFICATE VARIABLES --------------- #
-variable "minio_certificate_authority" {
-  description = "Name of the Certificate Authority associated with the MinIO Storage Solution"
+variable "garage_certificate_authority" {
+  description = "Name of the Certificate Authority associated with the Garage Storage Solution"
   type        = string
   nullable    = false
 }
@@ -100,8 +100,8 @@ variable "clients" {
 }
 
 # --------------- CLUSTER VARIABLES VARIABLES --------------- #
-variable "postgres_user_minio_configuration" {
-  description = "MinIO Configuration for storing PITR Backups"
+variable "garage_configuration" {
+  description = "Garage Configuration for storing PITR Backups"
   type        = string
   nullable    = false
 }
@@ -113,7 +113,7 @@ variable "cluster_name" {
 }
 
 variable "backup_bucket_name" {
-  description = "Name of the bucket for storing PITR Backups in MinIO"
+  description = "Name of the bucket for storing PITR Backups in Garage"
   type        = string
   nullable    = false
 }
