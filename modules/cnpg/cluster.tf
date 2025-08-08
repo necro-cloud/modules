@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "cluster" {
               "-vv",
             ]
           }
-          "destinationPath" = "s3://postgresql/"
+          "destinationPath" = "s3://${var.backup_bucket_name}/"
           "endpointCA" = {
             "key"  = "ca.crt"
             "name" = kubernetes_secret.garage_certificate_authority.metadata[0].name
@@ -30,15 +30,15 @@ resource "kubernetes_manifest" "cluster" {
           "s3Credentials" = {
             "accessKeyId" = {
               "key"  = "ACCESS_KEY_ID"
-              "name" = kubernetes_secret.postgres_user_garage_configuration.metadata[0].name
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
             }
             "secretAccessKey" = {
               "key"  = "SECRET_ACCESS_KEY"
-              "name" = kubernetes_secret.postgres_user_garage_configuration.metadata[0].name
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
             }
             "region" = {
               "key"  = "S3_REGION"
-              "name" = kubernetes_secret.postgres_user_garage_configuration.metadata[0].name
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
             }
           }
           "wal" = {
