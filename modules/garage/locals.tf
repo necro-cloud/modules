@@ -1,7 +1,7 @@
 locals {
   configurator_options = {
     adminApiUrl         = "https://garage-0.${kubernetes_service.garage-headless.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:3943"
-    k8sClusterName      = kubernetes_stateful_set.statefulset.metadata[0].name
+    k8sClusterName      = var.garage_cluster_name
     k8sClusterNamespace = kubernetes_namespace.namespace.metadata[0].name
     region              = var.garage_region
     desiredReplicas     = var.cluster_nodes
