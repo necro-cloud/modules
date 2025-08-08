@@ -43,6 +43,12 @@ variable "cert_manager_configuration" {
 }
 
 # --------------- MINIO OPERATOR VARIABLES --------------- #
+variable "enable_minio" {
+  description = "To enable MinIO Deployment or not"
+  type        = bool
+  default     = false
+}
+
 variable "minio_operator_configuration" {
   description = "Dictionary filled with MinIO Operator Configuration Details"
   type        = map(string)
