@@ -189,7 +189,7 @@
 #         access_modes       = ["ReadWriteOnce"]
 #         resources {
 #           requests = {
-#             storage = var.required_storage
+#             storage = "${var.required_storage}Gi"
 #           }
 #         }
 #       }
@@ -204,7 +204,7 @@
 #         access_modes       = ["ReadWriteOnce"]
 #         resources {
 #           requests = {
-#             storage = var.required_storage
+#             storage = "${var.required_storage}Gi"
 #           }
 #         }
 #       }

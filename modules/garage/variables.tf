@@ -106,8 +106,8 @@ variable "cluster_nodes" {
 
 variable "required_storage" {
   description = "Size of the disks to configure Garage Storage with"
-  type        = string
-  default     = "5Gi"
+  type        = number
+  default     = 5
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
@@ -118,12 +118,6 @@ variable "replication_namespaces" {
 }
 
 # --------------- GARAGE CONFIGURATION VARIABLES --------------- #
-variable "configuration_file" {
-  description = "Path of the file for Garage Storage Configuration"
-  type        = string
-  default     = "configuration.json"
-}
-
 variable "garage_region" {
   description = "Region to be used for the Garage Storage"
   type        = string
