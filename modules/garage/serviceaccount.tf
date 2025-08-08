@@ -66,10 +66,10 @@ resource "kubernetes_role" "garage_configurator_role" {
   }
 
   rule {
-    api_groups = ["apps"]
-    resources  = ["statefulsets"]
-    # resource_names = [kubernetes_stateful_set.statefulset.metadata[0].name]
-    verbs = ["get", "list"]
+    api_groups     = ["apps"]
+    resources      = ["statefulsets"]
+    resource_names = [kubernetes_stateful_set.statefulset.metadata[0].name]
+    verbs          = ["get", "list"]
   }
 
   rule {
