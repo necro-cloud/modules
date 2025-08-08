@@ -82,7 +82,7 @@ variable "api_ingress_certificate_name" {
 variable "host_name" {
   description = "Host name for which Ingress Certificate is to be generated for"
   type        = string
-  default     = "garage"
+  default     = "storage"
 }
 
 variable "domain" {
