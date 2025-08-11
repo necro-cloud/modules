@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "cluster" {
             "key"  = "ca.crt"
             "name" = kubernetes_secret.garage_certificate_authority.metadata[0].name
           }
-          "endpointURL" = "https://garage-service.garage.svc.cluster.local:3940"
+          "endpointURL" = "https://garage-service.${var.garage_namespace}.svc.cluster.local:3940"
           "s3Credentials" = {
             "accessKeyId" = {
               "key"  = "ACCESS_KEY_ID"
