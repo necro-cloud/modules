@@ -12,10 +12,6 @@ Required Modules to deploy Garage Object Storage:
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.36.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.7.1 |
 
-## Modules
-
-No modules.
-
 ## Resources
 
 | Name | Type |
@@ -59,21 +55,29 @@ No modules.
 | <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
 | <a name="input_cluster_nodes"></a> [cluster\_nodes](#input\_cluster\_nodes) | Number of nodes to deploy Garage Cluster with | `number` | `3` | no |
-| <a name="input_configuration_file"></a> [configuration\_file](#input\_configuration\_file) | Path of the file for Garage Storage Configuration | `string` | `"configuration.json"` | no |
+| <a name="input_configurator_image"></a> [configurator\_image](#input\_configurator\_image) | Docker image to be used for deployment of Garage Configurator | `string` | `"garage-configurator"` | no |
+| <a name="input_configurator_repository"></a> [configurator\_repository](#input\_configurator\_repository) | Repository to be used for deployment of Garage Configurator | `string` | `"quay.io/necronizerslab"` | no |
+| <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of Garage Configurator | `string` | `"0.8.10"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying Garage Storage Solution | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
 | <a name="input_garage_cluster_name"></a> [garage\_cluster\_name](#input\_garage\_cluster\_name) | Name of the Garage Cluster | `string` | `"garage"` | no |
 | <a name="input_garage_node_tags"></a> [garage\_node\_tags](#input\_garage\_node\_tags) | Node Tags to use to configure Garage nodes with | `list(string)` | <pre>[<br/>  "garage",<br/>  "node"<br/>]</pre> | no |
 | <a name="input_garage_region"></a> [garage\_region](#input\_garage\_region) | Region to be used for the Garage Storage | `string` | `"garage"` | no |
-| <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"garage"` | no |
+| <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"storage"` | no |
+| <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of Garage Storage Solution | `string` | `"amd64_garage"` | no |
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with Garage Storage Solution | `string` | `"garage-internal-certificate"` | no |
 | <a name="input_issuer_name"></a> [issuer\_name](#input\_issuer\_name) | Name of the Issuer to be associated with Garage Storage Solution | `string` | `"garage-certificate-issuer"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Garage Storage Solution | `string` | `"garage"` | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Garage Storage Solution | `string` | `"cloud"` | no |
+| <a name="input_proxy_image"></a> [proxy\_image](#input\_proxy\_image) | Docker image to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"nginx"` | no |
+| <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |
+| <a name="input_proxy_tag"></a> [proxy\_tag](#input\_proxy\_tag) | Docker tag to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"1.29.0"` | no |
 | <a name="input_replication_namespaces"></a> [replication\_namespaces](#input\_replication\_namespaces) | Namespaces to which Certificate Authority can be replicated to | `string` | `"postgres"` | no |
+| <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of Garage Storage Solution | `string` | `"dxflrs"` | no |
 | <a name="input_required_access_keys"></a> [required\_access\_keys](#input\_required\_access\_keys) | Access Keys required to be configured within the Garage Cluster | <pre>list(object({<br/>    name         = string<br/>    createBucket = bool<br/>    permissions = list(object({<br/>      bucket = string<br/>      owner  = bool<br/>      read   = bool<br/>      write  = bool<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_required_buckets"></a> [required\_buckets](#input\_required\_buckets) | Buckets to deploy in the Garage Cluster | `list(string)` | n/a | yes |
-| <a name="input_required_storage"></a> [required\_storage](#input\_required\_storage) | Size of the disks to configure Garage Storage with | `string` | `"5Gi"` | no |
+| <a name="input_required_storage"></a> [required\_storage](#input\_required\_storage) | Size of the disks to configure Garage Storage with | `number` | `5` | no |
+| <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Garage Storage Solution | `string` | `"v2.0.0"` | no |
 
 ## Outputs
 
