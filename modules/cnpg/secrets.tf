@@ -1,7 +1,7 @@
-// MinIO Credentials for storing PostgreSQL PITR Backups
-resource "kubernetes_secret" "postgres_user_minio_configuration" {
+// Garage Credentials for storing PostgreSQL PITR Backups
+resource "kubernetes_secret" "garage_configuration" {
   metadata {
-    name      = "minio-${var.postgres_user_minio_configuration}"
+    name      = var.garage_configuration
     namespace = kubernetes_namespace.namespace.metadata[0].name
 
     labels = {
@@ -10,13 +10,15 @@ resource "kubernetes_secret" "postgres_user_minio_configuration" {
     }
 
     annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "${var.minio_namespace}/${var.postgres_user_minio_configuration}"
+      "reflector.v1.k8s.emberstack.com/reflects" = "${var.garage_namespace}/${var.garage_configuration}"
     }
   }
 
   data = {
-    CONSOLE_ACCESS_KEY = ""
-    CONSOLE_SECRET_KEY = ""
+    KEY_NAME          = ""
+    ACCESS_KEY_ID     = ""
+    SECRET_ACCESS_KEY = ""
+    S3_REGION         = ""
   }
 
   type = "Opaque"

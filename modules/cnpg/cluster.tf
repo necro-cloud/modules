@@ -24,17 +24,21 @@ resource "kubernetes_manifest" "cluster" {
           "destinationPath" = "s3://${var.backup_bucket_name}/"
           "endpointCA" = {
             "key"  = "ca.crt"
-            "name" = kubernetes_secret.minio_certificate_authority.metadata[0].name
+            "name" = kubernetes_secret.garage_certificate_authority.metadata[0].name
           }
-          "endpointURL" = "https://minio-hl.${var.minio_namespace}.svc.cluster.local:9000"
+          "endpointURL" = "https://garage-service.${var.garage_namespace}.svc.cluster.local:3940"
           "s3Credentials" = {
             "accessKeyId" = {
-              "key"  = "CONSOLE_ACCESS_KEY"
-              "name" = kubernetes_secret.postgres_user_minio_configuration.metadata[0].name
+              "key"  = "ACCESS_KEY_ID"
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
             }
             "secretAccessKey" = {
-              "key"  = "CONSOLE_SECRET_KEY"
-              "name" = kubernetes_secret.postgres_user_minio_configuration.metadata[0].name
+              "key"  = "SECRET_ACCESS_KEY"
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
+            }
+            "region" = {
+              "key"  = "S3_REGION"
+              "name" = kubernetes_secret.garage_configuration.metadata[0].name
             }
           }
           "wal" = {
