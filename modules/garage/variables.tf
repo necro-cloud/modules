@@ -169,7 +169,7 @@ variable "configurator_image" {
 variable "configurator_tag" {
   description = "Docker tag to be used for deployment of Garage Configurator"
   type        = string
-  default     = "0.7.9"
+  default     = "0.8.10"
 }
 
 variable "garage_region" {
