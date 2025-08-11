@@ -110,6 +110,42 @@ variable "required_storage" {
   default     = 5
 }
 
+variable "repository" {
+  description = "Repository to be used for deployment of Garage Storage Solution"
+  type        = string
+  default     = "dxflrs"
+}
+
+variable "image" {
+  description = "Docker image to be used for deployment of Garage Storage Solution"
+  type        = string
+  default     = "amd64_garage"
+}
+
+variable "tag" {
+  description = "Docker tag to be used for deployment of Garage Storage Solution"
+  type        = string
+  default     = "v2.0.0"
+}
+
+variable "proxy_repository" {
+  description = "Repository to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "docker.io/library"
+}
+
+variable "proxy_image" {
+  description = "Docker image to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "nginx"
+}
+
+variable "proxy_tag" {
+  description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "1.29.0"
+}
+
 # --------------- REPLICATION VARIABLES --------------- #
 variable "replication_namespaces" {
   description = "Namespaces to which Certificate Authority can be replicated to"
@@ -118,6 +154,24 @@ variable "replication_namespaces" {
 }
 
 # --------------- GARAGE CONFIGURATION VARIABLES --------------- #
+variable "configurator_repository" {
+  description = "Repository to be used for deployment of Garage Configurator"
+  type        = string
+  default     = "quay.io/necronizerslab"
+}
+
+variable "configurator_image" {
+  description = "Docker image to be used for deployment of Garage Configurator"
+  type        = string
+  default     = "garage-configurator"
+}
+
+variable "configurator_tag" {
+  description = "Docker tag to be used for deployment of Garage Configurator"
+  type        = string
+  default     = "0.7.9"
+}
+
 variable "garage_region" {
   description = "Region to be used for the Garage Storage"
   type        = string

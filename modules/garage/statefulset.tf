@@ -43,7 +43,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
         container {
           name  = "garage"
-          image = "dxflrs/amd64_garage:v2.0.0"
+          image = "${var.repository}/${var.image}:${var.tag}"
 
           env_from {
             secret_ref {
@@ -109,7 +109,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
         container {
           name  = "proxy"
-          image = "nginx:1.29.0"
+          image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
 
           port {
             container_port = 3940

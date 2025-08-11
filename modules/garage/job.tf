@@ -25,7 +25,7 @@ resource "kubernetes_job" "configurator" {
         service_account_name = kubernetes_service_account.garage_configurator_service_account.metadata[0].name
         container {
           name  = "garage-configurator"
-          image = "quay.io/necronizerslab/garage-configurator:0.7.9"
+          image = "${var.configurator_repository}/${var.configurator_image}:${var.configurator_tag}"
 
           security_context {
             run_as_non_root = true
