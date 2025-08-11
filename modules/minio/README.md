@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-## necronizer's cloud minio module
+## [DEPRECATED] necronizer's cloud minio module
 
 OpenTofu Module to deploy [MinIO](https://min.io/) Object Storage on the Kubernetes Cluster
 
