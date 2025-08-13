@@ -12,6 +12,12 @@ resource "kubernetes_manifest" "cluster" {
       "namespace" = kubernetes_namespace.namespace.metadata[0].name
     }
     "spec" = {
+      "imageCatalogRef" = {
+        "apiGroup" = "postgresql.cnpg.io",
+        "kind"     = "ClusterImageCatalog"
+        "name"     = kubernetes_manifest.cluster_image_catalog.manifest.metadata.name
+        "major"    = var.cluster_postgresql_version
+      }
       "backup" = {
         "barmanObjectStore" = {
           "data" = {
@@ -51,7 +57,6 @@ resource "kubernetes_manifest" "cluster" {
       }
       "description"           = "PostgreSQL Cluster for storing relational data"
       "enableSuperuserAccess" = true
-      "imageName"             = "ghcr.io/cloudnative-pg/postgresql:16.2"
       "instances"             = 2
       "managed" = {
         "roles" = concat([
