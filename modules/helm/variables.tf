@@ -71,7 +71,7 @@ variable "cnpg_configuration" {
     "namespace"        = "cnpg-system"
     "repository"       = "https://cloudnative-pg.github.io/charts"
     "chart"            = "cloudnative-pg"
-    "version"          = "v0.25.0"
+    "version"          = "v0.26.0"
     "create_namespace" = true
   }
 }
