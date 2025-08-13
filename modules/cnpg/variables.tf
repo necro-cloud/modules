@@ -112,6 +112,12 @@ variable "cluster_name" {
   default     = "postgresql-cluster"
 }
 
+variable "cluster_postgresql_version" {
+  description = "Version of PostgreSQL Database to use and deploy"
+  type        = number
+  default     = 17
+}
+
 variable "backup_bucket_name" {
   description = "Name of the bucket for storing PITR Backups in Garage"
   type        = string
