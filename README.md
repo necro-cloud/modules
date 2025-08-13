@@ -14,8 +14,9 @@ The following is required to start using this repository:
 
 The following modules have been implemented and their usage instructions written in README:
 1. [Helm](modules/helm)
-1. [Cluster Issuer for internal certificates](modules/cluster-issuer)
-1. [MinIO Storage Storage](modules/minio)
-1. [Cloudnative PG PostgreSQL Database](modules/cnpg)
-1. [Valkey In Memory Database](modules/valkey)
-1. [Keycloak Identity Management](modules/keycloak)
+2. [Cluster Issuer for internal certificates](modules/cluster-issuer)
+3. [\[DEPRECATED\] MinIO Storage](modules/minio)
+4. [Garage Storage](modules/garage)
+5. [Cloudnative PG PostgreSQL Database](modules/cnpg)
+6. [Valkey In Memory Database](modules/valkey)
+7. [Keycloak Identity Management](modules/keycloak)
