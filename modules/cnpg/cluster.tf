@@ -18,46 +18,9 @@ resource "kubernetes_manifest" "cluster" {
         "name"     = kubernetes_manifest.cluster_image_catalog.manifest.metadata.name
         "major"    = var.cluster_postgresql_version
       }
-      "backup" = {
-        "barmanObjectStore" = {
-          "data" = {
-            "additionalCommandArgs" = [
-              "--min-chunk-size=5MB",
-              "--read-timeout=60",
-              "-vv",
-            ]
-          }
-          "destinationPath" = "s3://${var.backup_bucket_name}/"
-          "endpointCA" = {
-            "key"  = "ca.crt"
-            "name" = kubernetes_secret.garage_certificate_authority.metadata[0].name
-          }
-          "endpointURL" = "https://garage-service.${var.garage_namespace}.svc.cluster.local:3940"
-          "s3Credentials" = {
-            "accessKeyId" = {
-              "key"  = "ACCESS_KEY_ID"
-              "name" = kubernetes_secret.garage_configuration.metadata[0].name
-            }
-            "secretAccessKey" = {
-              "key"  = "SECRET_ACCESS_KEY"
-              "name" = kubernetes_secret.garage_configuration.metadata[0].name
-            }
-            "region" = {
-              "key"  = "S3_REGION"
-              "name" = kubernetes_secret.garage_configuration.metadata[0].name
-            }
-          }
-          "wal" = {
-            "compression" = "gzip"
-          }
-        }
-        "volumeSnapshot" = {
-          "className" = "csi-hostpath-snapclass"
-        }
-      }
       "description"           = "PostgreSQL Cluster for storing relational data"
       "enableSuperuserAccess" = true
-      "instances"             = 2
+      "instances"             = var.cluster_size
       "managed" = {
         "roles" = concat([
           {
@@ -111,6 +74,15 @@ resource "kubernetes_manifest" "cluster" {
         "clientCASecret"       = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
         "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate.manifest.spec.secretName
       }
+      "plugins" = [
+        {
+          "name"          = "barman-cloud.cloudnative-pg.io"
+          "isWALArchiver" = true
+          "parameters" = {
+            "barmanObjectName" = kubernetes_manifest.barman_object_store.manifest.metadata.name
+          }
+        }
+      ]
     }
   }
 
