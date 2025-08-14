@@ -75,3 +75,9 @@ variable "cnpg_configuration" {
     "create_namespace" = true
   }
 }
+
+variable "barman_cloud_plugin_version" {
+  description = "Version to be deplpyed for Barman Cloud Plugin"
+  type        = string
+  default     = "v0.5.0"
+}
