@@ -17,10 +17,10 @@ locals {
     "superuser"   = false
   }]
   pgadmin_servers = {
-    for client in concat(var.var.clients, [{ user = "keycloak", database = "keycloak" }]) : "${index(var.var.clients, client) + 1}" => {
+    for client in concat(var.clients, [{ user = "keycloak", database = "keycloak" }]) : "${index(var.clients, client) + 1}" => {
       "Name"                = client.value.database
       "Group"               = "PostgreSQL Server Access",
-      "Host"                = "${var.var.cluster_name}-rw"
+      "Host"                = "${var.cluster_name}-rw"
       "Port"                = 5432
       "MaintainanceDB"      = client.value.database
       "Username"            = client.value.user
