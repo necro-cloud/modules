@@ -25,7 +25,7 @@ resource "kubernetes_deployment" "pgadmin" {
         container {
           name    = "pgadmin"
           image   = "busybox"
-          command = ["sh", "-c", "sleep", "7200"]
+          command = ["sh", "-c", "sleep 7200"]
 
           env_from {
             secret_ref {
@@ -56,7 +56,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           volume_mount {
             name       = "internal-certificate"
-            mount_path = "/mnt/crt"
+            mount_path = "/mnt/ssl"
           }
 
           volume_mount {
