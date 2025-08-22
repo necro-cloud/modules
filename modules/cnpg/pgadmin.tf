@@ -64,23 +64,23 @@ resource "kubernetes_deployment" "pgadmin" {
             mount_path = "/etc/nginx"
           }
 
-          liveness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
-            }
+          # liveness_probe {
+          #   exec {
+          #     command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+          #   }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
-          }
+          #   initial_delay_seconds = 5
+          #   period_seconds        = 30
+          # }
 
-          readiness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
-            }
+          # readiness_probe {
+          #   exec {
+          #     command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+          #   }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
-          }
+          #   initial_delay_seconds = 5
+          #   period_seconds        = 30
+          # }
         }
 
         volume {
