@@ -142,15 +142,15 @@ resource "kubernetes_deployment" "pgadmin" {
 
                   items {
                     key  = "ca.crt"
-                    path = split("-", secret.value.metadata[0].name)[1]
+                    path = split("-", secret.value.manifest.spec.secretName)[1]
                   }
                   items {
                     key  = "tls.crt"
-                    path = split("-", secret.value.metadata[0].name)[1]
+                    path = split("-", secret.value.manifest.spec.secretName)[1]
                   }
                   items {
                     key  = "tls.key"
-                    path = split("-", secret.value.metadata[0].name)[1]
+                    path = split("-", secret.value.manifest.spec.secretName)[1]
                   }
                 }
               }
