@@ -123,37 +123,37 @@ resource "kubernetes_deployment" "pgadmin" {
 
                 items {
                   key  = "ca.crt"
-                  path = "keycloak-ca"
+                  path = "keycloak/ca.crt"
                 }
                 items {
                   key  = "tls.crt"
-                  path = "keycloak-tls"
+                  path = "keycloak/tls.crt"
                 }
                 items {
                   key  = "tls.key"
-                  path = "keycloak-key"
+                  path = "keycloak/tls.key"
                 }
               }
 
-              # dynamic "secret" {
-              #   for_each = kubernetes_manifest.client_certificates
-              #   content {
-              #     name = secret.value.manifest.spec.secretName
+              dynamic "secret" {
+                for_each = kubernetes_manifest.client_certificates
+                content {
+                  name = secret.value.manifest.spec.secretName
 
-              #     items {
-              #       key  = "ca.crt"
-              #       path = split("-", secret.value.manifest.spec.secretName)[1]
-              #     }
-              #     items {
-              #       key  = "tls.crt"
-              #       path = split("-", secret.value.manifest.spec.secretName)[1]
-              #     }
-              #     items {
-              #       key  = "tls.key"
-              #       path = split("-", secret.value.manifest.spec.secretName)[1]
-              #     }
-              #   }
-              # }
+                  items {
+                    key  = "ca.crt"
+                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/ca.crt"
+                  }
+                  items {
+                    key  = "tls.crt"
+                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.crt"
+                  }
+                  items {
+                    key  = "tls.key"
+                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.key"
+                  }
+                }
+              }
             }
           }
         }
@@ -166,7 +166,7 @@ resource "kubernetes_deployment" "pgadmin" {
                 name = kubernetes_secret.keycloak_database_credentials.metadata[0].name
                 items {
                   key  = "password"
-                  path = "keycloak"
+                  path = "keycloak/password"
                 }
               }
 
@@ -176,7 +176,7 @@ resource "kubernetes_deployment" "pgadmin" {
                   name = secret.value.metadata[0].name
                   items {
                     key  = "password"
-                    path = split("-", secret.value.metadata[0].name)[1]
+                    path = "${split("-", secret.value.metadata[0].name)[1]}/password"
                   }
                 }
               }
