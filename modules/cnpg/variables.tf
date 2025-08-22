@@ -129,3 +129,21 @@ variable "backup_bucket_name" {
   type        = string
   nullable    = false
 }
+
+variable "proxy_repository" {
+  description = "Repository to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "docker.io/library"
+}
+
+variable "proxy_image" {
+  description = "Docker image to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "nginx"
+}
+
+variable "proxy_tag" {
+  description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "1.29.0"
+}
