@@ -30,12 +30,10 @@ resource "kubernetes_secret" "garage_configuration" {
 
 // Database credentials configuration for Keycloak
 resource "random_password" "keycloak_password" {
-  length           = 20
-  lower            = true
-  numeric          = true
-  special          = true
-  override_special = "-_*/"
-  min_special      = 3
+  length  = 20
+  lower   = true
+  numeric = true
+  special = false
 }
 
 resource "kubernetes_secret" "keycloak_database_credentials" {
@@ -64,13 +62,11 @@ resource "kubernetes_secret" "keycloak_database_credentials" {
 
 // Database credentials configuration for all clients
 resource "random_password" "client_password" {
-  count            = length(var.clients)
-  length           = 20
-  lower            = true
-  numeric          = true
-  special          = true
-  override_special = "-_*/"
-  min_special      = 3
+  count   = length(var.clients)
+  length  = 20
+  lower   = true
+  numeric = true
+  special = false
 }
 
 resource "kubernetes_secret" "client_database_credentials" {
