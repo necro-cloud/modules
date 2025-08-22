@@ -408,3 +408,48 @@ resource "kubernetes_manifest" "client_certificates" {
     delete = "5m"
   }
 }
+
+// Internal Certificate for PGAdmin
+resource "kubernetes_manifest" "pgadmin_internal_certificate" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = "pgadmin-internal-certificate"
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "internal-certificate"
+      }
+    }
+    "spec" = {
+      "dnsNames" = [
+        "database.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "127.0.0.1",
+        "localhost",
+      ]
+      "subject" = {
+        "organizations"       = [var.organization_name]
+        "countries"           = [var.country_name]
+        "organizationalUnits" = [var.app_name]
+      }
+      "commonName" = "pgadmin-internal-certificate"
+      "secretName" = "pgadmin-internal-certificate"
+      "issuerRef" = {
+        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+      }
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
+}
