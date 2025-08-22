@@ -118,5 +118,5 @@ resource "kubernetes_secret" "pgadmin_credentials" {
     "PGADMIN_DEFAULT_PASSWORD" = random_password.pgadmin_password.result
   }
 
-  type = "kubernetes.io/basic-auth"
+  type = "Opaque"
 }
