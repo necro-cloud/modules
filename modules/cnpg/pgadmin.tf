@@ -120,12 +120,38 @@ resource "kubernetes_deployment" "pgadmin" {
             sources {
               secret {
                 name = kubernetes_manifest.client_keycloak_certificate.manifest.spec.secretName
+
+                items {
+                  key  = "ca.crt"
+                  path = "keycloak"
+                }
+                items {
+                  key  = "tls.crt"
+                  path = "keycloak"
+                }
+                items {
+                  key  = "tls.key"
+                  path = "keycloak"
+                }
               }
 
               dynamic "secret" {
                 for_each = kubernetes_manifest.client_certificates
                 content {
                   name = secret.value.manifest.spec.secretName
+
+                  items {
+                    key  = "ca.crt"
+                    path = split("-", secret.value.metadata[0].name)[1]
+                  }
+                  items {
+                    key  = "tls.crt"
+                    path = split("-", secret.value.metadata[0].name)[1]
+                  }
+                  items {
+                    key  = "tls.key"
+                    path = split("-", secret.value.metadata[0].name)[1]
+                  }
                 }
               }
             }
@@ -138,12 +164,20 @@ resource "kubernetes_deployment" "pgadmin" {
             sources {
               secret {
                 name = kubernetes_secret.keycloak_database_credentials.metadata[0].name
+                items {
+                  key  = "password"
+                  path = "keycloak"
+                }
               }
 
               dynamic "secret" {
                 for_each = kubernetes_secret.client_database_credentials
                 content {
                   name = secret.value.metadata[0].name
+                  items {
+                    key  = "password"
+                    path = split("-", secret.value.metadata[0].name)[1]
+                  }
                 }
               }
             }

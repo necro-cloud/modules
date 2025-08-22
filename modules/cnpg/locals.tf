@@ -26,10 +26,10 @@ locals {
       "Username"            = client.user
       "SSLMode"             = "verify-ca"
       "Comment"             = "PostgreSQL Server Access for Database: ${client.database}"
-      "SSLCert"             = "/mnt/certs/${client.database}tls.crt"
-      "SSLKey"              = "/mnt/certs/${client.database}/tls.key"
-      "SSLRootCert"         = "/mnt/certs/${client.database}/ca.crt"
-      "PasswordExecCommand" = "cat /mnt/passwords/${client.database}/password"
+      "SSLCert"             = "/mnt/certs/${client.user}tls.crt"
+      "SSLKey"              = "/mnt/certs/${client.user}/tls.key"
+      "SSLRootCert"         = "/mnt/certs/${client.user}/ca.crt"
+      "PasswordExecCommand" = "cat /mnt/passwords/${client.user}/password"
     }
   }
 }
