@@ -123,15 +123,15 @@ resource "kubernetes_deployment" "pgadmin" {
 
                 items {
                   key  = "ca.crt"
-                  path = "keycloak"
+                  path = "keycloak-ca"
                 }
                 items {
                   key  = "tls.crt"
-                  path = "keycloak"
+                  path = "keycloak-tls"
                 }
                 items {
                   key  = "tls.key"
-                  path = "keycloak"
+                  path = "keycloak-key"
                 }
               }
 
