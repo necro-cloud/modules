@@ -42,6 +42,16 @@ resource "kubernetes_deployment" "pgadmin" {
             name       = "servers-configuration"
             mount_path = "/pgadmin4"
           }
+
+          volume_mount {
+            name       = "client-passwords"
+            mount_path = "/mnt/passwords"
+          }
+
+          volume_mount {
+            name       = "client-certificates"
+            mount_path = "/mnt/certs"
+          }
         }
 
 
