@@ -16,4 +16,20 @@ locals {
     "replication" = false
     "superuser"   = false
   }]
+  pgadmin_servers = {
+    for client in concat(var.var.clients, [{ user = "keycloak", database = "keycloak" }]) : "${index(var.var.clients, client) + 1}" => {
+      "Name"                = client.value.database
+      "Group"               = "PostgreSQL Server Access",
+      "Host"                = "${var.var.cluster_name}-rw"
+      "Port"                = 5432
+      "MaintainanceDB"      = client.value.database
+      "Username"            = client.value.user
+      "SSLMode"             = "verify-ca"
+      "Comment"             = "PostgreSQL Server Access for Database: ${client.value.database}"
+      "SSLCert"             = "/mnt/certs/${client.value.database}tls.crt"
+      "SSLKey"              = "/mnt/certs/${client.value.database}/tls.key"
+      "SSLRootCert"         = "/mnt/certs/${client.value.database}/ca.crt"
+      "PasswordExecCommand" = "cat /mnt/passwords/${client.value.database}/password"
+    }
+  }
 }
