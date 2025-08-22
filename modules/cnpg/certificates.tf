@@ -436,7 +436,7 @@ resource "kubernetes_manifest" "pgadmin_internal_certificate" {
       "commonName" = "pgadmin-internal-certificate"
       "secretName" = "pgadmin-internal-certificate"
       "issuerRef" = {
-        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.server_issuer.manifest.metadata.name
       }
     }
   }
