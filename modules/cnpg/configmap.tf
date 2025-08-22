@@ -9,6 +9,8 @@ resource "kubernetes_config_map" "pgadmin_servers_configuration" {
   }
 
   data = {
-    "servers.json" = jsonencode(local.pgadmin_servers)
+    "servers.json" = jsonencode({
+      "Servers" = local.pgadmin_servers
+    })
   }
 }
