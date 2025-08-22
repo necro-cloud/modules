@@ -135,25 +135,25 @@ resource "kubernetes_deployment" "pgadmin" {
                 }
               }
 
-              dynamic "secret" {
-                for_each = kubernetes_manifest.client_certificates
-                content {
-                  name = secret.value.manifest.spec.secretName
+              # dynamic "secret" {
+              #   for_each = kubernetes_manifest.client_certificates
+              #   content {
+              #     name = secret.value.manifest.spec.secretName
 
-                  items {
-                    key  = "ca.crt"
-                    path = split("-", secret.value.manifest.spec.secretName)[1]
-                  }
-                  items {
-                    key  = "tls.crt"
-                    path = split("-", secret.value.manifest.spec.secretName)[1]
-                  }
-                  items {
-                    key  = "tls.key"
-                    path = split("-", secret.value.manifest.spec.secretName)[1]
-                  }
-                }
-              }
+              #     items {
+              #       key  = "ca.crt"
+              #       path = split("-", secret.value.manifest.spec.secretName)[1]
+              #     }
+              #     items {
+              #       key  = "tls.crt"
+              #       path = split("-", secret.value.manifest.spec.secretName)[1]
+              #     }
+              #     items {
+              #       key  = "tls.key"
+              #       path = split("-", secret.value.manifest.spec.secretName)[1]
+              #     }
+              #   }
+              # }
             }
           }
         }
