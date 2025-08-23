@@ -23,9 +23,8 @@ resource "kubernetes_deployment" "pgadmin" {
       }
       spec {
         container {
-          name    = "pgadmin"
-          image   = "busybox"
-          command = ["sh", "-c", "sleep 7200"]
+          name  = "pgadmin"
+          image = "dpage/pgadmin4:9.7.0"
 
           env_from {
             secret_ref {
@@ -74,23 +73,23 @@ resource "kubernetes_deployment" "pgadmin" {
             mount_path = "/etc/nginx"
           }
 
-          # liveness_probe {
-          #   exec {
-          #     command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
-          #   }
+          liveness_probe {
+            exec {
+              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+            }
 
-          #   initial_delay_seconds = 5
-          #   period_seconds        = 30
-          # }
+            initial_delay_seconds = 5
+            period_seconds        = 30
+          }
 
-          # readiness_probe {
-          #   exec {
-          #     command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
-          #   }
+          readiness_probe {
+            exec {
+              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+            }
 
-          #   initial_delay_seconds = 5
-          #   period_seconds        = 30
-          # }
+            initial_delay_seconds = 5
+            period_seconds        = 30
+          }
         }
 
         volume {
