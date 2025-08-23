@@ -24,7 +24,7 @@ locals {
       "Port"                = 5432
       "MaintenanceDB"       = client.database
       "Username"            = client.user
-      "SSLMode"             = "verify-ca"
+      "SSLMode"             = "require"
       "Comment"             = "PostgreSQL Server Access for Database: ${client.database}"
       "SSLCert"             = "/mnt/certs/${client.user}/tls.crt"
       "SSLKey"              = "/mnt/certs/${client.user}/tls.key"
