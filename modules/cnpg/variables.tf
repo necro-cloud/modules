@@ -79,6 +79,48 @@ variable "client_streaming_replica_certificate_name" {
   default     = "postgresql-streaming-replica-client-certificate"
 }
 
+variable "cloudflare_token" {
+  description = "Token for generating Ingress Certificates to be associated with PGAdmin"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_email" {
+  description = "Email for generating Ingress Certificates to be associated with PGAdmin"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_issuer_name" {
+  description = "Name of the Cloudflare Issuer to be associated with PGAdmin"
+  type        = string
+  default     = "cnpg-cloudflare-issuer"
+}
+
+variable "acme_server" {
+  description = "URL for the ACME Server to be used, defaults to production URL for LetsEncrypt"
+  type        = string
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+variable "ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with PGAdmin"
+  type        = string
+  default     = "pgadmin-ingress-certificate"
+}
+
+variable "host_name" {
+  description = "Host name for which Ingress Certificate is to be generated for"
+  type        = string
+  default     = "sql"
+}
+
+variable "domain" {
+  description = "Domain for which Ingress Certificate is to be generated for"
+  type        = string
+  default     = "cloud"
+}
+
 # --------------- USER CONFIGURATION VARIABLES --------------- #
 variable "clients" {
   description = "Object List of clients who need databases and users to be configured for"
