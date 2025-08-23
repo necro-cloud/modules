@@ -39,7 +39,9 @@ resource "kubernetes_deployment" "pgadmin" {
 
           volume_mount {
             name       = "servers-configuration"
-            mount_path = "/pgadmin4"
+            mount_path = "/pgadmin4/servers.json"
+            sub_path   = "servers.json"
+            read_only  = true
           }
 
           volume_mount {
@@ -52,7 +54,6 @@ resource "kubernetes_deployment" "pgadmin" {
             mount_path = "/mnt/certs"
           }
         }
-
 
         container {
           name  = "proxy"
