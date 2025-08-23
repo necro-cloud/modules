@@ -76,7 +76,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           liveness_probe {
             exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
             }
 
             initial_delay_seconds = 5
@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           readiness_probe {
             exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:443/health"]
+              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
             }
 
             initial_delay_seconds = 5
