@@ -93,3 +93,30 @@ resource "kubernetes_secret" "client_database_credentials" {
 
   type = "kubernetes.io/basic-auth"
 }
+
+
+resource "random_password" "pgadmin_password" {
+  length  = 20
+  lower   = true
+  numeric = true
+  special = false
+}
+
+resource "kubernetes_secret" "pgadmin_credentials" {
+  metadata {
+    name      = "pgadmin-credentials"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+
+    labels = {
+      app       = var.app_name
+      component = "secret"
+    }
+  }
+
+  data = {
+    "PGADMIN_DEFAULT_EMAIL"    = "noreply@${var.organization_name}.com"
+    "PGADMIN_DEFAULT_PASSWORD" = random_password.pgadmin_password.result
+  }
+
+  type = "Opaque"
+}
