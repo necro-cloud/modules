@@ -48,7 +48,7 @@ resource "kubernetes_config_map" "nginx_conf" {
               proxy_set_header X-Script-Name /pgadmin4;
               proxy_set_header X-Scheme $scheme;
               proxy_set_header Host $host;
-              proxy_pass http://localhost:5050/;
+              proxy_pass http://localhost:80;
               proxy_redirect off;
           }
         }
