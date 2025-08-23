@@ -118,7 +118,7 @@ variable "host_name" {
 variable "domain" {
   description = "Domain for which Ingress Certificate is to be generated for"
   type        = string
-  default     = "cloud"
+  nullable    = false
 }
 
 # --------------- USER CONFIGURATION VARIABLES --------------- #
