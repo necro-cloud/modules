@@ -44,6 +44,10 @@ resource "kubernetes_config_map" "nginx_conf" {
           ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
           ssl_prefer_server_ciphers on;
 
+          location / {
+            return 301 /pgadmin4;
+          }
+
           location /pgadmin4/ {
               proxy_set_header X-Script-Name /pgadmin4;
               proxy_set_header X-Scheme $scheme;
