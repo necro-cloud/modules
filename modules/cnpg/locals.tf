@@ -22,7 +22,7 @@ locals {
       "Group"               = "PostgreSQL Server Access",
       "Host"                = "${var.cluster_name}-rw"
       "Port"                = 5432
-      "MaintainanceDB"      = client.database
+      "MaintenanceDB"       = client.database
       "Username"            = client.user
       "SSLMode"             = "verify-ca"
       "Comment"             = "PostgreSQL Server Access for Database: ${client.database}"
