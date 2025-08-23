@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           env {
             name  = "PGADMIN_CONFIG_ENABLE_PSQL"
-            value = true
+            value = "True"
           }
 
           volume_mount {
