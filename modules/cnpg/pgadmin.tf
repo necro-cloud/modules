@@ -37,6 +37,11 @@ resource "kubernetes_deployment" "pgadmin" {
             value = true
           }
 
+          env {
+            name  = "PGADMIN_CONFIG_ENABLE_PSQL"
+            value = true
+          }
+
           volume_mount {
             name       = "servers-configuration"
             mount_path = "/pgadmin4/servers.json"
