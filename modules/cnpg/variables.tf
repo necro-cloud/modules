@@ -118,7 +118,6 @@ variable "host_name" {
 variable "domain" {
   description = "Domain for which Ingress Certificate is to be generated for"
   type        = string
-  nullable    = false
 }
 
 # --------------- USER CONFIGURATION VARIABLES --------------- #
@@ -172,20 +171,39 @@ variable "backup_bucket_name" {
   nullable    = false
 }
 
+# --------------- PGADMIN DEPLOYMENT VARIABLES --------------- #
+variable "repository" {
+  description = "Repository to be used for deployment of PGAdmin"
+  type        = string
+  default     = "docker.io/dpage"
+}
+
+variable "image" {
+  description = "Docker image to be used for deployment of PGAdmin"
+  type        = string
+  default     = "pgadmin4"
+}
+
+variable "tag" {
+  description = "Docker tag to be used for deployment of PGAdmin"
+  type        = string
+  default     = "9.7.0"
+}
+
 variable "proxy_repository" {
-  description = "Repository to be used for deployment of Garage NGINX Proxy for TLS"
+  description = "Repository to be used for deployment of PGAdmin NGINX Proxy for TLS"
   type        = string
   default     = "docker.io/library"
 }
 
 variable "proxy_image" {
-  description = "Docker image to be used for deployment of Garage NGINX Proxy for TLS"
+  description = "Docker image to be used for deployment of PGAdmin NGINX Proxy for TLS"
   type        = string
   default     = "nginx"
 }
 
 variable "proxy_tag" {
-  description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
+  description = "Docker tag to be used for deployment of PGAdmin NGINX Proxy for TLS"
   type        = string
   default     = "1.29.0"
 }

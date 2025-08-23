@@ -24,7 +24,7 @@ resource "kubernetes_deployment" "pgadmin" {
       spec {
         container {
           name  = "pgadmin"
-          image = "dpage/pgadmin4:9.7.0"
+          image = "${var.repository}/${var.image}:${var.tag}"
 
           env_from {
             secret_ref {
@@ -98,6 +98,7 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
+        // NGINX Configuration for TLS
         volume {
           name = "nginx-config"
           config_map {
@@ -105,6 +106,7 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
+        // Servers Configuration
         volume {
           name = "servers-configuration"
           config_map {
@@ -112,6 +114,7 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
+        // Internal Certificates for TLS
         volume {
           name = "internal-certificate"
           secret {
@@ -119,6 +122,7 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
+        // PostgreSQL Client Certificates Projected Volume
         volume {
           name = "client-certificates"
           projected {
@@ -163,6 +167,7 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
+        // Client Passwords Projected Volume
         volume {
           name = "client-passwords"
           projected {
