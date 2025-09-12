@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "sentinel" {
           command = ["sh", "-c"]
           args = [
             <<EOF
-              sed "s|VALKEY_PASSWORD|$VALKEY_PASSWORD|g" /etc/valkey/conf_template/sentinel.conf > /etc/valkey/conf/sentinel.conf
+              sed -e "s|SENTINEL_IP|$SENTINEL_ANNOUNCE_IP|g" -e "s|VALKEY_PASSWORD|$VALKEY_PASSWORD|g" /etc/valkey/conf_template/sentinel.conf > /etc/valkey/conf/sentinel.conf
               valkey-sentinel /etc/valkey/conf/sentinel.conf
             EOF
           ]
@@ -42,6 +42,15 @@ resource "kubernetes_deployment" "sentinel" {
           env_from {
             secret_ref {
               name = kubernetes_secret.valkey_password.metadata[0].name
+            }
+          }
+
+          env {
+            name = "SENTINEL_ANNOUNCE_IP"
+            value_from {
+              field_ref {
+                field_path = "status.podIP"
+              }
             }
           }
 

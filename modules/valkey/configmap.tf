@@ -49,6 +49,9 @@ resource "kubernetes_config_map" "sentinel_conf" {
       sentinel failover-timeout main 10000
       sentinel parallel-syncs main 1
 
+      sentinel announce-port 26379
+      sentinel announce-ip SENTINEL_IP
+
       # TLS Configuration for Sentinel itself.
       tls-cert-file /etc/valkey/tls/tls.crt
       tls-key-file /etc/valkey/tls/tls.key
