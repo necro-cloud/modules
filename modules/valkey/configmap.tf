@@ -11,6 +11,7 @@ resource "kubernetes_config_map" "valkey_conf" {
     "valkey.conf" = <<EOF
       port 6380
       tls-port 6379
+      replica-announce-port 6380
 
       protected-mode no
       appendonly yes
