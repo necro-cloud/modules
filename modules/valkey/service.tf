@@ -71,26 +71,3 @@ resource "kubernetes_service" "replica_service" {
     }
   }
 }
-
-resource "kubernetes_service" "sentinel_service" {
-  metadata {
-    name      = "valkey-sentinel-service"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-    labels = {
-      app       = var.app_name
-      component = "service"
-    }
-  }
-
-  spec {
-    port {
-      port        = 26379
-      target_port = 26379
-    }
-
-    selector = {
-      app       = var.app_name
-      "part-of" = "valkey-sentinel"
-    }
-  }
-}
