@@ -38,11 +38,13 @@ resource "kubernetes_service" "primary_service" {
     port {
       port        = 6379
       target_port = 6379
+      name        = "valkey"
     }
 
     port {
       port        = 6380
       target_port = 6380
+      name        = "valkey-no-tls"
     }
 
     selector = {
