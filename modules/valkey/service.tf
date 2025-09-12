@@ -41,12 +41,6 @@ resource "kubernetes_service" "primary_service" {
       name        = "valkey"
     }
 
-    port {
-      port        = 6380
-      target_port = 6380
-      name        = "valkey-no-tls"
-    }
-
     selector = {
       app                                  = var.app_name
       "part-of"                            = "valkey-cluster"

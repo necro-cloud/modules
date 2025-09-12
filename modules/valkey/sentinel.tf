@@ -67,10 +67,40 @@ resource "kubernetes_deployment" "sentinel" {
 
         }
 
+        container {
+          name  = "stunnel"
+          image = "alpine:3.22.1"
+
+          command = ["sh", "-c"]
+          args = [
+            <<EOF
+              apk add --no-cache stunnel
+              stunnel /etc/stunnel/stunnel.conf
+            EOF
+          ]
+
+          volume_mount {
+            name       = "stunnel-configuration"
+            mount_path = "/etc/stunnel"
+          }
+
+          volume_mount {
+            name       = "certificates"
+            mount_path = "/etc/valkey/tls"
+          }
+        }
+
         volume {
           name = "configuration-template"
           config_map {
             name = kubernetes_config_map.sentinel_conf.metadata[0].name
+          }
+        }
+
+        volume {
+          name = "stunnel-configuration"
+          config_map {
+            name = kubernetes_config_map.sentinel_stunnel_conf.metadata[0].name
           }
         }
 
