@@ -47,7 +47,7 @@ resource "kubernetes_deployment" "sentinel" {
 
           port {
             container_port = 26379
-            name           = sentinel
+            name           = "sentinel"
           }
 
           volume_mount {
