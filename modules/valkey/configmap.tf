@@ -53,6 +53,10 @@ resource "kubernetes_config_map" "sentinel_conf" {
       tls-cert-file /etc/valkey/tls/tls.crt
       tls-key-file /etc/valkey/tls/tls.key
       tls-ca-cert-file /etc/valkey/tls/ca.crt
+
+      sentinel-tls-cert-file /etc/valkey/tls/tls.crt
+      sentinel-tls-key-file /etc/valkey/tls/tls.key
+      sentinel-tls-ca-cert-file /etc/valkey/tls/ca.crt
     EOF
   }
 }
