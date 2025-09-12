@@ -25,6 +25,6 @@ resource "kubernetes_secret" "valkey_password" {
   }
 
   data = {
-    password = random_password.valkey_password.result
+    VALKEY_PASSWORD = random_password.valkey_password.result
   }
 }
