@@ -40,8 +40,7 @@ resource "kubernetes_config_map" "sentinel_conf" {
   }
   data = {
     "sentinel.conf" = <<EOF
-      port 0
-      tls-port 26379
+      port 26379
       
       sentinel monitor main 127.0.0.1 16379 2
       sentinel auth-pass main VALKEY_PASSWORD
