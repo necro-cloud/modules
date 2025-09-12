@@ -56,6 +56,11 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             name           = "valkey"
           }
 
+          port {
+            container_port = 6380
+            name           = "valkey-no-tls"
+          }
+
           volume_mount {
             name       = "template-configuration"
             mount_path = "/etc/valkey/conf_template"
