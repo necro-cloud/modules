@@ -18,7 +18,7 @@ resource "kubernetes_config_map" "valkey_conf" {
       dir /data
 
       # This is critical. Replicas need this to auth with a newly promoted primary.
-      primaryauth "$(VALKEY_PASSWORD)"
+      primaryauth VALKEY_PASSWORD
 
       # TLS Configuration
       tls-replication yes
@@ -44,7 +44,7 @@ resource "kubernetes_config_map" "sentinel_conf" {
       tls-port 26379
       
       sentinel monitor main valkey-primary-service 6379 2
-      sentinel auth-pass main "$(VALKEY_PASSWORD)"
+      sentinel auth-pass main VALKEY_PASSWORD
       sentinel down-after-milliseconds main 5000
       sentinel failover-timeout main 10000
       sentinel parallel-syncs main 1
