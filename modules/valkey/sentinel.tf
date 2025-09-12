@@ -34,14 +34,15 @@ resource "kubernetes_deployment" "sentinel" {
           command = ["sh", "-c"]
           args = [
             <<EOF
-              echo "Waiting for primary service DNS (valkey-primary-service)..."
-              until getent hosts valkey-primary-service > /dev/null 2>&1; do
-                echo "Primary service not found, sleeping for 2 seconds..."
+              sed "s|VALKEY_PASSWORD|$VALKEY_PASSWORD|g" /etc/valkey/conf_template/sentinel.conf > /etc/valkey/conf/sentinel.conf
+
+              echo "Waiting for primary service (valkey-primary-service) to be fully connectable..."
+              until valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD -h valkey-primary-service -p 6379 PING > /dev/null 2>&1; do
+                echo "Primary service not yet connectable, sleeping for 2 seconds..."
                 sleep 2
               done
-              echo "Primary service DNS found. Starting Sentinel."
+              echo "Primary service is connectable. Starting Sentinel..."
 
-              sed "s|VALKEY_PASSWORD|$VALKEY_PASSWORD|g" /etc/valkey/conf_template/sentinel.conf > /etc/valkey/conf/sentinel.conf
               valkey-sentinel /etc/valkey/conf/sentinel.conf
             EOF
           ]
