@@ -96,14 +96,26 @@ resource "kubernetes_manifest" "internal_certificate" {
     }
     "spec" = {
       "dnsNames" = [
-        "*.valkey.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
-        "valkey-primary.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
-        "*.valkey-primary.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
-        "*.valkey-headless.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
-        "valkey-headless.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        # For the Sentinel Service (client discovery endpoint)
+        "${kubernetes_service.sentinel_service.metadata[0].name}",
+        "${kubernetes_service.sentinel_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
+        "${kubernetes_service.sentinel_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+
+        # For the Primary Service
+        "${kubernetes_service.primary_service.metadata[0].name}",
+        "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
+        "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+
+        # For the Replica Service
+        "${kubernetes_service.replica_service.metadata[0].name}",
+        "${kubernetes_service.replica_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
+        "${kubernetes_service.replica_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+
+        # Wildcard for all StatefulSet pods
+        "*.${kubernetes_service.headless_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+
         "127.0.0.1",
         "localhost",
-        "valkey",
       ]
       "subject" = {
         "organizations"       = [var.organization_name]
