@@ -96,11 +96,6 @@ resource "kubernetes_manifest" "internal_certificate" {
     }
     "spec" = {
       "dnsNames" = [
-        # For the Sentinel Service (client discovery endpoint)
-        "${kubernetes_service.sentinel_service.metadata[0].name}",
-        "${kubernetes_service.sentinel_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
-        "${kubernetes_service.sentinel_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
-
         # For the Primary Service
         "${kubernetes_service.primary_service.metadata[0].name}",
         "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
