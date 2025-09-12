@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "sentinel" {
           command = ["sh", "-c"]
           args = [
             <<EOF
-              envsubst < /etc/valkey/conf_template/sentinel.conf > /etc/valkey/conf/sentinel.conf
+              sed "s|\"\\$(VALKEY_PASSWORD)\"|\"$VALKEY_PASSWORD\"|g" /etc/valkey/conf_template/valkey.conf > /etc/valkey/conf/valkey.conf
               valkey-sentinel /etc/valkey/conf/sentinel.conf
             EOF
           ]

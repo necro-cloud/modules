@@ -35,7 +35,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           command = ["sh", "-c"]
           args = [
             <<EOF
-              envsubst < /etc/valkey/conf_template/valkey.conf > /etc/valkey/conf/valkey.conf
+              sed "s|\"\\$(VALKEY_PASSWORD)\"|\"$VALKEY_PASSWORD\"|g" /etc/valkey/conf_template/valkey.conf > /etc/valkey/conf/valkey.conf
 
               if [ "$(hostname)" = "valkey-cluster-0" ]; then
                 valkey-server /etc/valkey/conf/valkey.conf --requirepass "$(VALKEY_PASSWORD)"
