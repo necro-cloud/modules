@@ -21,6 +21,7 @@ resource "kubernetes_config_map" "valkey_conf" {
       primaryauth "$(VALKEY_PASSWORD)"
 
       # TLS Configuration
+      tls-replication yes
       tls-cert-file /etc/valkey/tls/tls.crt
       tls-key-file /etc/valkey/tls/tls.key
       tls-ca-cert-file /etc/valkey/tls/ca.crt
