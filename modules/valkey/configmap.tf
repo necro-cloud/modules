@@ -9,7 +9,7 @@ resource "kubernetes_config_map" "valkey_conf" {
   }
   data = {
     "valkey.conf" = <<EOF
-      port 0
+      port 6380
       tls-port 6379
 
       protected-mode no
@@ -43,7 +43,7 @@ resource "kubernetes_config_map" "sentinel_conf" {
       port 0
       tls-port 26379
       
-      sentinel monitor main ${kubernetes_service.primary_service.spec[0].cluster_ip} 6379 2
+      sentinel monitor main ${kubernetes_service.primary_service.spec[0].cluster_ip} 6380 2
       sentinel auth-pass main VALKEY_PASSWORD
       sentinel down-after-milliseconds main 5000
       sentinel failover-timeout main 10000
