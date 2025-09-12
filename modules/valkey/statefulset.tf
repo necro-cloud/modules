@@ -35,6 +35,8 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           command = ["sh", "-c"]
           args = [
             <<EOF
+              envsubst < /etc/valkey/conf_template/valkey.conf > /etc/valkey/conf/valkey.conf
+
               if [ "$(hostname)" = "valkey-cluster-0" ]; then
                 valkey-server /etc/valkey/conf/valkey.conf --requirepass "$(VALKEY_PASSWORD)"
               else
@@ -55,6 +57,11 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           }
 
           volume_mount {
+            name       = "template-configuration"
+            mount_path = "/etc/valkey/conf_template"
+          }
+
+          volume_mount {
             name       = "configuration"
             mount_path = "/etc/valkey/conf"
           }
@@ -71,10 +78,15 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
         }
 
         volume {
-          name = "configuration"
+          name = "template-configuration"
           config_map {
             name = kubernetes_config_map.valkey_conf.metadata[0].name
           }
+        }
+
+        volume {
+          name = "configuration"
+          empty_dir {}
         }
 
         volume {
