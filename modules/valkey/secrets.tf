@@ -1,11 +1,9 @@
 // Valkey Password Secret
 resource "random_password" "valkey_password" {
-  length           = 20
-  lower            = true
-  numeric          = true
-  special          = true
-  override_special = "-_*"
-  min_special      = 3
+  length  = 20
+  lower   = true
+  numeric = true
+  special = false
 }
 
 resource "kubernetes_secret" "valkey_password" {
@@ -25,6 +23,6 @@ resource "kubernetes_secret" "valkey_password" {
   }
 
   data = {
-    password = random_password.valkey_password.result
+    VALKEY_PASSWORD = random_password.valkey_password.result
   }
 }
