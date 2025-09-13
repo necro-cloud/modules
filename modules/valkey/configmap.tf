@@ -1,3 +1,4 @@
+// Valkey Cluster Configuration for ports, memory, persistence and security
 resource "kubernetes_config_map" "valkey_conf" {
   metadata {
     name      = "valkey-configuration"

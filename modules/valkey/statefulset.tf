@@ -1,3 +1,4 @@
+// StatefulSet Definition for Valkey
 resource "kubernetes_stateful_set" "valkey_cluster" {
   metadata {
     name      = "valkey-cluster"
@@ -19,6 +20,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
       }
     }
 
+    // Pod Template Definition
     template {
       metadata {
         labels = {
@@ -28,6 +30,8 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
       }
 
       spec {
+
+        // Topology Spread to ensure pods are running on seperate nodes
         topology_spread_constraint {
           max_skew           = 1
           topology_key       = "kubernetes.io/hostname"
@@ -39,10 +43,13 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             }
           }
         }
+
+        // Container Definition for the Pod
         container {
           name  = "valkey"
           image = "${var.repository}/${var.image}:${var.tag}"
 
+          // Start command for the container
           command = ["sh", "-c"]
           args = [
             <<EOF
@@ -56,17 +63,20 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             EOF
           ]
 
+          // Valkey Password Environment Variable
           env_from {
             secret_ref {
               name = kubernetes_secret.valkey_password.metadata[0].name
             }
           }
 
+          // Ports Definition
           port {
             container_port = 6379
             name           = "valkey"
           }
 
+          // Resources Definition
           resources {
             requests = {
               "cpu"    = "250m"
@@ -78,6 +88,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             }
           }
 
+          // Probes for checking on pods
           readiness_probe {
             exec {
               command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
@@ -100,6 +111,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             failure_threshold     = 3
           }
 
+          // Volume Mounts for Configuration and Data
           volume_mount {
             name       = "template-configuration"
             mount_path = "/etc/valkey/conf_template"

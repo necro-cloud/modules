@@ -1,3 +1,4 @@
+// Headless Service for StatefulSet
 resource "kubernetes_service" "headless_service" {
   metadata {
     name      = "valkey-headless-service"
@@ -25,6 +26,7 @@ resource "kubernetes_service" "headless_service" {
   }
 }
 
+// Service for Exposing the Primary Node
 resource "kubernetes_service" "primary_service" {
   metadata {
     name      = "valkey-primary-service"
@@ -50,6 +52,7 @@ resource "kubernetes_service" "primary_service" {
   }
 }
 
+// Service for Exposing Replicas
 resource "kubernetes_service" "replica_service" {
   metadata {
     name      = "valkey-replica-service"
