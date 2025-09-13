@@ -11,7 +11,8 @@ resource "helm_release" "cnpg" {
 // Barman Cloud Plugin installation (no helm chart yet)
 resource "null_resource" "barman_plugin" {
   triggers = {
-    "cnpg_chart_id" = helm_release.cnpg.id
+    "cnpg_chart_id"         = helm_release.cnpg.id
+    "cert_manager_chart_id" = helm_release.cert-manager.id
   }
 
   provisioner "local-exec" {
