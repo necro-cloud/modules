@@ -31,7 +31,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
         topology_spread_constraint {
           max_skew           = 1
           topology_key       = "kubernetes.io/hostname"
-          when_unsatisfiable = "NoSchedule"
+          when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = {
               app       = var.app_name
