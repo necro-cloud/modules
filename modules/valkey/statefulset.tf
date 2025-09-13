@@ -10,7 +10,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
   spec {
     service_name = kubernetes_service.headless_service.metadata[0].name
-    replicas     = 3
+    replicas     = var.replicas
 
     selector {
       match_labels = {
@@ -28,9 +28,20 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
       }
 
       spec {
+        topology_spread_constraint {
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
+          when_unsatisfiable = "NoSchedule"
+          label_selector {
+            match_labels = {
+              app       = var.app_name
+              "part-of" = "valkey-cluster"
+            }
+          }
+        }
         container {
           name  = "valkey"
-          image = "valkey/valkey:8.1.3"
+          image = "${var.repository}/${var.image}:${var.tag}"
 
           command = ["sh", "-c"]
           args = [
@@ -54,6 +65,39 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           port {
             container_port = 6379
             name           = "valkey"
+          }
+
+          resources {
+            requests = {
+              "cpu"    = "250m"
+              "memory" = "512Mi"
+            }
+            limits = {
+              "cpu"    = "1"
+              "memory" = "1Gi"
+            }
+          }
+
+          readiness_probe {
+            exec {
+              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+            }
+
+            initial_delay_seconds = 20
+            period_seconds        = 10
+            timeout_seconds       = 10
+            failure_threshold     = 3
+          }
+
+          liveness_probe {
+            exec {
+              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+            }
+
+            initial_delay_seconds = 20
+            period_seconds        = 10
+            timeout_seconds       = 10
+            failure_threshold     = 3
           }
 
           volume_mount {

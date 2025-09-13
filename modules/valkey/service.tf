@@ -15,6 +15,7 @@ resource "kubernetes_service" "headless_service" {
     port {
       port        = 6379
       target_port = 6379
+      name        = "valkey"
     }
 
     selector = {
@@ -63,6 +64,7 @@ resource "kubernetes_service" "replica_service" {
     port {
       port        = 6379
       target_port = 6379
+      name        = "valkey"
     }
 
     selector = {

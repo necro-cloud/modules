@@ -57,14 +57,26 @@ variable "replication_namespaces" {
 }
 
 # --------------- VALKEY CLUSTER VARIABLES --------------- #
-variable "valkey_configuration" {
-  description = "Dictionary filled with Valkey Configuration Details"
-  type        = map(string)
-  default = {
-    "name"             = "valkey"
-    "repository"       = "oci://registry-1.docker.io/bitnamicharts"
-    "chart"            = "valkey"
-    "version"          = "2.4.6"
-    "create_namespace" = false
-  }
+variable "repository" {
+  description = "Repository to be used for deployment of Valkey"
+  type        = string
+  default     = "docker.io/valkey"
+}
+
+variable "image" {
+  description = "Docker image to be used for deployment of Valkey"
+  type        = string
+  default     = "valkey"
+}
+
+variable "tag" {
+  description = "Docker tag to be used for deployment of Valkey"
+  type        = string
+  default     = "8.1.3"
+}
+
+variable "replicas" {
+  description = "Number of replicas to run for Valkey Cluster"
+  type        = number
+  default     = 3
 }

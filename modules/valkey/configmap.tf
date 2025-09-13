@@ -9,15 +9,20 @@ resource "kubernetes_config_map" "valkey_conf" {
   }
   data = {
     "valkey.conf" = <<EOF
+      # Ports to be exposed
       port 0
       tls-port 6379
-
       protected-mode no
-      appendonly yes
 
+      # Memory Management
+      maxmemory 800mb
+      maxmemory-policy allkeys-lru
+
+      # Persistence for the Valkey node
+      appendonly yes 
       dir /data
 
-      # This is critical. Replicas need this to auth with a newly promoted primary.
+      # Password to be used for Replication
       primaryauth VALKEY_PASSWORD
 
       # TLS Configuration
