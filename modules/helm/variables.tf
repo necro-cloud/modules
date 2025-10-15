@@ -80,4 +80,24 @@ variable "barman_cloud_plugin_version" {
   description = "Version to be deplpyed for Barman Cloud Plugin"
   type        = string
   default     = "v0.5.0"
+# --------------- CALICO OPERATOR VARIABLES --------------- #
+variable "calico_configuration" {
+  description = "Dictionary filled with Calico Configuration Details"
+  type        = map(string)
+  default = {
+    "name"       = "projectcalico"
+    "repository" = "https://docs.tigera.io/calico/charts"
+    "chart"      = "tigera-operator"
+    "version"    = "v3.30.3"
+  }
+}
+
+# --------------- NODE SELECTOR VARIABLES --------------- #
+variable "node_selector" {
+  description = "Default value to be used for Node Selector for all Helm deployments"
+  type        = map(string)
+  default = {
+    name  = "nodeSelector.server"
+    value = "cloud"
+  }
 }
