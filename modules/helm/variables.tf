@@ -8,7 +8,7 @@ variable "reflector_configuration" {
     "namespace"        = "reflector"
     "repository"       = "https://emberstack.github.io/helm-charts"
     "chart"            = "reflector"
-    "version"          = "v9.0.320"
+    "version"          = "v9.1.35"
     "create_namespace" = true
   }
 }
