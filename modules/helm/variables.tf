@@ -96,13 +96,3 @@ variable "calico_configuration" {
     "version"    = "v3.30.3"
   }
 }
-
-# --------------- NODE SELECTOR VARIABLES --------------- #
-variable "node_selector" {
-  description = "Default value to be used for Node Selector for all Helm deployments"
-  type        = map(string)
-  default = {
-    name  = "nodeSelector.server"
-    value = "cloud"
-  }
-}

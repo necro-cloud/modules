@@ -7,5 +7,10 @@ resource "helm_release" "reflector" {
   version          = var.reflector_configuration.version
   create_namespace = var.reflector_configuration.create_namespace
 
-  set = [var.node_selector]
+  set = [
+    {
+      name  = "nodeSelector.server"
+      value = "cloud"
+    }
+  ]
 }

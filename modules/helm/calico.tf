@@ -6,6 +6,9 @@ resource "helm_release" "calico" {
   version    = var.calico_configuration.version
 
   set = [
-    var.node_selector
+    {
+      name  = "nodeSelector.server"
+      value = "cloud"
+    }
   ]
 }

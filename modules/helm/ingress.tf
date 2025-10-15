@@ -7,5 +7,10 @@ resource "helm_release" "nginx" {
   version          = var.nginx_configuration.version
   create_namespace = var.nginx_configuration.create_namespace
 
-  set = [var.node_selector]
+  set = [
+    {
+      name  = "nodeSelector.server"
+      value = "cloud"
+    }
+  ]
 }
