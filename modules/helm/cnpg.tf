@@ -8,14 +8,12 @@ resource "helm_release" "cnpg" {
   create_namespace = var.cnpg_configuration.create_namespace
 }
 
-// Barman Cloud Plugin installation (no helm chart yet)
-resource "null_resource" "barman_plugin" {
-  triggers = {
-    "cnpg_chart_id"         = helm_release.cnpg.id
-    "cert_manager_chart_id" = helm_release.cert-manager.id
-  }
+// Barman Cloud Plugin installation
+resource "helm_release" "cnpg_barman_plugin" {
+  name       = var.cnpg_barman_configuration.name
+  repository = var.cnpg_barman_configuration.repository
+  chart      = var.cnpg_barman_configuration.chart
+  version    = var.cnpg_barman_configuration.version
 
-  provisioner "local-exec" {
-    command = "kubectl apply -f https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/${var.barman_cloud_plugin_version}/manifest.yaml"
-  }
+  set = [var.node_selector]
 }

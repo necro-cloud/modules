@@ -76,10 +76,17 @@ variable "cnpg_configuration" {
   }
 }
 
-variable "barman_cloud_plugin_version" {
-  description = "Version to be deplpyed for Barman Cloud Plugin"
-  type        = string
-  default     = "v0.5.0"
+variable "cnpg_barman_configuration" {
+  description = "Dictionary filled with Cloud Native PG Barman Configuration Details"
+  type        = map(string)
+  default = {
+    "name"       = "cnpg"
+    "repository" = "https://cloudnative-pg.github.io/charts"
+    "chart"      = "plugin-barman-cloud"
+    "version"    = "v0.2.0"
+  }
+}
+
 # --------------- CALICO OPERATOR VARIABLES --------------- #
 variable "calico_configuration" {
   description = "Dictionary filled with Calico Configuration Details"
