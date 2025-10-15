@@ -28,4 +28,6 @@ resource "helm_release" "cnpg_barman_plugin" {
       value = "cloud"
     }
   ]
+
+  depends_on = [helm_release.cnpg, helm_release.cert-manager]
 }
