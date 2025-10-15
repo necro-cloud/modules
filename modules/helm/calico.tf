@@ -1,5 +1,5 @@
 // Calico Configuration
-resource "helm_release" "cert-manager" {
+resource "helm_release" "calico" {
   name       = var.calico_configuration.name
   repository = var.calico_configuration.repository
   chart      = var.calico_configuration.chart
