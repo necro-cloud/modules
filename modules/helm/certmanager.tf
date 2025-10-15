@@ -11,6 +11,7 @@ resource "helm_release" "cert-manager" {
     {
       name  = "crds.enabled"
       value = true
-    }
+    },
+    var.node_selector
   ]
 }
