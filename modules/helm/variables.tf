@@ -1,5 +1,4 @@
 # -------------- KUBERNETES REFLECTOR VARIABLES -------------- #
-
 variable "reflector_configuration" {
   description = "Dictionary filled with Kubernetes Reflector Configuration Details"
   type        = map(string)
@@ -14,7 +13,6 @@ variable "reflector_configuration" {
 }
 
 # -------------- NGINX INGRESS VARIABLES -------------- #
-
 variable "nginx_configuration" {
   description = "Dictionary filled with NGINX Controller Configuration Details"
   type        = map(string)

@@ -6,6 +6,8 @@ resource "helm_release" "cnpg" {
   chart            = var.cnpg_configuration.chart
   version          = var.cnpg_configuration.version
   create_namespace = var.cnpg_configuration.create_namespace
+
+  set = [var.node_selector]
 }
 
 // Barman Cloud Plugin installation
