@@ -78,7 +78,7 @@ variable "cnpg_barman_configuration" {
   description = "Dictionary filled with Cloud Native PG Barman Configuration Details"
   type        = map(string)
   default = {
-    "name"       = "cnpg"
+    "name"       = "cnpg-barman"
     "namespace"  = "cnpg-system"
     "repository" = "https://cloudnative-pg.github.io/charts"
     "chart"      = "plugin-barman-cloud"
