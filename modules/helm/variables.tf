@@ -79,6 +79,7 @@ variable "cnpg_barman_configuration" {
   type        = map(string)
   default = {
     "name"       = "cnpg"
+    "namespace"  = "cnpg-system"
     "repository" = "https://cloudnative-pg.github.io/charts"
     "chart"      = "plugin-barman-cloud"
     "version"    = "v0.2.0"

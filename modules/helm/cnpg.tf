@@ -18,6 +18,7 @@ resource "helm_release" "cnpg" {
 // Barman Cloud Plugin installation
 resource "helm_release" "cnpg_barman_plugin" {
   name       = var.cnpg_barman_configuration.name
+  namespace  = var.cnpg_barman_configuration.namespace
   repository = var.cnpg_barman_configuration.repository
   chart      = var.cnpg_barman_configuration.chart
   version    = var.cnpg_barman_configuration.version
