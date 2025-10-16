@@ -10,7 +10,7 @@ resource "helm_release" "reflector" {
   set = [
     {
       name  = "nodeSelector.server"
-      value = "cloud"
+      value = var.server_node_selector
     }
   ]
 }

@@ -99,3 +99,10 @@ variable "calico_configuration" {
     "create_namespace" = true
   }
 }
+
+# --------------- NODE SELECTOR VARIABLE --------------- #
+variable "server_node_selector" {
+  description = "Node Selector Label Value to be used for deploying required foundation components"
+  type        = string
+  nullable    = false
+}

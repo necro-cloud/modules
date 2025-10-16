@@ -10,7 +10,7 @@ resource "helm_release" "calico" {
   set = [
     {
       name  = "nodeSelector.server"
-      value = "cloud"
+      value = var.server_node_selector
     }
   ]
 }

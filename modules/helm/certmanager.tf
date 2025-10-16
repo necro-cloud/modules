@@ -14,7 +14,7 @@ resource "helm_release" "cert-manager" {
     },
     {
       name  = "global.nodeSelector.server"
-      value = "cloud"
+      value = var.server_node_selector
     }
   ]
 }

@@ -10,7 +10,7 @@ resource "helm_release" "cnpg" {
   set = [
     {
       name  = "nodeSelector.server"
-      value = "cloud"
+      value = var.server_node_selector
     }
   ]
 }
@@ -26,7 +26,7 @@ resource "helm_release" "cnpg_barman_plugin" {
   set = [
     {
       name  = "nodeSelector.server"
-      value = "cloud"
+      value = var.server_node_selector
     }
   ]
 
