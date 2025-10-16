@@ -90,9 +90,11 @@ variable "calico_configuration" {
   description = "Dictionary filled with Calico Configuration Details"
   type        = map(string)
   default = {
-    "name"       = "projectcalico"
-    "repository" = "https://docs.tigera.io/calico/charts"
-    "chart"      = "tigera-operator"
-    "version"    = "v3.30.3"
+    "name"             = "tigera-operator"
+    "namespace"        = "tigera-operator"
+    "repository"       = "https://docs.tigera.io/calico/charts"
+    "chart"            = "tigera-operator"
+    "version"          = "v3.30.3"
+    "create_namespace" = true
   }
 }
