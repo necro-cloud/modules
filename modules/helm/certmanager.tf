@@ -11,6 +11,10 @@ resource "helm_release" "cert-manager" {
     {
       name  = "crds.enabled"
       value = true
+    },
+    {
+      name  = "global.nodeSelector.server"
+      value = var.server_node_selector
     }
   ]
 }

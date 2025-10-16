@@ -1,5 +1,4 @@
 # -------------- KUBERNETES REFLECTOR VARIABLES -------------- #
-
 variable "reflector_configuration" {
   description = "Dictionary filled with Kubernetes Reflector Configuration Details"
   type        = map(string)
@@ -8,13 +7,12 @@ variable "reflector_configuration" {
     "namespace"        = "reflector"
     "repository"       = "https://emberstack.github.io/helm-charts"
     "chart"            = "reflector"
-    "version"          = "v9.0.320"
+    "version"          = "v9.1.35"
     "create_namespace" = true
   }
 }
 
 # -------------- NGINX INGRESS VARIABLES -------------- #
-
 variable "nginx_configuration" {
   description = "Dictionary filled with NGINX Controller Configuration Details"
   type        = map(string)
@@ -23,7 +21,7 @@ variable "nginx_configuration" {
     "namespace"        = "ingress-nginx"
     "repository"       = "https://kubernetes.github.io/ingress-nginx"
     "chart"            = "ingress-nginx"
-    "version"          = "4.12.0"
+    "version"          = "4.13.3"
     "create_namespace" = true
   }
 }
@@ -37,7 +35,7 @@ variable "cert_manager_configuration" {
     "namespace"        = "cert-manager"
     "repository"       = "https://charts.jetstack.io"
     "chart"            = "cert-manager"
-    "version"          = "v1.17.1"
+    "version"          = "v1.19.0"
     "create_namespace" = true
   }
 }
@@ -76,8 +74,35 @@ variable "cnpg_configuration" {
   }
 }
 
-variable "barman_cloud_plugin_version" {
-  description = "Version to be deplpyed for Barman Cloud Plugin"
+variable "cnpg_barman_configuration" {
+  description = "Dictionary filled with Cloud Native PG Barman Configuration Details"
+  type        = map(string)
+  default = {
+    "name"       = "cnpg-barman"
+    "namespace"  = "cnpg-system"
+    "repository" = "https://cloudnative-pg.github.io/charts"
+    "chart"      = "plugin-barman-cloud"
+    "version"    = "v0.2.0"
+  }
+}
+
+# --------------- CALICO OPERATOR VARIABLES --------------- #
+variable "calico_configuration" {
+  description = "Dictionary filled with Calico Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "tigera-operator"
+    "namespace"        = "tigera-operator"
+    "repository"       = "https://docs.tigera.io/calico/charts"
+    "chart"            = "tigera-operator"
+    "version"          = "v3.30.3"
+    "create_namespace" = true
+  }
+}
+
+# --------------- NODE SELECTOR VARIABLE --------------- #
+variable "server_node_selector" {
+  description = "Node Selector Label Value to be used for deploying required foundation components"
   type        = string
-  default     = "v0.5.0"
+  nullable    = false
 }

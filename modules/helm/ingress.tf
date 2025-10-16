@@ -6,4 +6,11 @@ resource "helm_release" "nginx" {
   chart            = var.nginx_configuration.chart
   version          = var.nginx_configuration.version
   create_namespace = var.nginx_configuration.create_namespace
+
+  set = [
+    {
+      name  = "nodeSelector.server"
+      value = var.server_node_selector
+    }
+  ]
 }
