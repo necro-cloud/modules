@@ -50,8 +50,8 @@ variable "internal_certificate_name" {
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
-variable "replication_namespaces" {
-  description = "Namespaces where the certificates"
+variable "access_namespaces" {
+  description = "Namespaces which require access to Valkey through certificates and network"
   type        = string
   nullable    = false
 }

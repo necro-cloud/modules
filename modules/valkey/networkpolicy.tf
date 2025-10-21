@@ -43,7 +43,7 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
           match_expressions {
             key      = "kubernetes.io/metadata.name"
             operator = "In"
-            values   = split(",", var.replication_namespaces)
+            values   = split(",", var.access_namespaces)
           }
         }
         pod_selector {
