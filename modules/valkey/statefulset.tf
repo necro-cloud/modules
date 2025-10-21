@@ -31,6 +31,20 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
       spec {
 
+        // Node Affinity rule to run only on worker nodes
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "worker"
+                  operator = "Exists"
+                }
+              }
+            }
+          }
+        }
+
         // Topology Spread to ensure pods are running on seperate nodes
         topology_spread_constraint {
           max_skew           = 1

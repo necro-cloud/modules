@@ -18,7 +18,7 @@ resource "kubernetes_secret" "valkey_password" {
 
     annotations = {
       "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.replication_namespaces
+      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.access_namespaces
     }
   }
 

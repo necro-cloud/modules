@@ -50,8 +50,8 @@ variable "internal_certificate_name" {
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
-variable "replication_namespaces" {
-  description = "Namespaces where the certificates"
+variable "access_namespaces" {
+  description = "Namespaces which require access to Valkey through certificates and network"
   type        = string
   nullable    = false
 }
@@ -72,11 +72,11 @@ variable "image" {
 variable "tag" {
   description = "Docker tag to be used for deployment of Valkey"
   type        = string
-  default     = "8.1.3"
+  default     = "9.0"
 }
 
 variable "replicas" {
   description = "Number of replicas to run for Valkey Cluster"
   type        = number
-  default     = 3
+  default     = 6
 }

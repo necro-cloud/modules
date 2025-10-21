@@ -11,6 +11,26 @@ resource "helm_release" "calico" {
     {
       name  = "nodeSelector.server"
       value = var.server_node_selector
+    },
+    {
+      name  = "installation.calicoNetwork.ipPools[0].cidr"
+      value = "10.42.0.0/16"
+    },
+    {
+      name  = "installation.calicoNetwork.ipPools[0].natOutgoing"
+      value = "Enabled"
+    },
+    {
+      name  = "installation.calicoNetwork.ipPools[0].ipipMode"
+      value = "Always"
+    },
+    {
+      name  = "installation.calicoNetwork.ipPools[0].nodeSelector"
+      value = "all()"
+    },
+    {
+      name  = "installation.calicoNetwork.policy.type"
+      value = "Calico"
     }
   ]
 }
