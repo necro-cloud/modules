@@ -1,4 +1,4 @@
-resource "kubernetes_pod_disruption_budget" "valkey_pdb" {
+resource "kubernetes_pod_disruption_budget_v1" "valkey_pdb" {
   metadata {
     name      = "valkey-cluster-pdb"
     namespace = kubernetes_namespace.namespace.metadata[0].name
