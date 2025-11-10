@@ -54,33 +54,9 @@ resource "kubernetes_service" "garage-service" {
     type = "ClusterIP"
 
     port {
-      port        = 3900
-      target_port = 3900
-      name        = "api"
-    }
-
-    port {
-      port        = 3902
-      target_port = 3902
-      name        = "web"
-    }
-
-    port {
-      port        = 3903
-      target_port = 3903
-      name        = "admin"
-    }
-
-    port {
       port        = 3940
       target_port = 3940
       name        = "proxy-api"
-    }
-
-    port {
-      port        = 3942
-      target_port = 3942
-      name        = "proxy-web"
     }
 
     port {

@@ -14,7 +14,7 @@ resource "kubernetes_stateful_set" "statefulset" {
       match_labels = {
         app       = var.app_name
         component = "pod"
-        part_of   = "statefulset"
+        "part-of" = "garage"
       }
     }
 
@@ -27,7 +27,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         labels = {
           app       = var.app_name
           component = "pod"
-          part_of   = "statefulset"
+          "part-of" = "garage"
         }
       }
 
@@ -39,6 +39,34 @@ resource "kubernetes_stateful_set" "statefulset" {
           run_as_group    = 1000
           run_as_non_root = true
           run_as_user     = 1000
+        }
+
+        // Node Affinity rule to run only on worker nodes
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "worker"
+                  operator = "Exists"
+                }
+              }
+            }
+          }
+        }
+
+        // Topology Spread to ensure pods are running on seperate nodes
+        topology_spread_constraint {
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = {
+              app       = var.app_name
+              component = "pod"
+              "part-of" = "garage"
+            }
+          }
         }
 
         container {
