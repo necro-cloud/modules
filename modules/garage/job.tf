@@ -11,14 +11,13 @@ resource "kubernetes_job" "configurator" {
   }
 
   spec {
-    completions                = 1
-    ttl_seconds_after_finished = 5 * 60
+    completions = 1
     template {
       metadata {
         labels = {
           app       = var.app_name
           component = "pod"
-          created-by : "job"
+          created-by : "configurator"
         }
       }
       spec {

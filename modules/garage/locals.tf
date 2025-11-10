@@ -10,7 +10,7 @@ locals {
     storagePerNodeInGBs = var.required_storage
     accessKeysSecretAnnotations = {
       "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.replication_namespaces
+      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.access_namespaces
     }
     accessKeysSecretLabels = {
       app            = var.app_name

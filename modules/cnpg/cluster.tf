@@ -12,6 +12,11 @@ resource "kubernetes_manifest" "cluster" {
       "namespace" = kubernetes_namespace.namespace.metadata[0].name
     }
     "spec" = {
+      "inheritedMetadata" = {
+        "labels" = {
+          "garage-access" = true
+        }
+      }
       "imageCatalogRef" = {
         "apiGroup" = "postgresql.cnpg.io",
         "kind"     = "ClusterImageCatalog"

@@ -147,8 +147,8 @@ variable "proxy_tag" {
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
-variable "replication_namespaces" {
-  description = "Namespaces to which Certificate Authority can be replicated to"
+variable "access_namespaces" {
+  description = "Namespaces that require internal access to Garage"
   type        = string
   default     = "postgres"
 }
