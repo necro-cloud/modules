@@ -27,7 +27,7 @@ resource "kubernetes_config_map" "garage_config" {
 
       [kubernetes_discovery]
       namespace = "${kubernetes_namespace.namespace.metadata[0].name}"
-      service_name = "${kubernetes_service.garage-service.metadata[0].name}"
+      service_name = "${kubernetes_service.garage-headless.metadata[0].name}"
       skip_crd = false
 
       [s3_api]
