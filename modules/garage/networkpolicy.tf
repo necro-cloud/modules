@@ -96,9 +96,9 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       from {
         pod_selector {
           match_labels = {
-            "app"       = var.app_name
-            "component" = "pod"
-            "created-by" : "configurator"
+            app       = var.app_name
+            component = "pod"
+            created-by : "configurator"
           }
         }
       }
