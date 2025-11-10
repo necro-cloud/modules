@@ -150,12 +150,12 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
     egress {
       to {
         ip_block {
-          cidr = "${element(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset, 0).address[0].ip}/32"
+          cidr = "${one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))}/32"
         }
       }
       ports {
-        protocol = element(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset, 0).port[0].protocol
-        port     = element(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset, 0).port[0].port
+        protocol = data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[0].port[0].protocol
+        port     = data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[0].port[0].port
       }
     }
   }
