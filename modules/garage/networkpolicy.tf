@@ -66,8 +66,8 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
         namespace_selector {
           match_expressions {
             key      = "kubernetes.io/metadata.name"
-            operator = "Equals"
-            values   = "ingress-nginx"
+            operator = "In"
+            values   = ["ingress-nginx"]
           }
         }
         pod_selector {
