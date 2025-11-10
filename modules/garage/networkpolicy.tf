@@ -154,8 +154,8 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
         }
       }
       ports {
-        protocol = data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[0].port[0].protocol
-        port     = data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[0].port[0].port
+        protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+        port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
       }
     }
   }
