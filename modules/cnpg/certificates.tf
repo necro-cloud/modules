@@ -53,7 +53,7 @@ resource "kubernetes_manifest" "server_certificate_authority" {
       "secretTemplate" = {
         "annotations" = {
           "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = length(var.clients) == 0 ? "keycloak" : "keycloak,${join(",", local.replication_namespaces)}"
+          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = length(var.clients) == 0 ? "keycloak" : "keycloak,${join(",", local.access_namespaces)}"
         }
       }
       "duration" = "70128h"

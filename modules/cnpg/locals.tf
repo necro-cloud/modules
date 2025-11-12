@@ -1,5 +1,5 @@
 locals {
-  replication_namespaces = [for config in var.clients : config.namespace]
+  access_namespaces = [for config in var.clients : config.namespace]
   managed_roles = [for secret in kubernetes_secret.client_database_credentials : {
     "bypassrls"       = false
     "comment"         = "${secret.data.username} user for postgresql"
