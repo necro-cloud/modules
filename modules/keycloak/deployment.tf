@@ -4,8 +4,9 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     name      = "keycloak-cluster"
     namespace = var.namespace
     labels = {
-      app       = "keycloak"
-      component = "statefulset"
+      app         = "keycloak"
+      component   = "statefulset"
+      "pg-access" = true
     }
   }
   spec {
