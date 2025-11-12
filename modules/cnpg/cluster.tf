@@ -19,9 +19,9 @@ resource "kubernetes_manifest" "cluster" {
       }
       "affinity" = {
         "nodeAffinity" = {
-          "required_during_scheduling_ignored_during_execution" = {
-            "node_selector_term" = {
-              "match_expressions" = {
+          "requiredDuringSchedulingIgnoredDuringExecution" = {
+            "nodeSelectorTerm" = {
+              "matchExpressions" = {
                 "key"      = "worker"
                 "operator" = "exists"
               }
@@ -30,11 +30,11 @@ resource "kubernetes_manifest" "cluster" {
         }
       }
       "topologySpreadConstraints" = {
-        "max_skew"           = 1
-        "topology_key"       = "kubernetes.io/hostname"
-        "when_unsatisfiable" = "DoNotSchedule"
-        "label_selector" = {
-          "match_labels" = {
+        "maxSkew"           = 1
+        "topologyKey"       = "kubernetes.io/hostname"
+        "whenUnsatisfiable" = "DoNotSchedule"
+        "labelSelector" = {
+          "matchLabels" = {
             "cnpg.io/cluster" = var.cluster_name
           }
         }
