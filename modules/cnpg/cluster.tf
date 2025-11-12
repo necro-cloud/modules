@@ -20,7 +20,7 @@ resource "kubernetes_manifest" "cluster" {
       "affinity" = {
         "nodeAffinity" = {
           "requiredDuringSchedulingIgnoredDuringExecution" = {
-            "nodeSelectorTerm" = {
+            "nodeSelectorTerms" = {
               "matchExpressions" = {
                 "key"      = "worker"
                 "operator" = "exists"
