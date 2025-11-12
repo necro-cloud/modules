@@ -120,11 +120,9 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
     # Rule 2: Allow egress to Garage S3 Cluster for PITR
     egress {
       to {
-        pod_selector {
+        namespace_selector {
           match_labels = {
-            app       = "garage"
-            component = "pod"
-            "part-of" = "garage"
+            "kubernetes.io/metadata.name" = var.garage_namespace
           }
         }
       }
