@@ -70,6 +70,10 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
         protocol = "TCP"
         port     = 5432
       }
+      ports {
+        protocol = "TCP"
+        port     = 8000
+      }
     }
 
     # Rule 3: Allow ingress from allowed pods in trusted namespaces
@@ -114,6 +118,10 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       ports {
         protocol = "TCP"
         port     = 5432
+      }
+      ports {
+        protocol = "TCP"
+        port     = 8000
       }
     }
 
