@@ -4,9 +4,8 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     name      = "keycloak-cluster"
     namespace = var.namespace
     labels = {
-      app         = "keycloak"
-      component   = "statefulset"
-      "pg-access" = true
+      app       = "keycloak"
+      component = "statefulset"
     }
   }
   spec {
@@ -16,8 +15,9 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     // Stateful Set Pod Selector
     selector {
       match_labels = {
-        app       = "keycloak"
-        component = "pod"
+        app         = "keycloak"
+        component   = "pod"
+        "pg-access" = true
       }
     }
 
@@ -27,8 +27,9 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
       // Pod Metadata
       metadata {
         labels = {
-          app       = "keycloak"
-          component = "pod"
+          app         = "keycloak"
+          component   = "pod"
+          "pg-access" = true
         }
       }
 
