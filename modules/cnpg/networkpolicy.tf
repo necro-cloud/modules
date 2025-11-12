@@ -1,3 +1,11 @@
+# Fetching Kubernetes Endpoint for API Access
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+  }
+}
+
 resource "kubernetes_network_policy" "cnpg_network_policy" {
   metadata {
     name      = "cnpg-network-policy"
@@ -144,6 +152,20 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       ports {
         protocol = "UDP"
         port     = 53
+      }
+    }
+
+
+    # Rule 4: Allow Egress to Kubernetes API
+    egress {
+      to {
+        ip_block {
+          cidr = "${one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))}/32"
+        }
+      }
+      ports {
+        protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+        port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
       }
     }
   }
