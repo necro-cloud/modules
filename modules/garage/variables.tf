@@ -203,3 +203,22 @@ variable "required_access_keys" {
     }))
   }))
 }
+
+# --------------- NETWORK POLICY VARIABLES --------------- #
+variable "kubernetes_api_ip" {
+  description = "IP Address for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_protocol" {
+  description = "Protocol for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_port" {
+  description = "Port for the Kubernetes API"
+  type        = number
+  nullable    = false
+}

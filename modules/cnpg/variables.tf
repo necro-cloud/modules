@@ -207,3 +207,22 @@ variable "proxy_tag" {
   type        = string
   default     = "1.29.0"
 }
+
+# --------------- NETWORK POLICY VARIABLES --------------- #
+variable "kubernetes_api_ip" {
+  description = "IP Address for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_protocol" {
+  description = "Protocol for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_port" {
+  description = "Port for the Kubernetes API"
+  type        = number
+  nullable    = false
+}
