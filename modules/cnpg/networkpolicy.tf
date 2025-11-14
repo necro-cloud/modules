@@ -1,5 +1,5 @@
 # Fetching Kubernetes Endpoint for API Access
-data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+data "kubernetes_endpoints" "kubernetes_api_endpoint" {
   metadata {
     name      = "kubernetes"
     namespace = "default"
