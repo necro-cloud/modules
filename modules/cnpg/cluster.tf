@@ -17,24 +17,6 @@ resource "kubernetes_manifest" "cluster" {
           "garage-access" = true
         }
       }
-      "affinity" = {
-        "nodeAffinity" = {
-          "preferredDuringSchedulingIgnoredDuringExecution" = [
-            {
-              "nodeSelectorTerms" = [
-                {
-                  "matchExpressions" = [
-                    {
-                      "key"      = "worker"
-                      "operator" = "Exists"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      }
       "topologySpreadConstraints" = [
         {
           "maxSkew"           = 1
