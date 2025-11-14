@@ -19,18 +19,20 @@ resource "kubernetes_manifest" "cluster" {
       }
       "affinity" = {
         "nodeAffinity" = {
-          "preferredDuringSchedulingIgnoredDuringExecution" = {
-            "nodeSelectorTerms" = [
-              {
-                "matchExpressions" = [
-                  {
-                    "key"      = "worker"
-                    "operator" = "Exists"
-                  }
-                ]
-              }
-            ]
-          }
+          "preferredDuringSchedulingIgnoredDuringExecution" = [
+            {
+              "nodeSelectorTerms" = [
+                {
+                  "matchExpressions" = [
+                    {
+                      "key"      = "worker"
+                      "operator" = "Exists"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       }
       "topologySpreadConstraints" = [
