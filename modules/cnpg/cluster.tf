@@ -17,6 +17,34 @@ resource "kubernetes_manifest" "cluster" {
           "garage-access" = true
         }
       }
+      "affinity" = {
+        "nodeAffinity" = {
+          "preferredDuringSchedulingIgnoredDuringExecution" = {
+            "nodeSelectorTerms" = [
+              {
+                "matchExpressions" = [
+                  {
+                    "key"      = "worker"
+                    "operator" = "Exists"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+      "topologySpreadConstraints" = [
+        {
+          "maxSkew"           = 1
+          "topologyKey"       = "kubernetes.io/hostname"
+          "whenUnsatisfiable" = "DoNotSchedule"
+          "labelSelector" = {
+            "matchLabels" = {
+              "cnpg.io/cluster" = var.cluster_name
+            }
+          }
+        }
+      ]
       "imageCatalogRef" = {
         "apiGroup" = "postgresql.cnpg.io",
         "kind"     = "ClusterImageCatalog"
@@ -79,15 +107,15 @@ resource "kubernetes_manifest" "cluster" {
         "clientCASecret"       = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
         "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate.manifest.spec.secretName
       }
-      "plugins" = [
-        {
-          "name"          = "barman-cloud.cloudnative-pg.io"
-          "isWALArchiver" = true
-          "parameters" = {
-            "barmanObjectName" = kubernetes_manifest.barman_object_store.manifest.metadata.name
-          }
-        }
-      ]
+      # "plugins" = [
+      #   {
+      #     "name"          = "barman-cloud.cloudnative-pg.io"
+      #     "isWALArchiver" = true
+      #     "parameters" = {
+      #       "barmanObjectName" = kubernetes_manifest.barman_object_store.manifest.metadata.name
+      #     }
+      #   }
+      # ]
     }
   }
 
