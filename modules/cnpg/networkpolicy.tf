@@ -163,6 +163,4 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       }
     }
   }
-
-  depends_on = [data.kubernetes_endpoints_v1.kubernetes_api_endpoint]
 }
