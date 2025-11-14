@@ -64,10 +64,6 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
 
       ports {
         protocol = "TCP"
-        port     = 5433
-      }
-      ports {
-        protocol = "TCP"
         port     = 5432
       }
       ports {
@@ -83,7 +79,7 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
           match_expressions {
             key      = "kubernetes.io/metadata.name"
             operator = "In"
-            values   = concat(local.access_namespaces, ["keycloak"])
+            values   = concat(local.access_namespaces, ["keycloak", kubernetes_namespace.namespace.metadata[0].name])
           }
         }
 
