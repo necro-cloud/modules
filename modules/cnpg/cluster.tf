@@ -17,6 +17,18 @@ resource "kubernetes_manifest" "cluster" {
           "garage-access" = true
         }
       }
+      "topologySpreadConstraints" = [
+        {
+          "maxSkew"           = 1
+          "topologyKey"       = "kubernetes.io/hostname"
+          "whenUnsatisfiable" = "DoNotSchedule"
+          "labelSelector" = {
+            "matchLabels" = {
+              "cnpg.io/cluster" = var.cluster_name
+            }
+          }
+        }
+      ]
       "imageCatalogRef" = {
         "apiGroup" = "postgresql.cnpg.io",
         "kind"     = "ClusterImageCatalog"

@@ -1,7 +1,6 @@
-// Network policy to restrict network access to the Garage Cluster
-resource "kubernetes_network_policy" "garage_network_access_policy" {
+resource "kubernetes_network_policy" "cnpg_network_policy" {
   metadata {
-    name      = "garage-network-access-policy"
+    name      = "cnpg-network-policy"
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
@@ -12,113 +11,125 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
   spec {
     pod_selector {
       match_labels = {
-        "app"       = var.app_name
-        "component" = "pod"
-        "part-of"   = "garage"
+        "cnpg.io/cluster" = var.cluster_name
       }
     }
 
     policy_types = ["Ingress", "Egress"]
 
     # -------------- INGRESS RULES -------------- #
-    # Rule 1: Allow ingress from other Garage Pods
+    # Rule 1: Allow ingress from other CNPG Operator
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "cnpg-system"
+          }
+        }
+
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/name" = "cloudnative-pg"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 8000
+      }
+      ports {
+        protocol = "TCP"
+        port     = 5432
+      }
+    }
+
+    # Rule 2: Allow ingress from other CNPG pods
     ingress {
       from {
         pod_selector {
           match_labels = {
-            "app"       = var.app_name
-            "component" = "pod"
-            "part-of"   = "garage"
+            "cnpg.io/cluster" = var.cluster_name
           }
         }
       }
+
       ports {
         protocol = "TCP"
-        port     = 3901
+        port     = 5432
+      }
+      ports {
+        protocol = "TCP"
+        port     = 8000
       }
     }
 
-    # Rule 2: Allow ingress from trusted pods in trusted namespaces
+    # Rule 3: Allow ingress from allowed pods in trusted namespaces
     ingress {
       from {
         namespace_selector {
           match_expressions {
             key      = "kubernetes.io/metadata.name"
             operator = "In"
-            values   = split(",", var.access_namespaces)
+            values   = concat(local.access_namespaces, ["keycloak", kubernetes_namespace.namespace.metadata[0].name])
           }
         }
+
         pod_selector {
           match_labels = {
-            "garage-access" = true
+            "pg-access" = true
           }
         }
       }
+
       ports {
         protocol = "TCP"
-        port     = 3940
+        port     = 5432
       }
     }
 
-    # Rule 3: Allow ingress from NGINX Ingress pods
-    ingress {
-      from {
-        namespace_selector {
-          match_expressions {
-            key      = "kubernetes.io/metadata.name"
-            operator = "In"
-            values   = ["ingress-nginx"]
-          }
-        }
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/component" = "controller"
-            "app.kubernetes.io/name"      = "ingress-nginx"
-          }
-        }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 3940
-      }
-    }
-
-    # Rule 4: Allow ingress from Garage Configurator
-    ingress {
-      from {
-        pod_selector {
-          match_labels = {
-            app       = var.app_name
-            component = "pod"
-            created-by : "configurator"
-          }
-        }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 3943
-      }
-    }
-
-    # -------------- INGRESS RULES -------------- #
-    # Rule 1: Allow egress to other Garage pods
+    # -------------- EGRESS RULES -------------- #
+    # Rule 1: Allow egress to other CNPG pods
     egress {
       to {
         pod_selector {
           match_labels = {
-            "app"       = var.app_name
-            "component" = "pod"
-            "part-of"   = "garage"
+            "cnpg.io/cluster" = var.cluster_name
           }
         }
       }
+
       ports {
         protocol = "TCP"
-        port     = 3901
+        port     = 5433
+      }
+      ports {
+        protocol = "TCP"
+        port     = 5432
+      }
+      ports {
+        protocol = "TCP"
+        port     = 8000
       }
     }
 
-    # Rule 2: Allow DNS resolution to KubeDNS
+    # Rule 2: Allow egress to Garage S3 Cluster for PITR
+    egress {
+      to {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = var.garage_namespace
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 3940
+      }
+    }
+
+    # Rule 3: Allow DNS resolution to KubeDNS
     egress {
       to {
         namespace_selector {
@@ -138,7 +149,8 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
     }
 
-    # Rule 3: Allow Egress to Kubernetes API
+
+    # Rule 4: Allow Egress to Kubernetes API
     egress {
       to {
         ip_block {

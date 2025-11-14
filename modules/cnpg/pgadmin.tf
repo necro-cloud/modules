@@ -8,17 +8,19 @@ resource "kubernetes_deployment" "pgadmin" {
     replicas = 1
     selector {
       match_labels = {
-        app       = var.app_name
-        component = "pod"
-        used-for  = "pgadmin"
+        app         = var.app_name
+        component   = "pod"
+        used-for    = "pgadmin"
+        "pg-access" = true
       }
     }
     template {
       metadata {
         labels = {
-          app       = var.app_name
-          component = "pod"
-          used-for  = "pgadmin"
+          app         = var.app_name
+          component   = "pod"
+          used-for    = "pgadmin"
+          "pg-access" = true
         }
       }
       spec {
