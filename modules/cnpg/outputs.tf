@@ -9,3 +9,9 @@ output "server-certificate-authority" {
   value       = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
   depends_on  = [kubernetes_manifest.databases, kubernetes_manifest.keycloak_database]
 }
+
+output "cluster_name" {
+  description = "Name of the CNPG PostgreSQL Cluster"
+  value       = var.cluster_name
+  depends_on  = [kubernetes_manifest.databases, kubernetes_manifest.keycloak_database]
+}

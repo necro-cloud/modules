@@ -30,7 +30,13 @@ variable "postgres_namespace" {
   nullable    = false
 }
 
-# --------------- DATABASE CERTIFICATE VARIABLES --------------- #
+# --------------- DATABASE VARIABLES --------------- #
+variable "cluster_name" {
+  description = "Database Cluster Name to allow Network Connections to"
+  type        = string
+  nullable    = false
+}
+
 variable "database_server_certificate_authority_name" {
   description = "Server Certificate Authority being used for the database"
   type        = string
@@ -188,7 +194,7 @@ variable "keycloak_environment_variables" {
     },
     {
       name  = "KC_CACHE_STACK"
-      value = "kubernetes"
+      value = "jdbc-ping"
     },
     {
       name  = "KC_PROXY"
