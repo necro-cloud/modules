@@ -92,7 +92,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
       to {
         pod_selector {
           match_labels = {
-            "cnpg.io/cluster" = "postgresql-cluster"
+            "cnpg.io/cluster" = var.cluster_name
           }
         }
         namespace_selector {
