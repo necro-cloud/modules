@@ -188,7 +188,7 @@ variable "keycloak_environment_variables" {
     },
     {
       name  = "KC_CACHE_STACK"
-      value = "kubernetes"
+      value = "jdbc-ping"
     },
     {
       name  = "KC_PROXY"
