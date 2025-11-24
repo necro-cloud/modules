@@ -9,7 +9,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     }
   }
   spec {
-    replicas     = 1
+    replicas     = 2
     service_name = ""
 
     // Stateful Set Pod Selector
@@ -17,6 +17,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
       match_labels = {
         app         = "keycloak"
         component   = "pod"
+        "part-of"   = "keycloak"
         "pg-access" = true
       }
     }
@@ -29,12 +30,41 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         labels = {
           app         = "keycloak"
           component   = "pod"
+          "part-of"   = "keycloak"
           "pg-access" = true
         }
       }
 
       // Pod Spec
       spec {
+
+        // Node Affinity rule to run only on worker nodes
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "worker"
+                  operator = "Exists"
+                }
+              }
+            }
+          }
+        }
+
+        // Topology Spread to ensure pods are running on seperate nodes
+        topology_spread_constraint {
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = {
+              app       = var.app_name
+              component = "pod"
+              "part-of" = "keycloak"
+            }
+          }
+        }
 
         // Container Details
         container {
