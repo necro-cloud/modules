@@ -29,6 +29,8 @@ Required Modules to deploy Garage Object Storage:
 | [kubernetes_manifest.issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.public_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace.namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
+| [kubernetes_network_policy.garage_network_access_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
+| [kubernetes_pod_disruption_budget_v1.garage_pdb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/pod_disruption_budget_v1) | resource |
 | [kubernetes_role.garage_configurator_role](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role) | resource |
 | [kubernetes_role_binding.garage_configurator_role_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [kubernetes_secret.admin_password](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
@@ -46,6 +48,7 @@ Required Modules to deploy Garage Object Storage:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_access_namespaces"></a> [access\_namespaces](#input\_access\_namespaces) | Namespaces that require internal access to Garage | `string` | `"postgres"` | no |
 | <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_api_ingress_certificate_name"></a> [api\_ingress\_certificate\_name](#input\_api\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Garage API | `string` | `"garage-api-ingress-certificate"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying Garage Storage Solution | `string` | `"garage"` | no |
@@ -67,12 +70,14 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of Garage Storage Solution | `string` | `"amd64_garage"` | no |
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with Garage Storage Solution | `string` | `"garage-internal-certificate"` | no |
 | <a name="input_issuer_name"></a> [issuer\_name](#input\_issuer\_name) | Name of the Issuer to be associated with Garage Storage Solution | `string` | `"garage-certificate-issuer"` | no |
+| <a name="input_kubernetes_api_ip"></a> [kubernetes\_api\_ip](#input\_kubernetes\_api\_ip) | IP Address for the Kubernetes API | `string` | n/a | yes |
+| <a name="input_kubernetes_api_port"></a> [kubernetes\_api\_port](#input\_kubernetes\_api\_port) | Port for the Kubernetes API | `number` | n/a | yes |
+| <a name="input_kubernetes_api_protocol"></a> [kubernetes\_api\_protocol](#input\_kubernetes\_api\_protocol) | Protocol for the Kubernetes API | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Garage Storage Solution | `string` | `"garage"` | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Garage Storage Solution | `string` | `"cloud"` | no |
 | <a name="input_proxy_image"></a> [proxy\_image](#input\_proxy\_image) | Docker image to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"nginx"` | no |
 | <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |
 | <a name="input_proxy_tag"></a> [proxy\_tag](#input\_proxy\_tag) | Docker tag to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"1.29.0"` | no |
-| <a name="input_replication_namespaces"></a> [replication\_namespaces](#input\_replication\_namespaces) | Namespaces to which Certificate Authority can be replicated to | `string` | `"postgres"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of Garage Storage Solution | `string` | `"dxflrs"` | no |
 | <a name="input_required_access_keys"></a> [required\_access\_keys](#input\_required\_access\_keys) | Access Keys required to be configured within the Garage Cluster | <pre>list(object({<br/>    name         = string<br/>    createBucket = bool<br/>    permissions = list(object({<br/>      bucket = string<br/>      owner  = bool<br/>      read   = bool<br/>      write  = bool<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_required_buckets"></a> [required\_buckets](#input\_required\_buckets) | Buckets to deploy in the Garage Cluster | `list(string)` | n/a | yes |
