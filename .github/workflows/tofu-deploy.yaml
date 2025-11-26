@@ -14,6 +14,10 @@ on:
       - synchronize
       - closed
 
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+
 jobs:
   infrastructure_deploy:
     name: Infrastructure Deployment on Self Hosted Kubernetes Cluster
