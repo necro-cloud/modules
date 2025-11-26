@@ -10,7 +10,7 @@ Required Modules to deploy Cluster Issuer for internal certificates:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.36.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0 |
 
 ## Resources
 
