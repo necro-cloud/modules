@@ -1,0 +1,28 @@
+name: Infrastructure Deployment on Self Hosted Kubernetes Cluster
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - task/**
+      - bug/**
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - closed
+
+jobs:
+  infrastructure_deploy:
+    name: Infrastructure Deployment on Self Hosted Kubernetes Cluster
+    uses: necro-cloud/automations/.github/workflows/tofu-deploy.yml@main
+    with:
+      deployment_name: Kubernetes Infrastructure
+      folder_path: example
+      runners: cloud
+      pre_plan_script: tofu apply --target=module.helm -var-file terraform.tfvars.json -auto-approve
+    secrets:
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      TFVARS: ${{ secrets.TFVARS }}
