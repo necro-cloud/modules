@@ -11,7 +11,7 @@ OpenTofu Module to deploy the following required helm charts:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 3.0.0-pre2 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 3.1.1 |
 
 ## Resources
 
