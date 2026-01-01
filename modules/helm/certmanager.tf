@@ -7,14 +7,22 @@ resource "helm_release" "cert-manager" {
   version          = var.cert_manager_configuration.version
   create_namespace = var.cert_manager_configuration.create_namespace
 
-  set = [
-    {
-      name  = "crds.enabled"
-      value = true
-    },
-    {
-      name  = "global.nodeSelector.server"
-      value = var.server_node_selector
-    }
+  values = [
+    yamlencode({
+      crds = {
+        enabled = true
+      },
+
+      global = {
+        nodeSelector = {
+           server = var.server_node_selector
+        }
+      },
+
+      extraArgs = [
+        "--dns01-recursive-nameservers-only",
+        "--dns01-recursive-nameservers=1.1.1.1:53,1.0.0.1:53"
+      ]
+    })
   ]
 }
