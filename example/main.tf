@@ -9,7 +9,7 @@ data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
 
 # Deploy all required helm charts for deploying the infrastructure
 module "helm" {
-  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=bug/61/mtu-cert-manager-fix"
+  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=main"
   server_node_selector = "cloud"
 }
 
