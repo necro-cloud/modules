@@ -31,6 +31,10 @@ resource "helm_release" "calico" {
     {
       name  = "installation.calicoNetwork.policy.type"
       value = "Calico"
+    },
+    {
+      name = "installation.calicoNetwork.mtu"
+      value = "1440"
     }
   ]
 }
