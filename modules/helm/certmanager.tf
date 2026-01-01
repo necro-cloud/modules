@@ -25,23 +25,4 @@ resource "helm_release" "cert-manager" {
       ]
     })
   ]
-
-  # set = [
-  #   {
-  #     name  = "crds.enabled"
-  #     value = true
-  #   },
-  #   {
-  #     name  = "global.nodeSelector.server"
-  #     value = var.server_node_selector
-  #   },
-  #   {
-  #     name = "extraArgs[0]"
-  #     value = "--dns01-recursive-nameservers-only"
-  #   },
-  #   {
-  #     name = "extraArgs[1]"
-  #     value = "--dns01-recursive-nameservers=1.1.1.1:53,1.0.0.1:53"
-  #   }
-  # ]
 }
