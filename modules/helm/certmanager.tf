@@ -27,4 +27,5 @@ resource "helm_release" "cert-manager" {
   ]
 
   depends_on = [ helm_release.calico ]
+  timeout = 1800
 }

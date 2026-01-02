@@ -15,4 +15,5 @@ resource "helm_release" "reflector" {
   ]
 
   depends_on = [ helm_release.calico ]
+  timeout = 1800
 }
