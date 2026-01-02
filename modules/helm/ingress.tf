@@ -13,4 +13,6 @@ resource "helm_release" "nginx" {
       value = var.server_node_selector
     }
   ]
+
+  depends_on = [ helm_release.calico ]
 }

@@ -30,5 +30,5 @@ resource "helm_release" "cnpg_barman_plugin" {
     }
   ]
 
-  depends_on = [helm_release.cnpg, helm_release.cert-manager]
+  depends_on = [helm_release.cnpg, helm_release.cert-manager, helm_release.calico]
 }

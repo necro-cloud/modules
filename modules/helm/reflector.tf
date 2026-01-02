@@ -13,4 +13,6 @@ resource "helm_release" "reflector" {
       value = var.server_node_selector
     }
   ]
+
+  depends_on = [ helm_release.calico ]
 }
