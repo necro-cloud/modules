@@ -37,4 +37,7 @@ resource "helm_release" "calico" {
       value = "1440"
     }
   ]
+
+  wait = true
+  timeout = 1800
 }
