@@ -42,8 +42,11 @@ resource "kubernetes_manifest" "cluster" {
       "instances"             = var.cluster_size
       // Required postgresql configuration for DocumentDB
       "postgresql" = {
+        "shared_preload_libraries" = [
+          "pg_documentdb_core",
+          "pg_documentdb"
+        ]
         "parameters" = {
-          "shared_preload_libraries" = "pg_documentdb_core,pg_documentdb"
           "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
         }
       }
