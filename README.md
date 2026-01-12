@@ -18,5 +18,6 @@ The following modules have been implemented and their usage instructions written
 3. [\[DEPRECATED\] MinIO Storage](modules/minio)
 4. [Garage Storage](modules/garage)
 5. [Cloudnative PG PostgreSQL Database](modules/cnpg)
-6. [Valkey In Memory Database](modules/valkey)
-7. [Keycloak Identity Management](modules/keycloak)
+6. [FerretDB (MongoDB) Database](modules/ferretdb)
+7. [Valkey In Memory Database](modules/valkey)
+8. [Keycloak Identity Management](modules/keycloak)
