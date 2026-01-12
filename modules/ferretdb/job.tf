@@ -65,6 +65,13 @@ until pg_isready; do echo "Waiting for DB..."; sleep 2; done;
 # Run the Fixed Grant Script
 psql <<SQL
 -- 1. Grant access to the internal API schema
+GRANT USAGE ON SCHEMA documentdb_api TO ferret;
+GRANT USAGE ON SCHEMA documentdb_api_internal TO ferret;
+GRANT ALL ON ALL TABLES IN SCHEMA documentdb_api TO ferret;
+GRANT ALL ON ALL TABLES IN SCHEMA documentdb_core TO ferret;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA documentdb_api TO ferret;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA documentdb_core TO ferret;
+
 GRANT USAGE ON SCHEMA documentdb_api_internal TO ferret;
 GRANT ALL ON ALL TABLES IN SCHEMA documentdb_api_internal TO ferret;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA documentdb_api_internal TO ferret;
