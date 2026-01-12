@@ -49,7 +49,7 @@ resource "kubernetes_secret" "ferret_database_credentials" {
 
   data = {
     "username" = "ferret"
-    "password" = random_password.keycloak_password.result
+    "password" = random_password.ferret_password.result
   }
 
   type = "kubernetes.io/basic-auth"
