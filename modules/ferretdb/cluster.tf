@@ -52,6 +52,9 @@ resource "kubernetes_manifest" "cluster" {
           "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
           "cron.database_name" = "postgres"
         }
+        "pg_hba" = [
+          "host postgres postgres 127.0.0.1/32 trust"
+        ]
       }
       "bootstrap" = {
         "initdb" = {
