@@ -164,3 +164,89 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
     }
   }
 }
+
+// Network Policy for FerretDB
+resource "kubernetes_network_policy" "ferret_network_policy" {
+  metadata {
+    name      = "ferret-network-policy"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "networkpolicy"
+    }
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        app = var.app_name
+        component = "pod"
+        "part-of" = "ferretdb"
+      }
+    }
+
+    policy_types = ["Ingress", "Egress"]
+
+    # -------------- INGRESS RULES -------------- #
+    # Rule 1: Allow ingress from allowed pods in trusted namespaces
+    ingress {
+      from {
+        namespace_selector {
+          match_expressions {
+            key      = "kubernetes.io/metadata.name"
+            operator = "In"
+            values   = concat(local.access_namespaces, [kubernetes_namespace.namespace.metadata[0].name])
+          }
+        }
+
+        pod_selector {
+          match_labels = {
+            "ferret-mongo-access" = true
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 27017
+      }
+    }
+
+    # -------------- EGRESS RULES -------------- #
+    # Rule 1: Allow egress to CNPG pods
+    egress {
+      to {
+        pod_selector {
+          match_labels = {
+            "cnpg.io/cluster" = var.cluster_name
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 5432
+      }
+    }
+
+    # Rule 2: Allow DNS resolution to KubeDNS
+    egress {
+      to {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "kube-system"
+          }
+        }
+        pod_selector {
+          match_labels = {
+            "k8s-app" = "kube-dns"
+          }
+        }
+      }
+      ports {
+        protocol = "UDP"
+        port     = 53
+      }
+    }
+  }
+}
