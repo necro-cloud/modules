@@ -19,14 +19,16 @@ resource "kubernetes_manifest" "ferret_database" {
       "cluster" = {
         "name" = kubernetes_manifest.cluster.manifest.metadata.name
       }
-      "extensions" = {
-        "vector" = {
+      "extensions" = [
+        {
+          "name" = "vector"
+          "ensure" = "present"
+        },
+        {
+          "name" = "pg_documentdb"
           "ensure" = "present"
         }
-        "pg_documentdb" = {
-          "ensure" = "present"
-        }
-      }
+      ]
     }
   }
 
