@@ -23,10 +23,39 @@ resource "kubernetes_deployment" "ferretdb" {
           app = var.app_name
           component = "pod"
           "ferret-access" = "true"
+          "part-of" = "ferretdb"
         }
       }
 
       spec {
+        // Node Affinity rule to run only on worker nodes
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "worker"
+                  operator = "Exists"
+                }
+              }
+            }
+          }
+        }
+
+        // Topology Spread to ensure pods are running on seperate nodes
+        topology_spread_constraint {
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = {
+              app       = var.app_name
+              component = "pod"
+              "part-of" = "ferretdb"
+            }
+          }
+        }
+
         container {
           name = "ferret"
           image = "ghcr.io/ferretdb/ferretdb:2.7.0"
@@ -34,6 +63,22 @@ resource "kubernetes_deployment" "ferretdb" {
           port {
             container_port = 27017
             name = "mongo"
+          }
+          
+          port {
+            container_port = 8088
+            name = "debug"
+          }
+
+          resources {
+            requests = {
+              cpu = "250m"
+              memory = "256Mi"
+            }
+            limits = {
+              cpu = "500m"
+              memory = "500Mi"
+            }
           }
 
           // PostgreSQL Certificates
@@ -74,8 +119,21 @@ resource "kubernetes_deployment" "ferretdb" {
             tcp_socket {
               port = 27017
             }
-            initial_delay_seconds = 30
+            initial_delay_seconds = 10
             period_seconds = 10
+            success_threshold = 3
+            failure_threshold = 5
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/debug/livez"
+              port = 8088
+            }
+            initial_delay_seconds = 10
+            period_seconds = 10
+            success_threshold = 3
+            failure_threshold = 5
           }
         }
 
