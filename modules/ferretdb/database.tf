@@ -25,6 +25,10 @@ resource "kubernetes_manifest" "ferret_database" {
           "ensure" = "present"
         },
         {
+          "name"   = "tsm_system_rows"
+          "ensure" = "present"
+        },
+        {
           "name" = "pg_cron"
           "ensure" = "present"
         },
