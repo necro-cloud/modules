@@ -53,7 +53,8 @@ resource "kubernetes_manifest" "cluster" {
           "cron.database_name" = "postgres"
         }
         "pg_hba" = [
-          "host postgres postgres 127.0.0.1/32 trust"
+          "host postgres postgres 127.0.0.1/32 trust",
+          "host postgres postgres ::1/128 trust"
         ]
       }
       "bootstrap" = {
