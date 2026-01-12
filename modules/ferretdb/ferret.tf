@@ -151,5 +151,5 @@ resource "kubernetes_deployment" "ferretdb" {
     }
   }
 
-  depends_on = [ kubernetes_manifest.cluster, kubernetes_manifest.ferret_database ]
+  depends_on = [ kubernetes_manifest.cluster ]
 }
