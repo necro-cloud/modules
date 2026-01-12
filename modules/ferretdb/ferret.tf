@@ -92,8 +92,8 @@ resource "kubernetes_deployment" "ferretdb" {
             name = "DB_USER"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ferret_database_credentials.metadata[0].name
-                key = "username"
+                name = "${var.cluster_name}-superuser"
+                key = "user"
               }
             }
           }
@@ -101,7 +101,7 @@ resource "kubernetes_deployment" "ferretdb" {
             name = "DB_PASS"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ferret_database_credentials.metadata[0].name
+                name = "${var.cluster_name}-superuser"
                 key = "password"
               }
             }
@@ -112,7 +112,7 @@ resource "kubernetes_deployment" "ferretdb" {
           }
           env {
             name = "FERRETDB_POSTGRESQL_URL"
-            value = "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/ferret?sslmode=verify-ca&sslrootcert=/etc/certs/ca.crt"
+            value = "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres?sslmode=verify-ca&sslrootcert=/etc/certs/ca.crt"
           }
 
           readiness_probe {
