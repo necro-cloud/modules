@@ -12,6 +12,11 @@ resource "kubernetes_job" "ferret_permissions" {
     template {
       metadata {
         name = "ferret-sql-permissions"
+        labels = {
+          app = var.app_name
+          component = "pod"
+          "ferret-access" = "true"
+        }
       }
 
       spec {
