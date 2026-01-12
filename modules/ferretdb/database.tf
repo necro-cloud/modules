@@ -25,6 +25,10 @@ resource "kubernetes_manifest" "ferret_database" {
           "ensure" = "present"
         },
         {
+          "name" = "documentdb_core"
+          "ensure" = "present"
+        },
+        {
           "name" = "documentdb"
           "ensure" = "present"
         }
