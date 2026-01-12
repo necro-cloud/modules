@@ -43,11 +43,13 @@ resource "kubernetes_manifest" "cluster" {
       // Required postgresql configuration for DocumentDB
       "postgresql" = {
         "shared_preload_libraries" = [
+          "pg_cron",
           "pg_documentdb_core",
-          "pg_documentdb"
+          "pg_documentdb",
         ]
         "parameters" = {
           "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
+          "cron.database_name" = "ferret"
         }
       }
       "managed" = {

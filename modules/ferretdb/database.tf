@@ -25,6 +25,10 @@ resource "kubernetes_manifest" "ferret_database" {
           "ensure" = "present"
         },
         {
+          "name" = "pg_cron"
+          "ensure" = "present"
+        },
+        {
           "name" = "documentdb_core"
           "ensure" = "present"
         },
