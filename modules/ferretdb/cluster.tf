@@ -19,6 +19,7 @@ resource "kubernetes_manifest" "cluster" {
       }
       "postgresUID" = 999
       "postgresGID" = 999
+      "enableSuperuserAccess" = true
       "topologySpreadConstraints" = [
         {
           "maxSkew"           = 1
@@ -49,7 +50,14 @@ resource "kubernetes_manifest" "cluster" {
         ]
         "parameters" = {
           "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
-          "cron.database_name" = "ferret"
+          "cron.database_name" = "postgres"
+        }
+      }
+      "bootstrap" = {
+        "initdb" = {
+          "postInitSQL" = [
+            "CREATE EXTENSION IF NOT EXISTS documentdb CASCADE;"
+          ]
         }
       }
       "managed" = {
