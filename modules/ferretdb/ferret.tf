@@ -132,7 +132,7 @@ resource "kubernetes_deployment" "ferretdb" {
             }
             initial_delay_seconds = 10
             period_seconds = 10
-            success_threshold = 3
+            success_threshold = 1
             failure_threshold = 5
           }
         }
