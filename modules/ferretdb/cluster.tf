@@ -51,6 +51,16 @@ resource "kubernetes_manifest" "cluster" {
           "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
           "cron.database_name" = "ferret"
         }
+      },
+      "bootstrap" = {
+        "initdb" = {
+          "database" = "ferret"
+          "owner" = "ferret"
+          "postInitSQL" = [
+            "CREATE EXTENSION IF NOT EXISTS documentdb CASCADE;",
+            "ALTER ROLE ferret SET search_path TO \"$user\", public, documentdb_api, documentdb_core;"
+          ]
+        }
       }
       "managed" = {
         "roles" = concat([
