@@ -24,7 +24,7 @@ jobs:
     uses: necro-cloud/automations/.github/workflows/tofu-deploy.yml@main
     with:
       deployment_name: Kubernetes Infrastructure
-      folder_path: example
+      folder_path: infrastructure
       runners: cloud
       pre_plan_script: tofu apply --target=module.helm -var-file terraform.tfvars.json -auto-approve
     secrets:

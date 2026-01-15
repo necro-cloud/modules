@@ -88,3 +88,30 @@ resource "kubernetes_secret" "client_database_credentials" {
 
   type = "kubernetes.io/basic-auth"
 }
+
+// UI credentials configuration for MongoExpress
+resource "random_password" "ui_password" {
+  length  = 20
+  lower   = true
+  numeric = true
+  special = false
+}
+
+resource "kubernetes_secret" "ui_credentials" {
+  metadata {
+    name      = "ui-ferret"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+
+    labels = {
+      app       = var.app_name
+      component = "secret"
+    }
+  }
+
+  data = {
+    "username" = "ferret"
+    "password" = random_password.ferret_password.result
+  }
+
+  type = "kubernetes.io/basic-auth"
+}
