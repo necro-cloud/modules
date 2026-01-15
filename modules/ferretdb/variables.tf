@@ -85,18 +85,8 @@ variable "clients" {
   type = list(object({
     namespace          = string
     user               = string
-    database           = string
-    derRequired        = bool
-    privateKeyEncoding = string
   }))
   default = []
-  validation {
-    condition = length([
-      for object in var.clients : true
-      if contains(["PKCS1", "PKCS8"], object.privateKeyEncoding)
-    ]) == length(var.clients)
-    error_message = "Encoding Value is either PKCS1 or PKCS8"
-  }
 }
 
 # --------------- CLUSTER VARIABLES VARIABLES --------------- #
