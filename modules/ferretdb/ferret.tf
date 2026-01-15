@@ -58,7 +58,7 @@ resource "kubernetes_deployment" "ferretdb" {
 
         container {
           name = "ferret"
-          image = "ghcr.io/ferretdb/ferretdb:2.7.0"
+          image = "${var.repository}/${var.image}:${var.tag}"
 
           port {
             container_port = 27017
