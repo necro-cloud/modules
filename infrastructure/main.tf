@@ -81,7 +81,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/68/authn-setup"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/69/mongo-ui"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
@@ -97,8 +97,11 @@ module "ferretdb" {
     }
   ]
 
-  // Certificate details for internal certificates
+  // Certificate details for internal and ingress certificates
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
   // Whitelisting Kubernetes API Endpoints in the Network Policy
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
