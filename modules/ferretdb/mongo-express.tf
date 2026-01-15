@@ -8,7 +8,7 @@ resource "kubernetes_deployment" "mongo_express" {
     replicas = 1
     selector {
       match_labels = {
-        "ferret-access" = true
+        "ferret-mongo-access" = true
         app       = var.app_name
         component = "pod"
         used-for  = "mongo-express"
@@ -18,7 +18,7 @@ resource "kubernetes_deployment" "mongo_express" {
     template {
       metadata {
         labels = {
-          "ferret-access" = true
+          "ferret-mongo-access" = true
           app       = var.app_name
           component = "pod"
           used-for  = "mongo-express"
