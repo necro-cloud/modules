@@ -189,7 +189,7 @@ variable "mongo_express_repository" {
 variable "mongo_express_image" {
   description = "Docker image to be used for deployment of Mongo Express UI"
   type        = string
-  default     = "nginx"
+  default     = "mongo-express"
 }
 
 variable "mongo_express_tag" {
