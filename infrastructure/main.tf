@@ -20,6 +20,13 @@ module "cluster-issuer" {
   depends_on = [module.helm]
 }
 
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/73/vl-deployment"
+
+  depends_on = [module.cluster-issuer]
+}
+
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
   source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
@@ -41,6 +48,8 @@ module "garage" {
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  depends_on = [module.observability]
 }
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
@@ -76,7 +85,7 @@ module "cnpg" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Dependency on Garage Deployment  
-  depends_on = [module.garage]
+  depends_on = [module.garage, module.observability]
 }
 
 # FerretDB Deployment for MongoDB Database Solution
@@ -109,7 +118,7 @@ module "ferretdb" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Dependency on Garage Deployment  
-  depends_on = [module.garage]
+  depends_on = [module.garage, module.observability]
 }
 
 # Keycloak Cluster Deployment for Identity Solution
@@ -133,7 +142,7 @@ module "keycloak" {
   realm_settings = local.keycloak_realm_settings
 
   // Dependency on CNPG PostgreSQL Deployment
-  depends_on = [module.cnpg]
+  depends_on = [module.cnpg, module.observability]
 }
 
 # Valkey Deployment for In Memory Storage Solution
@@ -145,4 +154,6 @@ module "valkey" {
 
   // Granting required namespaces access to the Valkey
   access_namespaces = "cloud"
+
+  depends_on = [module.observability]
 }
