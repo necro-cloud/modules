@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/73/vl-deployment"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/74/vm-deployment"
 
   depends_on = [module.cluster-issuer]
 }
