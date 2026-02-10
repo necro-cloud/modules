@@ -10,6 +10,11 @@ resource "helm_release" "otel_collector" {
     yamlencode({
       mode = "daemonset"
 
+      # Contrib image supports all required features
+      image = {
+        repository = "otel/opentelemetry-collector-contrib"
+      }
+
       # Inject Node Name as Env Var (Required for Scrape Filtering)
       extraEnvs = [
         {
