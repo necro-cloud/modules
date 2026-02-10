@@ -115,15 +115,17 @@ resource "helm_release" "otel_collector" {
 
         # Exporters
         exporters = {
+          # Traces -> Debug
+          debug = {}
           # Metrics -> VictoriaMetrics
           prometheusremotewrite = {
             endpoint = "http://victoria-metrics-victoria-metrics-single-server:8428/api/v1/write"
           }
           
           # Logs -> VictoriaLogs
-          otlphttp = {
+          otlp_http = {
             # VictoriaLogs OTLP endpoint
-            endpoint = "http://victoria-logs-victoria-logs-single-server:9428/insert/opentelemetry/v1/logs"
+            logs_endpoint = "http://victoria-logs-victoria-logs-single-server:9428/insert/opentelemetry/v1/logs"
             tls = {
               insecure = true
             }
@@ -143,7 +145,7 @@ resource "helm_release" "otel_collector" {
               # 'filelog' comes from the logsCollection preset
               receivers  = ["otlp", "filelog"]
               processors = ["memory_limiter", "k8sattributes", "batch"]
-              exporters  = ["otlphttp"]
+              exporters  = ["otlp_http"]
             }
             traces = {
               # Defining debug as exporter for traces
