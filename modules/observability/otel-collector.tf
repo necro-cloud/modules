@@ -123,9 +123,9 @@ resource "helm_release" "otel_collector" {
           }
           
           # Logs -> VictoriaLogs
-          otlp_http = {
+          otlphttp = {
             # VictoriaLogs OTLP endpoint
-            logs_endpoint = "http://victoria-logs-victoria-logs-single-server:9428/insert/opentelemetry/v1/logs"
+            endpoint = "http://victoria-logs-victoria-logs-single-server:9428/insert/opentelemetry"
             tls = {
               insecure = true
             }
@@ -145,7 +145,7 @@ resource "helm_release" "otel_collector" {
               # 'filelog' comes from the logsCollection preset
               receivers  = ["otlp", "filelog"]
               processors = ["memory_limiter", "k8sattributes", "batch"]
-              exporters  = ["otlp_http"]
+              exporters  = ["otlphttp"]
             }
             traces = {
               # Defining debug as exporter for traces
