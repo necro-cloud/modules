@@ -9,7 +9,7 @@ data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
 
 # Deploy all required helm charts for deploying the infrastructure
 module "helm" {
-  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=main"
+  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=task/76/netobserv-deployment"
   server_node_selector = "cloud"
 }
 
@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/76/netobserv-deployment"
 
   depends_on = [module.cluster-issuer]
 }

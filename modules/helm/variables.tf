@@ -100,6 +100,20 @@ variable "calico_configuration" {
   }
 }
 
+# --------------- CALICO OPERATOR VARIABLES --------------- #
+variable "netobserv_configuration" {
+  description = "Dictionary filled with Netobserv Operator Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "netobserv"
+    "namespace"        = "netobserv"
+    "repository"       = "https://netobserv.io/static/helm"
+    "chart"            = "netobserv-operator"
+    "version"          = "1.11.0"
+    "create_namespace" = true
+  }
+}
+
 # --------------- NODE SELECTOR VARIABLE --------------- #
 variable "server_node_selector" {
   description = "Node Selector Label Value to be used for deploying required foundation components"

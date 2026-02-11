@@ -6,6 +6,7 @@ OpenTofu Module to deploy the following required helm charts:
 3. [NGINX Ingress](https://github.com/kubernetes/ingress-nginx)
 4. [Kubernetes Reflector](https://github.com/emberstack/kubernetes-reflector)
 5. [Calico CNI](https://www.tigera.io/project-calico/)
+6. [NetObserv](https://github.com/netobserv)
 
 ## Providers
 
@@ -22,6 +23,7 @@ OpenTofu Module to deploy the following required helm charts:
 | [helm_release.cnpg](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cnpg_barman_plugin](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.minio](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.netobserv](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.nginx](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.reflector](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 
@@ -35,6 +37,7 @@ OpenTofu Module to deploy the following required helm charts:
 | <a name="input_cnpg_configuration"></a> [cnpg\_configuration](#input\_cnpg\_configuration) | Dictionary filled with Cloud Native PG Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "cloudnative-pg",<br/>  "create_namespace": true,<br/>  "name": "cnpg",<br/>  "namespace": "cnpg-system",<br/>  "repository": "https://cloudnative-pg.github.io/charts",<br/>  "version": "v0.26.0"<br/>}</pre> | no |
 | <a name="input_enable_minio"></a> [enable\_minio](#input\_enable\_minio) | To enable MinIO Deployment or not | `bool` | `false` | no |
 | <a name="input_minio_operator_configuration"></a> [minio\_operator\_configuration](#input\_minio\_operator\_configuration) | Dictionary filled with MinIO Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "operator",<br/>  "create_namespace": true,<br/>  "name": "minio-operator",<br/>  "namespace": "minio-operator",<br/>  "repository": "https://operator.min.io",<br/>  "version": "7.0.0"<br/>}</pre> | no |
+| <a name="input_netobserv_configuration"></a> [netobserv\_configuration](#input\_netobserv\_configuration) | Dictionary filled with Netobserv Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "netobserv-operator",<br/>  "create_namespace": true,<br/>  "name": "netobserv",<br/>  "namespace": "netobserv",<br/>  "repository": "https://netobserv.io/static/helm",<br/>  "version": "1.11.0"<br/>}</pre> | no |
 | <a name="input_nginx_configuration"></a> [nginx\_configuration](#input\_nginx\_configuration) | Dictionary filled with NGINX Controller Configuration Details | `map(string)` | <pre>{<br/>  "chart": "ingress-nginx",<br/>  "create_namespace": true,<br/>  "name": "ingress-nginx",<br/>  "namespace": "ingress-nginx",<br/>  "repository": "https://kubernetes.github.io/ingress-nginx",<br/>  "version": "4.13.3"<br/>}</pre> | no |
 | <a name="input_reflector_configuration"></a> [reflector\_configuration](#input\_reflector\_configuration) | Dictionary filled with Kubernetes Reflector Configuration Details | `map(string)` | <pre>{<br/>  "chart": "reflector",<br/>  "create_namespace": true,<br/>  "name": "reflector",<br/>  "namespace": "reflector",<br/>  "repository": "https://emberstack.github.io/helm-charts",<br/>  "version": "v9.1.35"<br/>}</pre> | no |
 | <a name="input_server_node_selector"></a> [server\_node\_selector](#input\_server\_node\_selector) | Node Selector Label Value to be used for deploying required foundation components | `string` | n/a | yes |
