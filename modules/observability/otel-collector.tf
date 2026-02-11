@@ -8,6 +8,8 @@ resource "helm_release" "otel_collector" {
 
   values = [
     yamlencode({
+      fullnameOverride = "otel-collector"
+      
       mode = "daemonset"
 
       # Contrib image supports all required features
@@ -53,6 +55,13 @@ resource "helm_release" "otel_collector" {
       # Custom Configuration for receivers
       config = {
         receivers = {
+          # OTLP Endpoints to send stuff to this collector
+          otlp = {
+            protocols = {
+              grpc = { endpoint = "0.0.0.0:4317" }
+              http = { endpoint = "0.0.0.0:4318" }
+            }
+          }
           # Scrape annotated pods (prometheus.io/scrape: "true")
           prometheus = {
             config = {
@@ -111,6 +120,16 @@ resource "helm_release" "otel_collector" {
             limit_mib              = 400 # Hard cap for the process (leaving 112Mi buffer for OS)
             spike_limit_mib        = 100
           }
+          # Tag Netobserv logs appropriately
+          "resource/netobserv" = {
+            attributes = [
+              {
+                key    = "log.source"
+                value  = "netobserv"
+                action = "insert"
+              }
+            ]
+          }
         }
 
         # Exporters
@@ -143,7 +162,7 @@ resource "helm_release" "otel_collector" {
             }
             logs = {
               # 'filelog' comes from the logsCollection preset
-              receivers  = ["otlp", "filelog"]
+              receivers  = ["filelog"]
               processors = ["memory_limiter", "k8sattributes", "batch"]
               exporters  = ["otlphttp"]
             }
@@ -154,6 +173,11 @@ resource "helm_release" "otel_collector" {
               receivers = ["otlp"]
               processors = ["memory_limiter", "batch"]
               exporters = ["debug"] 
+            }
+            "logs/netobserv" = {
+              receivers  = ["otlp"]
+              processors = ["memory_limiter", "resource/netobserv", "batch"]
+              exporters  = ["otlphttp"]
             }
           }
         }
