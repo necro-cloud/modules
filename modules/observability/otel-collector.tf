@@ -12,6 +12,22 @@ resource "helm_release" "otel_collector" {
       
       mode = "daemonset"
 
+      # Enable service creation for pushing logs and metrics 
+      service = {
+        enabled = true
+      }
+
+      // Ports for the service to use
+      ports = {
+        otlp = {
+          enabled = true
+          containerPort = 4317
+          servicePort   = 4317
+          hostPort      = 4317
+          protocol      = "TCP"
+        }
+      }
+
       # Contrib image supports all required features
       image = {
         repository = "otel/opentelemetry-collector-contrib"

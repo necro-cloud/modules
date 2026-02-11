@@ -93,5 +93,7 @@ resource "kubernetes_manifest" "network_observability" {
         }
       ]
     }
-  }  
+  }
+
+  depends_on = [ helm_release.otel_collector ]  
 }
