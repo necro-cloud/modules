@@ -61,7 +61,6 @@ resource "kubernetes_manifest" "network_observability" {
           # Disable agent-side metrics generation to save CPU
           # We will derive metrics from logs in Victoria if needed
           disableAlerts = ["NetObservLokiError", "NetObservNoFlows"] 
-          ignoreTags    = ["nodes", "workloads"]
         }
       }
 
