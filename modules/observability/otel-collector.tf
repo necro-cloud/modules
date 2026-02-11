@@ -210,24 +210,6 @@ resource "helm_release" "otel_collector" {
           memory = "512Mi"
         }
       }
-
-      # Placement (Pinned to Worker Nodes)
-      affinity = {
-        nodeAffinity = {
-          requiredDuringSchedulingIgnoredDuringExecution = {
-            nodeSelectorTerms = [
-              {
-                matchExpressions = [
-                  {
-                    key      = "worker"
-                    operator = "Exists"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
     })
   ]
 }
