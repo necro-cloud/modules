@@ -7,6 +7,6 @@ resource "helm_release" "netobserv" {
   version          = var.netobserv_configuration.version
   create_namespace = var.netobserv_configuration.create_namespace
 
-  depends_on = [ helm_release.calico ]
+  depends_on = [ helm_release.calico, helm_release.cert-manager ]
   timeout = 1800
 }
