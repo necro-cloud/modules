@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/77/grafana-deployment"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
