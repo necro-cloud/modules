@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/77/grafana-deployment"
 
   depends_on = [module.cluster-issuer]
 }
