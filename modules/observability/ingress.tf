@@ -32,7 +32,7 @@ resource "kubernetes_ingress_v1" "ingress" {
             service {
               name = helm_release.grafana.name
               port {
-                number = 3000
+                number = 80
               }
             }
           }
