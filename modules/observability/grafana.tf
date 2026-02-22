@@ -11,12 +11,12 @@ resource "helm_release" "grafana" {
       adminUser     = "admin"
       adminPassword = "admin" 
 
-      # Automatically install the VictoriaMetrics Logs plugin for native VictoriaLogs support
+      // Automatically install the VictoriaMetrics Logs plugin for native VictoriaLogs support
       plugins = [
         "victoriametrics-logs-datasource"
       ]
 
-      # Provisioning of datasources during deployment
+      // Provisioning of datasources during deployment
       datasources = {
         "datasources.yaml" = {
           apiVersion = 1
@@ -49,7 +49,7 @@ resource "helm_release" "grafana" {
         }
       }
 
-      # Persistence for dashboards, settings, and downloaded plugins
+      // Persistence for dashboards, settings, and downloaded plugins
       persistence = {
         enabled          = true
         accessModes      = ["ReadWriteOnce"]
@@ -62,6 +62,26 @@ resource "helm_release" "grafana" {
         component = "dashboard"
       }
 
+      // Mount Certificates and Attach them to the Grafana Instance
+      extraSecretMounts = [
+        {
+          name        = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+          secretName  = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+          defaultMode = "0400"
+          mountPath   = "/etc/grafana/ssl"
+          readOnly    = true
+        }
+      ]
+
+      
+      "grafana.ini" = {
+        server = {
+          protocol  = "https"
+          cert_file = "/etc/grafana/ssl/tls.crt" 
+          cert_key  = "/etc/grafana/ssl/tls.key"
+        }
+      }
+            
       affinity = {
         nodeAffinity = {
           requiredDuringSchedulingIgnoredDuringExecution = {
