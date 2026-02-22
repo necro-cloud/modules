@@ -8,8 +8,13 @@ resource "helm_release" "grafana" {
 
   values = [
     yamlencode({
-      adminUser     = "admin"
-      adminPassword = "admin" 
+
+      // Authentication Credentials
+      admin = {
+        existingSecret = kubernetes_secret.observability_credentials.metadata[0].name
+        userKey = "username"
+        passwordKey = "password"
+      }
 
       // Automatically install the VictoriaMetrics Logs plugin for native VictoriaLogs support
       plugins = [
