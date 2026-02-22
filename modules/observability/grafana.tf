@@ -81,6 +81,18 @@ resource "helm_release" "grafana" {
           cert_key  = "/etc/grafana/ssl/tls.key"
         }
       }
+
+      // Health checks to use HTTPS instead of HTTP
+      readinessProbe = {
+        httpGet = {
+          scheme = "HTTPS"
+        }
+      }
+      livenessProbe = {
+        httpGet = {
+          scheme = "HTTPS"
+        }
+      }
             
       affinity = {
         nodeAffinity = {
