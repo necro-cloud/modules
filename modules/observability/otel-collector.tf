@@ -12,7 +12,7 @@ resource "helm_release" "otel_collector" {
       
       mode = "daemonset"
 
-      # Enable service creation for pushing logs and metrics 
+      // Enable service creation for pushing logs and metrics 
       service = {
         enabled = true
       }
@@ -28,12 +28,12 @@ resource "helm_release" "otel_collector" {
         }
       }
 
-      # Contrib image supports all required features
+      // Contrib image supports all required features
       image = {
         repository = "otel/opentelemetry-collector-contrib"
       }
 
-      # Inject Node Name as Env Var (Required for Scrape Filtering)
+      // Inject Node Name as Env Var (Required for Scrape Filtering)
       extraEnvs = [
         {
           name = "K8S_NODE_NAME"
@@ -45,22 +45,22 @@ resource "helm_release" "otel_collector" {
         }
       ]
 
-      # Presets for scraping logs and metrics
+      // Presets for scraping logs and metrics
       presets = {
-        # Scrape /var/log/pods
+        // Scrape /var/log/pods
         logsCollection = {
           enabled = true
           includeCollectorLogs = false
         }
-        # Scrape Node CPU/RAM/Disk
+        // Scrape Node CPU/RAM/Disk
         hostMetrics = {
           enabled = true
         }
-        # Scrape Pod CPU/RAM (Kubelet)
+        // Scrape Pod CPU/RAM (Kubelet)
         kubeletMetrics = {
           enabled = true
         }
-        # Decorate data with K8s metadata
+        // Decorate data with K8s metadata
         kubernetesAttributes = {
           enabled = true
           extractAllPodLabels = true
@@ -68,17 +68,17 @@ resource "helm_release" "otel_collector" {
         }
       }
 
-      # Custom Configuration for receivers
+      // Custom Configuration for receivers
       config = {
         receivers = {
-          # OTLP Endpoints to send stuff to this collector
+          // OTLP Endpoints to send stuff to this collector
           otlp = {
             protocols = {
               grpc = { endpoint = "0.0.0.0:4317" }
               http = { endpoint = "0.0.0.0:4318" }
             }
           }
-          # Scrape annotated pods (prometheus.io/scrape: "true")
+          // Scrape annotated pods (prometheus.io/scrape: "true")
           prometheus = {
             config = {
               scrape_configs = [
@@ -91,28 +91,28 @@ resource "helm_release" "otel_collector" {
                     }
                   ]
                   relabel_configs = [
-                    # Only scrape if annotation exists
+                    // Only scrape if annotation exists
                     {
                       source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
                       action        = "keep"
                       regex         = "true"
                     },
-                    # Only scrape pods on the SAME NODE as this collector
-                    # This uses the Env Var we injected above.
-                    # Note: The double $$ is for Terraform escaping. Result in YAML: ${env:K8S_NODE_NAME}
+                    // Only scrape pods on the SAME NODE as this collector
+                    // This uses the Env Var we injected above.
+                    // Note: The double $$ is for Terraform escaping. Result in YAML: ${env:K8S_NODE_NAME}
                     {
                       source_labels = ["__meta_kubernetes_pod_node_name"]
                       action        = "keep"
                       regex         = "$${env:K8S_NODE_NAME}"
                     },
-                    # Path override
+                    // Path override
                     {
                       source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
                       action        = "replace"
                       target_label  = "__metrics_path__"
                       regex         = "(.+)"
                     },
-                    # Port override
+                    // Port override
                     {
                       source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
                       action        = "replace"
@@ -127,16 +127,16 @@ resource "helm_release" "otel_collector" {
           }
         }
 
-        # Processors
+        // Processors
         processors = {
           batch = {}
-          # Strict memory limits for the 512Mi constraint
+          // Strict memory limits for the 512Mi constraint
           memory_limiter = {
             check_interval         = "5s"
-            limit_mib              = 400 # Hard cap for the process (leaving 112Mi buffer for OS)
+            limit_mib              = 400 // Hard cap for the process (leaving 112Mi buffer for OS)
             spike_limit_mib        = 100
           }
-          # Tag Netobserv logs appropriately
+          // Tag Netobserv logs appropriately
           "resource/netobserv" = {
             attributes = [
               {
@@ -148,18 +148,18 @@ resource "helm_release" "otel_collector" {
           }
         }
 
-        # Exporters
+        // Exporters
         exporters = {
-          # Traces -> Debug
+          // Traces -> Debug
           debug = {}
-          # Metrics -> VictoriaMetrics
+          // Metrics -> VictoriaMetrics
           prometheusremotewrite = {
             endpoint = "http://victoria-metrics-victoria-metrics-single-server:8428/api/v1/write"
           }
           
-          # Logs -> VictoriaLogs
+          // Logs -> VictoriaLogs
           otlphttp = {
-            # VictoriaLogs OTLP endpoint
+            // VictoriaLogs OTLP endpoint
             endpoint = "http://victoria-logs-victoria-logs-single-server:9428/insert/opentelemetry"
             tls = {
               insecure = true
@@ -167,25 +167,25 @@ resource "helm_release" "otel_collector" {
           }
         }
 
-        # Pipelines to pull in data from the cluster
+        // Pipelines to pull in data from the cluster
         service = {
           pipelines = {
             metrics = {
-              # 'hostmetrics' & 'kubeletstats' come from presets. 'prometheus' is our custom one.
+              // 'hostmetrics' & 'kubeletstats' come from presets. 'prometheus' is our custom one.
               receivers  = ["otlp", "hostmetrics", "kubeletstats", "prometheus"]
               processors = ["memory_limiter", "k8sattributes", "batch"]
               exporters  = ["prometheusremotewrite"]
             }
             logs = {
-              # 'filelog' comes from the logsCollection preset
+              // 'filelog' comes from the logsCollection preset
               receivers  = ["filelog"]
               processors = ["memory_limiter", "k8sattributes", "batch"]
               exporters  = ["otlphttp"]
             }
             traces = {
-              # Defining debug as exporter for traces
-              # to ignore traces and catch errors
-              # when apps send traces here
+              // Defining debug as exporter for traces
+              // to ignore traces and catch errors
+              // when apps send traces here
               receivers = ["otlp"]
               processors = ["memory_limiter", "batch"]
               exporters = ["debug"] 
@@ -199,7 +199,7 @@ resource "helm_release" "otel_collector" {
         }
       }
 
-      # Resource Constraints
+      // Resource Constraints
       resources = {
         requests = {
           cpu    = "50m"

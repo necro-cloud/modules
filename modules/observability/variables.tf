@@ -23,3 +23,70 @@ variable "namespace" {
   type        = string
   default     = "observability"
 }
+
+# --------------- CERTIFICATE VARIABLES --------------- #
+variable "cluster_issuer_name" {
+  description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
+  type        = string
+  nullable    = false
+}
+
+variable "certificate_authority_name" {
+  description = "Name of the Certificate Authority to be associated with Observability Platform"
+  type        = string
+  default     = "observability-certificate-authority"
+}
+
+variable "issuer_name" {
+  description = "Name of the Issuer to be associated with Observability Platform"
+  type        = string
+  default     = "observability-certificate-issuer"
+}
+
+variable "internal_certificate_name" {
+  description = "Name of the Internal Certificate to be associated with Observability Platform"
+  type        = string
+  default     = "observability-internal-certificate"
+}
+
+variable "cloudflare_token" {
+  description = "Token for generating Ingress Certificates to be associated with Observability Platform"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_email" {
+  description = "Email for generating Ingress Certificates to be associated with Observability Platform"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_issuer_name" {
+  description = "Name of the Cloudflare Issuer to be associated with Observability Platform"
+  type        = string
+  default     = "observability-cloudflare-issuer"
+}
+
+variable "acme_server" {
+  description = "URL for the ACME Server to be used, defaults to production URL for LetsEncrypt"
+  type        = string
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+variable "ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with Observability Platform"
+  type        = string
+  default     = "observability-ingress-certificate"
+}
+
+variable "host_name" {
+  description = "Host name for which Ingress Certificate is to be generated for"
+  type        = string
+  default     = "observability"
+}
+
+variable "domain" {
+  description = "Domain for which Ingress Certificate is to be generated for"
+  type        = string
+  nullable    = false
+}

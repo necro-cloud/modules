@@ -3,45 +3,45 @@ resource "kubernetes_manifest" "network_observability" {
     apiVersion = "flows.netobserv.io/v1beta2"
     kind       = "FlowCollector"
     metadata = {
-      # The operator expects this specific name
+      // The operator expects this specific name
       name = "cluster"
     }
     spec = {
       namespace = kubernetes_namespace.namespace.metadata[0].name
       
-      # "Direct" mode sends logs straight to OTel (bypassing Kafka/IPFIX)
+      // "Direct" mode sends logs straight to OTel (bypassing Kafka/IPFIX)
       deploymentModel = "Direct"
 
       agent = {
         type = "eBPF"
         ebpf = {
-          # PRIVILEGED: Required for "PacketDrop" to read kernel drop reasons
+          // PRIVILEGED: Required for "PacketDrop" to read kernel drop reasons
           privileged = true
           
-          # FEATURES: Enable drop detection
+          // FEATURES: Enable drop detection
           features = ["PacketDrop"] 
           
-          # SAMPLING: 25 means 1 in 25 packets
+          // SAMPLING: 25 means 1 in 25 packets
           sampling           = 25
           cacheActiveTimeout = "15s"
           cacheMaxFlows      = 100000
-          excludeInterfaces  = ["lo"] # Ignore loopback traffic
+          excludeInterfaces  = ["lo"] // Ignore loopback traffic
 
-          # Resource Constraints
+          // Resource Constraints
           resources = {
             requests = {
               cpu    = "50m"
               memory = "100Mi"
             }
             limits = {
-              cpu    = "500m"  # Hard cap to prevent eBPF compiler spikes
-              memory = "512Mi" # Hard cap to prevent leaks
+              cpu    = "500m"  // Hard cap to prevent eBPF compiler spikes
+              memory = "512Mi" // Hard cap to prevent leaks
             }
           }
         }
       }
 
-      # Disable default stack for the netobserv instance
+      // Disable default stack for the netobserv instance
       loki = {
         enable = false
       }
@@ -54,23 +54,23 @@ resource "kubernetes_manifest" "network_observability" {
         enable = false
       }
 
-      # PROCESSOR: Enrichment settings
+      // PROCESSOR: Enrichment settings
       processor = {
         logTypes = "Flows"
         metrics = {
-          # Disable agent-side metrics generation to save CPU
-          # We will derive metrics from logs in Victoria if needed
+          // Disable agent-side metrics generation to save CPU
+          // We will derive metrics from logs in Victoria if needed
           disableAlerts = ["NetObservLokiError", "NetObservNoFlows"] 
         }
       }
 
-      # EXPORT: Pushing to the OTel Collector
+      // EXPORT: Pushing to the OTel Collector
       exporters = [
         {
           type = "OpenTelemetry"
           openTelemetry = {
-            # 1. POINT THIS TO YOUR OTEL COLLECTOR SERVICE
-            # Format: <service-name>.<namespace>.svc.cluster.local
+            // 1. POINT THIS TO YOUR OTEL COLLECTOR SERVICE
+            // Format: <service-name>.<namespace>.svc.cluster.local
             targetHost = "otel-collector.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
             targetPort = 4317
             protocol   = "grpc"
@@ -81,7 +81,7 @@ resource "kubernetes_manifest" "network_observability" {
               expiryTime       = "2m"
             }
             
-            # Disable direct metric export (optional)
+            // Disable direct metric export (optional)
             metrics = {
               enable = false 
             }

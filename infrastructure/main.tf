@@ -22,7 +22,13 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/77/grafana-deployment"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
   depends_on = [module.cluster-issuer]
 }
