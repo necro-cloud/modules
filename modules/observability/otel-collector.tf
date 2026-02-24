@@ -85,6 +85,7 @@ resource "helm_release" "otel_collector" {
                 {
                   job_name = "kubernetes-pods"
                   scrape_interval = "30s"
+                  body_size_limit = "50MB"
                   kubernetes_sd_configs = [
                     {
                       role = "pod"
