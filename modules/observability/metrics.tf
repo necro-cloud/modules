@@ -9,6 +9,11 @@ resource "helm_release" "metrics" {
   values = [
     yamlencode({
       server = {
+        
+        extraArgs = {
+          "maxLabelValueLen" = "8192"
+        }        
+
         replicaCount = 1
         retentionPeriod = "7d"
 
