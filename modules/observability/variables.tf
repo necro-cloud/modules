@@ -2,7 +2,7 @@
 variable "app_name" {
   description = "App name for deploying the Observability Stack"
   type        = string
-  default     = "ferret"
+  default     = "observability"
 }
 
 variable "organization_name" {
