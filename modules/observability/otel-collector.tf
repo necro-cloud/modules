@@ -84,6 +84,7 @@ resource "helm_release" "otel_collector" {
               scrape_configs = [
                 {
                   job_name = "kubernetes-pods"
+                  honor_labels = true
                   scrape_interval = "30s"
                   body_size_limit = "50MB"
                   kubernetes_sd_configs = [
