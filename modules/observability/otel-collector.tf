@@ -158,7 +158,18 @@ resource "helm_release" "otel_collector" {
               }
             ]
           }
-        }
+
+          transform = {
+            metric_statements = [
+              {
+                context = "datapoint"
+                statements = [
+                  "set(attributes[\"namespace\"], resource.attributes[\"namespace\"]) where attributes[\"namespace\"] == nil and resource.attributes[\"namespace\"] != nil",
+                  "set(attributes[\"pod\"], resource.attributes[\"pod\"]) where attributes[\"pod\"] == nil and resource.attributes[\"pod\"] != nil"
+                ]
+              }
+            ]
+          }        }
 
         // Exporters
         exporters = {
@@ -185,7 +196,7 @@ resource "helm_release" "otel_collector" {
             metrics = {
               // 'hostmetrics' & 'kubeletstats' come from presets. 'prometheus' is our custom one.
               receivers  = ["otlp", "hostmetrics", "kubeletstats", "prometheus"]
-              processors = ["memory_limiter", "k8sattributes", "batch"]
+              processors = ["memory_limiter", "k8sattributes", "transform", "batch"]
               exporters  = ["prometheusremotewrite"]
             }
             logs = {
