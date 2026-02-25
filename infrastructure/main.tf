@@ -60,7 +60,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/90/cnpg-dashboards"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret

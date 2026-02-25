@@ -16,6 +16,11 @@ resource "kubernetes_manifest" "cluster" {
         "labels" = {
           "garage-access" = true
         }
+        "annotations" = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/port"   = "9187"
+          "prometheus.io/path"   = "/metrics"
+        }
       }
       "topologySpreadConstraints" = [
         {
