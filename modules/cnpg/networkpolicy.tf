@@ -92,6 +92,12 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
     # Rule 4: Allow OpenTelemetry Collector to scrape CNPG metrics
     ingress {
       from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "observability"
+          }
+        }
+
         pod_selector {
           match_labels = {
             "app.kubernetes.io/instance" = "otel-collector" 
