@@ -120,6 +120,17 @@ resource "helm_release" "otel_collector" {
                       regex         = "([^:]+)(?::\\d+)?;(\\d+)"
                       replacement   = "$1:$2"
                       target_label  = "__address__"
+                    },
+                    // Add namespace and pod to the metrics data
+                    {
+                      source_labels = ["__meta_kubernetes_namespace"]
+                      action        = "replace"
+                      target_label  = "namespace"
+                    },
+                    {
+                      source_labels = ["__meta_kubernetes_pod_name"]
+                      action        = "replace"
+                      target_label  = "pod"
                     }
                   ]
                 }
