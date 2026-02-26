@@ -94,7 +94,7 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       from {
         namespace_selector {
           match_labels = {
-            "kubernetes.io/metadata.name" = "observability"
+            "kubernetes.io/metadata.name" = var.observability_namespace
           }
         }
 
