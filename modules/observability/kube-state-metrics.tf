@@ -12,6 +12,17 @@ resource "helm_release" "kube_state_metrics" {
         "prometheus.io/scrape" = "true"
         "prometheus.io/port"   = "8080"
       }
+
+      resources = {
+        requests = {
+          cpu    = "50m"
+          memory = "128Mi"
+        }
+        limits = {
+          cpu    = "200m"
+          memory = "256Mi"
+        }
+      }
     })
   ]
 }
