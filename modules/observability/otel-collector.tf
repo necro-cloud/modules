@@ -134,6 +134,37 @@ resource "helm_release" "otel_collector" {
                       target_label  = "pod"
                     }
                   ]
+                },
+                // Scrape Kubernetes cAdvisor Metrics
+                {
+                  job_name = "kubelet-cadvisor"
+                  scheme   = "https"
+                  tls_config = {
+                    ca_file              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+                    insecure_skip_verify = true
+                  }
+                  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                  
+                  kubernetes_sd_configs = [
+                    {
+                      role = "node"
+                    }
+                  ]
+                  
+                  relabel_configs = [
+                    // 1. Only scrape the local node this DaemonSet pod is running on
+                    {
+                      source_labels = ["__meta_kubernetes_node_name"]
+                      action        = "keep"
+                      regex         = "$${env:K8S_NODE_NAME}"
+                    },
+                    // 2. Point directly to the internal cAdvisor endpoint
+                    {
+                      action       = "replace"
+                      target_label = "__metrics_path__"
+                      replacement  = "/metrics/cadvisor"
+                    }
+                  ]
                 }
               ]
             }
