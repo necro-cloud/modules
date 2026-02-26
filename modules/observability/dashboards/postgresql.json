@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -523,10 +523,6 @@
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1024,5 +1020,5 @@
   "timezone": "browser",
   "title": "Cloudnative PostgreSQL Database Monitoring",
   "uid": "obbmrs2",
-  "version": 3
+  "version": 1
 }
