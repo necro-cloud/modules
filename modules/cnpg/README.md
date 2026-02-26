@@ -56,19 +56,19 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02
+| <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying PostgreSQL Database | `string` | `"postgres"` | no |
 | <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the bucket for storing PITR Backups in Garage | `string` | n/a | yes |
-| <a name="input_client_certificate_authority_name"></a> [client\_certificate\_authority\_name](#input\_client\_certificate\_authority\_name) | Name of the Certificate Authority to be
-| <a name="input_client_issuer_name"></a> [client\_issuer\_name](#input\_client\_issuer\_name) | Name of the Issuer to be used with PostgreSQL Client | `string` | `"postgresql-client-i
-| <a name="input_client_streaming_replica_certificate_name"></a> [client\_streaming\_replica\_certificate\_name](#input\_client\_streaming\_replica\_certificate\_name) | Name of the Ce
-| <a name="input_clients"></a> [clients](#input\_clients) | Object List of clients who need databases and users to be configured for | <pre>list(object({<br/>    namespace          = s
-| <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes
-| <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with PGAdmin | `string` | `"
-| <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes
-| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates
+| <a name="input_client_certificate_authority_name"></a> [client\_certificate\_authority\_name](#input\_client\_certificate\_authority\_name) | Name of the Certificate Authority to be used with PostgreSQL Client | `string` | `"postgresql-client-certificate-authority"` | no |
+| <a name="input_client_issuer_name"></a> [client\_issuer\_name](#input\_client\_issuer\_name) | Name of the Issuer to be used with PostgreSQL Client | `string` | `"postgresql-client-issuer"` | no |
+| <a name="input_client_streaming_replica_certificate_name"></a> [client\_streaming\_replica\_certificate\_name](#input\_client\_streaming\_replica\_certificate\_name) | Name of the Certificate to be used with PostgreSQL Streaming Replica Client | `string` | `"postgresql-streaming-replica-client-certificate"` | no |
+| <a name="input_clients"></a> [clients](#input\_clients) | Object List of clients who need databases and users to be configured for | <pre>list(object({<br/>    namespace          = string<br/>    user               = string<br/>    database           = string<br/>    derRequired        = bool<br/>    privateKeyEncoding = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes |
+| <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with PGAdmin | `string` | `"cnpg-cloudflare-issuer"` | no |
+| <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes |
+| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the PostgreSQL Database Cluster to be created | `string` | `"postgresql-cluster"` | no |
-| <a name="input_cluster_postgresql_version"></a> [cluster\_postgresql\_version](#input\_cluster\_postgresql\_version) | Version of PostgreSQL Database to use and deploy | `number` | `
+| <a name="input_cluster_postgresql_version"></a> [cluster\_postgresql\_version](#input\_cluster\_postgresql\_version) | Version of PostgreSQL Database to use and deploy | `number` | `17` | no |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the PostgreSQL Cluster | `number` | `2` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying PostgreSQL Database | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
