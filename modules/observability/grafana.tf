@@ -98,7 +98,37 @@ resource "helm_release" "grafana" {
           scheme = "HTTPS"
         }
       }
-            
+
+      
+      // Deploy dashboards to Grafana
+      dashboardProviders = {
+        "dashboardproviders.yaml" = {
+          apiVersion = 1
+          providers = [
+            {
+              name            = "Cloudnative PostgreSQL Database Dashboard"
+              orgId           = 1
+              folder          = "Database Dashboards"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/default"
+              }
+            }
+          ]
+        }
+      }
+
+      // Injecting the Dashboard JSON file into the Grafana container
+      dashboards = {
+        default = {
+          postgres-dashboard = {
+            json = file("${path.module}/dashboards/postgres-dashboard.json")
+          }
+        }
+      }
+                  
       affinity = {
         nodeAffinity = {
           requiredDuringSchedulingIgnoredDuringExecution = {
