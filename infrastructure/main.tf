@@ -68,6 +68,9 @@ module "cnpg" {
   garage_configuration         = "walbackups-credentials"
   backup_bucket_name           = "postgresql"
 
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
   // Required client details to allow access and generate credentials and certificates for
   clients = [
     {
@@ -96,13 +99,16 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/90/cnpg-dashboards"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
   garage_configuration         = "walbackups-credentials"
   backup_bucket_name           = "ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
   // Required client details to allow access and generate credentials and certificates for
   clients = [
