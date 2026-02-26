@@ -201,7 +201,8 @@ resource "helm_release" "otel_collector" {
                 ]
               }
             ]
-          }        }
+          }
+        }
 
         // Exporters
         exporters = {
