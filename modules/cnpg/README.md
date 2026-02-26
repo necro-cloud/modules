@@ -82,6 +82,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="input_kubernetes_api_port"></a> [kubernetes\_api\_port](#input\_kubernetes\_api\_port) | Port for the Kubernetes API | `number` | n/a | yes |
 | <a name="input_kubernetes_api_protocol"></a> [kubernetes\_api\_protocol](#input\_kubernetes\_api\_protocol) | Protocol for the Kubernetes API | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying PostgreSQL Database | `string` | `"postgres"` | no |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | n/a | yes |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying PostgreSQL Database | `string` | `"cloud"` | no |
 | <a name="input_proxy_image"></a> [proxy\_image](#input\_proxy\_image) | Docker image to be used for deployment of PGAdmin NGINX Proxy for TLS | `string` | `"nginx"` | no |
 | <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of PGAdmin NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |

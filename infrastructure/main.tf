@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/90/cnpg-dashboards"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -60,13 +60,16 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/90/cnpg-dashboards"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
   garage_configuration         = "walbackups-credentials"
   backup_bucket_name           = "postgresql"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
   // Required client details to allow access and generate credentials and certificates for
   clients = [
@@ -96,13 +99,16 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/90/cnpg-dashboards"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
   garage_configuration         = "walbackups-credentials"
   backup_bucket_name           = "ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
   // Required client details to allow access and generate credentials and certificates for
   clients = [

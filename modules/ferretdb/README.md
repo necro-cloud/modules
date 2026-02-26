@@ -83,6 +83,7 @@ Required Modules to deploy FerretDB Database:
 | <a name="input_mongo_express_repository"></a> [mongo\_express\_repository](#input\_mongo\_express\_repository) | Repository to be used for deployment of Mongo Express UI | `string` | `"docker.io/library"` | no |
 | <a name="input_mongo_express_tag"></a> [mongo\_express\_tag](#input\_mongo\_express\_tag) | Docker tag to be used for deployment of Mongo Express UI | `string` | `"1.0.2-20-alpine3.19"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Ferret Database | `string` | `"ferret"` | no |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | n/a | yes |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Ferret Database | `string` | `"cloud"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of FerretDB | `string` | `"ghcr.io/ferretdb"` | no |
 | <a name="input_server_certificate_authority_name"></a> [server\_certificate\_authority\_name](#input\_server\_certificate\_authority\_name) | Name of the Certificate Authority to be used with Ferret Server | `string` | `"ferretdb-server-certificate-authority"` | no |

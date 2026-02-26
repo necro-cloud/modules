@@ -84,6 +84,7 @@ resource "helm_release" "otel_collector" {
               scrape_configs = [
                 {
                   job_name = "kubernetes-pods"
+                  honor_labels = true
                   scrape_interval = "30s"
                   body_size_limit = "50MB"
                   kubernetes_sd_configs = [
@@ -120,6 +121,48 @@ resource "helm_release" "otel_collector" {
                       regex         = "([^:]+)(?::\\d+)?;(\\d+)"
                       replacement   = "$1:$2"
                       target_label  = "__address__"
+                    },
+                    // Add namespace and pod to the metrics data
+                    {
+                      source_labels = ["__meta_kubernetes_namespace"]
+                      action        = "replace"
+                      target_label  = "namespace"
+                    },
+                    {
+                      source_labels = ["__meta_kubernetes_pod_name"]
+                      action        = "replace"
+                      target_label  = "pod"
+                    }
+                  ]
+                },
+                // Scrape Kubernetes cAdvisor Metrics
+                {
+                  job_name = "kubelet-cadvisor"
+                  scheme   = "https"
+                  tls_config = {
+                    ca_file              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+                    insecure_skip_verify = true
+                  }
+                  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                  
+                  kubernetes_sd_configs = [
+                    {
+                      role = "node"
+                    }
+                  ]
+                  
+                  relabel_configs = [
+                    // 1. Only scrape the local node this DaemonSet pod is running on
+                    {
+                      source_labels = ["__meta_kubernetes_node_name"]
+                      action        = "keep"
+                      regex         = "$${env:K8S_NODE_NAME}"
+                    },
+                    // 2. Point directly to the internal cAdvisor endpoint
+                    {
+                      action       = "replace"
+                      target_label = "__metrics_path__"
+                      replacement  = "/metrics/cadvisor"
                     }
                   ]
                 }
@@ -144,6 +187,18 @@ resource "helm_release" "otel_collector" {
                 key    = "log.source"
                 value  = "netobserv"
                 action = "insert"
+              }
+            ]
+          }
+
+          transform = {
+            metric_statements = [
+              {
+                context = "datapoint"
+                statements = [
+                  "set(attributes[\"namespace\"], resource.attributes[\"namespace\"]) where attributes[\"namespace\"] == nil and resource.attributes[\"namespace\"] != nil",
+                  "set(attributes[\"pod\"], resource.attributes[\"pod\"]) where attributes[\"pod\"] == nil and resource.attributes[\"pod\"] != nil"
+                ]
               }
             ]
           }
@@ -174,7 +229,7 @@ resource "helm_release" "otel_collector" {
             metrics = {
               // 'hostmetrics' & 'kubeletstats' come from presets. 'prometheus' is our custom one.
               receivers  = ["otlp", "hostmetrics", "kubeletstats", "prometheus"]
-              processors = ["memory_limiter", "k8sattributes", "batch"]
+              processors = ["memory_limiter", "k8sattributes", "transform", "batch"]
               exporters  = ["prometheusremotewrite"]
             }
             logs = {

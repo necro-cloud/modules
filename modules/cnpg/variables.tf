@@ -30,6 +30,12 @@ variable "garage_namespace" {
   nullable    = false
 }
 
+variable "observability_namespace" {
+  description = "Namespace where all components for observability are deployed"
+  type        = string
+  nullable    = false
+}
+
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "garage_certificate_authority" {
   description = "Name of the Certificate Authority associated with the Garage Storage Solution"
