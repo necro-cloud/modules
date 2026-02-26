@@ -124,7 +124,7 @@ resource "helm_release" "grafana" {
       dashboards = {
         default = {
           postgres-dashboard = {
-            json = file("${path.module}/dashboards/postgres-dashboard.json")
+            json = file("${path.module}/dashboards/postgresql.json")
           }
         }
       }
