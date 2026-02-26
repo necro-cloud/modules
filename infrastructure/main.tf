@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/90/cnpg-dashboards"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -60,7 +60,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/90/cnpg-dashboards"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
@@ -99,7 +99,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/90/cnpg-dashboards"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
