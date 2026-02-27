@@ -24,6 +24,12 @@ variable "namespace" {
   default     = "garage"
 }
 
+variable "observability_namespace" {
+  description = "Namespace where all components for observability are deployed"
+  type        = string
+  nullable    = false
+}
+
 # --------------- GARAGE CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
