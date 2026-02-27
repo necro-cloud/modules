@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/93/garage-dashboards"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -35,7 +35,7 @@ module "observability" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/93/garage-dashboards"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -45,6 +45,9 @@ module "garage" {
 
   // Granting required namespaces access to the Garage cluster
   access_namespaces = "postgres,ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
   // Configuring required configurations on the Garage Cluster
   required_buckets     = var.garage_required_buckets

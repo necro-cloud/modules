@@ -99,8 +99,30 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
         port     = 3943
       }
     }
+    
+    # Rule 5: Allow OpenTelemetry Collector to scrape Garage metrics
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = var.observability_namespace
+          }
+        }
 
-    # -------------- INGRESS RULES -------------- #
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/instance" = "otel-collector" 
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 3903
+      }
+    }
+
+    # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to other Garage pods
     egress {
       to {

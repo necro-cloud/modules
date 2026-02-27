@@ -29,6 +29,13 @@ resource "kubernetes_stateful_set" "statefulset" {
           component = "pod"
           "part-of" = "garage"
         }
+
+        // Scrape for metrics
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/port"   = "3903"
+          "prometheus.io/path"   = "/metrics"
+        }
       }
 
       spec {

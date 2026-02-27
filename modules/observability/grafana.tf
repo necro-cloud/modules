@@ -113,8 +113,19 @@ resource "helm_release" "grafana" {
               disableDeletion = false
               editable        = true
               options = {
-                path = "/var/lib/grafana/dashboards/default"
-              }
+                path = "/var/lib/grafana/dashboards/psql"
+              },
+            },
+            {
+              name            = "Garage S3 Object Storage Dashboard"
+              orgId           = 1
+              folder          = "Object Storage Dashboards"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/garage"
+              },
             }
           ]
         }
@@ -122,9 +133,14 @@ resource "helm_release" "grafana" {
 
       // Injecting the Dashboard JSON file into the Grafana container
       dashboards = {
-        default = {
+        psql = {
           postgres-dashboard = {
             json = file("${path.module}/dashboards/postgresql.json")
+          }
+        }
+        garage = {
+          garage-dashboard = {
+            json = file("${path.module}/dashboards/garage.json")
           }
         }
       }
