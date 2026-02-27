@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/93/garage-dashboards"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -35,7 +35,7 @@ module "observability" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/93/garage-dashboards"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
