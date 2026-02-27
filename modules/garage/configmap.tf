@@ -37,6 +37,7 @@ resource "kubernetes_config_map" "garage_config" {
 
       [admin]
       api_bind_addr = "[::]:3903"
+      metrics_require_token = false
     EOF
   }
 }
