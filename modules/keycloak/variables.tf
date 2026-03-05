@@ -30,6 +30,12 @@ variable "postgres_namespace" {
   nullable    = false
 }
 
+variable "observability_namespace" {
+  description = "Namespace where all components for observability are deployed"
+  type        = string
+  nullable    = false
+}
+
 # --------------- DATABASE VARIABLES --------------- #
 variable "cluster_name" {
   description = "Database Cluster Name to allow Network Connections to"

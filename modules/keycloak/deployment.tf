@@ -9,7 +9,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     }
   }
   spec {
-    replicas     = 3
+    replicas     = 1
     service_name = ""
 
     // Stateful Set Pod Selector
@@ -32,6 +32,13 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           component   = "pod"
           "part-of"   = "keycloak"
           "pg-access" = true
+        }
+
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/path"   = "/metrics"
+          "prometheus.io/port"   = "9000" 
+          "prometheus.io/scheme" = "https"
         }
       }
 
@@ -101,6 +108,11 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           env {
             name  = "KC_DB"
             value = "postgres"
+          }
+
+          env {
+            name = "KC_METRICS_ENABLED"
+            value = "true"
           }
 
           env {
