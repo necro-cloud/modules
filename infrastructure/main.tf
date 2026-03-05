@@ -153,6 +153,9 @@ module "keycloak" {
   cloudflare_email = var.cloudflare_email
   domain           = var.domain
 
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
   // Realm Settings for auto configuration of required clients
   realm_settings = local.keycloak_realm_settings
 
