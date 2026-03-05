@@ -84,7 +84,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
 
       ports {
         protocol = "TCP"
-        port     = 3903
+        port     = 9000
       }
     }
 
