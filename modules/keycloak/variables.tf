@@ -123,7 +123,6 @@ variable "domain" {
 }
 
 # --------------- SECRET VARIABLES --------------- #
-
 variable "database_credentials" {
   description = "Name of the secret which contains the database credentials for Keycloak"
   type        = string
@@ -155,6 +154,29 @@ variable "realm_settings" {
 }
 
 # --------------- CLUSTER VARIABLES --------------- #
+variable "replicas" {
+  description = "Number of replicas to run for Keycloak cluster"
+  type = number
+  default = 1
+}
+
+variable "repository" {
+  description = "Repository to be used for deployment of Keycloak"
+  type        = string
+  default     = "quay.io/keycloak"
+}
+
+variable "image" {
+  description = "Docker image to be used for deployment of Keycloak"
+  type        = string
+  default     = "keycloak"
+}
+
+variable "tag" {
+  description = "Docker tag to be used for deployment of Keycloak"
+  type        = string
+  default     = "26.4.5"
+}
 
 variable "keycloak_environment_variables" {
   default = [

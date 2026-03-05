@@ -9,7 +9,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     }
   }
   spec {
-    replicas     = 1
+    replicas     = var.replicas
     service_name = ""
 
     // Stateful Set Pod Selector
@@ -76,7 +76,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         // Container Details
         container {
           name  = "keycloak"
-          image = "quay.io/keycloak/keycloak:26.4.5"
+          image = "${var.repository}/${var.image}:${var.tag}"
           args  = ["--verbose", "start", "--import-realm"]
 
           // Environment Variables
