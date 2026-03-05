@@ -126,6 +126,17 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/garage"
               },
+            },
+            {
+              name            = "Keycloak Identity Management Dashboard"
+              orgId           = 1
+              folder          = "Application Services Dashboards"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/keycloak"
+              },
             }
           ]
         }
@@ -141,6 +152,11 @@ resource "helm_release" "grafana" {
         garage = {
           garage-dashboard = {
             json = file("${path.module}/dashboards/garage.json")
+          }
+        }
+        keycloak = {
+          keycloak-dashboard = {
+            json = file("${path.module}/dashboards/keycloak.json")
           }
         }
       }
