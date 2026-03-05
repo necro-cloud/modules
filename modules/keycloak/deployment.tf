@@ -116,6 +116,16 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           env {
+            name = "KC_EVENT_METRICS_USER_ENABLED"
+            value = "true"
+          }
+
+          env {
+            name = "KC_EVENT_METRICS_USER_TAGS"
+            value = "realm,idp,clientId"
+          }
+
+          env {
             name = "KC_DB_USERNAME"
             value_from {
               secret_key_ref {
