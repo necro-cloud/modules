@@ -11,7 +11,22 @@ resource "helm_release" "otel_collector" {
       fullnameOverride = "otel-collector"
       
       mode = "daemonset"
-
+      clusterRole = {
+        create = true
+        rules = [
+          {
+            apiGroups = [""]
+            resources = ["nodes", "nodes/metrics", "nodes/stats", "nodes/proxy", "services", "endpoints", "pods"]
+            verbs     = ["get", "list", "watch"]
+          },
+          {
+            apiGroups = ["apps", "extensions"]
+            resources = ["replicasets"]
+            verbs     = ["get", "list", "watch"]
+          }
+        ]
+      }
+      
       // Enable service creation for pushing logs and metrics 
       service = {
         enabled = true

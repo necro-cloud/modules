@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/96/keycloak-dashboards"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -138,7 +138,7 @@ module "ferretdb" {
 
 # Keycloak Cluster Deployment for Identity Solution
 module "keycloak" {
-  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=task/96/keycloak-dashboards"
 
   // PostgreSQL Database Details for database details
   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
