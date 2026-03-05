@@ -11,7 +11,22 @@ resource "helm_release" "otel_collector" {
       fullnameOverride = "otel-collector"
       
       mode = "daemonset"
-
+      clusterRole = {
+        create = true
+        rules = [
+          {
+            apiGroups = [""]
+            resources = ["nodes", "nodes/metrics", "nodes/stats", "nodes/proxy", "services", "endpoints", "pods"]
+            verbs     = ["get", "list", "watch"]
+          },
+          {
+            apiGroups = ["apps", "extensions"]
+            resources = ["replicasets"]
+            verbs     = ["get", "list", "watch"]
+          }
+        ]
+      }
+      
       // Enable service creation for pushing logs and metrics 
       service = {
         enabled = true
@@ -87,6 +102,12 @@ resource "helm_release" "otel_collector" {
                   honor_labels = true
                   scrape_interval = "30s"
                   body_size_limit = "50MB"
+
+                  // Ignore Self Signed TLS errors while scraping HTTPS endpoints
+                  tls_config = {
+                    insecure_skip_verify = true
+                  }
+                  
                   kubernetes_sd_configs = [
                     {
                       role = "pod"
@@ -132,6 +153,13 @@ resource "helm_release" "otel_collector" {
                       source_labels = ["__meta_kubernetes_pod_name"]
                       action        = "replace"
                       target_label  = "pod"
+                    },
+                    // Use HTTPS if the scheme asks for it
+                    {
+                      source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scheme"]
+                      action        = "replace"
+                      target_label  = "__scheme__"
+                      regex         = "(https?)"
                     }
                   ]
                 },

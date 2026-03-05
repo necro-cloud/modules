@@ -65,6 +65,28 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
         port     = 57800
       }
     }
+    
+    # Rule 3: Allow OpenTelemetry Collector to scrape Keycloak metrics
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = var.observability_namespace
+          }
+        }
+
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/instance" = "otel-collector" 
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 9000
+      }
+    }
 
     # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to KubeDNS for DNS resolutions

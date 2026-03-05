@@ -9,7 +9,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     }
   }
   spec {
-    replicas     = 3
+    replicas     = var.replicas
     service_name = ""
 
     // Stateful Set Pod Selector
@@ -32,6 +32,13 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           component   = "pod"
           "part-of"   = "keycloak"
           "pg-access" = true
+        }
+
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/path"   = "/metrics"
+          "prometheus.io/port"   = "9000" 
+          "prometheus.io/scheme" = "https"
         }
       }
 
@@ -69,7 +76,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         // Container Details
         container {
           name  = "keycloak"
-          image = "quay.io/keycloak/keycloak:26.4.5"
+          image = "${var.repository}/${var.image}:${var.tag}"
           args  = ["--verbose", "start", "--import-realm"]
 
           // Environment Variables
@@ -101,6 +108,21 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           env {
             name  = "KC_DB"
             value = "postgres"
+          }
+
+          env {
+            name = "KC_METRICS_ENABLED"
+            value = "true"
+          }
+
+          env {
+            name = "KC_EVENT_METRICS_USER_ENABLED"
+            value = "true"
+          }
+
+          env {
+            name = "KC_EVENT_METRICS_USER_TAGS"
+            value = "realm,idp,clientId"
           }
 
           env {
