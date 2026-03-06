@@ -58,6 +58,28 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
       }
     }
 
+    # Rule 3: Allow OpenTelemetry Collector to scrape Garage metrics
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = var.observability_namespace
+          }
+        }
+
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/instance" = "otel-collector" 
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 9121
+      }
+    }
+
     # -------------- INGRESS RULES -------------- #
     # Rule 1: Allow egress to other Valkey pods
     egress {

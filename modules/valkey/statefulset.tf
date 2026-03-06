@@ -27,6 +27,11 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           app       = var.app_name
           "part-of" = "valkey-cluster"
         }
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/port"   = "9121"
+          "prometheus.io/scheme" = "http"
+        }
       }
 
       spec {
@@ -145,6 +150,73 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             name       = "valkey-data"
             mount_path = "/data"
           }
+        }
+
+        // Valkey Exporter for exposing Prometheus Metrics
+        container {
+          name = "metrics"
+          image = "${var.metrics_repository}/${var.metrics_image}:${var.metrics_tag}"
+
+          port {
+            name           = "metrics"
+            container_port = 9121
+          }
+
+          // Valkey Connection String
+          env {
+            name  = "REDIS_ADDR"
+            value = "rediss://localhost:6379" 
+          }
+
+          // Password Authentication for the cluster
+          env {
+            name = "REDIS_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.valkey_password.metadata[0].name
+                key  = "VALKEY_PASSWORD"
+              }
+            }
+          }
+
+          // Using certificates for proper TLS connection to the cluster
+          env {
+            name  = "REDIS_EXPORTER_TLS_CA_CERT_FILE"
+            value = "/etc/valkey/tls/ca.crt"
+          }
+          env {
+            name  = "REDIS_EXPORTER_TLS_CLIENT_CERT_FILE"
+            value = "/etc/valkey/tls/tls.crt"
+          }
+          env {
+            name  = "REDIS_EXPORTER_TLS_CLIENT_KEY_FILE"
+            value = "/etc/valkey/tls/tls.key"
+          }
+
+          // Optionally skip verifying the hostname on the cert since we are using localhost
+          env {
+            name  = "REDIS_EXPORTER_SKIP_TLS_VERIFICATION"
+            value = "true"
+          }
+
+          // Mounting the exact same certificate volume used by the Valkey container
+          volume_mount {
+            name       = "certificates"
+            mount_path = "/etc/valkey/tls"
+            read_only  = true
+          }
+          
+          // Tiny resource footprint for metrics
+          resources {
+            requests = {
+              cpu    = "10m"
+              memory = "32Mi"
+            }
+            limits = {
+              cpu    = "100m"
+              memory = "64Mi"
+            }
+          }                    
         }
 
         volume {
