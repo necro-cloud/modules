@@ -148,6 +148,28 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/valkey"
               },
+            },
+            {
+              name            = "Cluster Level Monitoring Dashboard"
+              orgId           = 1
+              folder          = "Kubernetes Monitoring"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/cluster"
+              },
+            },
+            {
+              name            = "Pod Level Monitoring Dashboard"
+              orgId           = 1
+              folder          = "Kubernetes Monitoring"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/pod"
+              },
             }
           ]
         }
@@ -173,6 +195,16 @@ resource "helm_release" "grafana" {
         valkey = {
           valkey-dashboard = {
             json = file("${path.module}/dashboards/valkey.json")
+          }
+        }
+        cluster = {
+          cluster-dashboard = {
+            json = file("${path.module}/dashboards/cluster.json")
+          }
+        }
+        pod = {
+          pod-dashboard = {
+            json = file("${path.module}/dashboards/pod.json")
           }
         }
       }
