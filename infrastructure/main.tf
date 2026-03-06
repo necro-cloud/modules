@@ -173,5 +173,8 @@ module "valkey" {
   // Granting required namespaces access to the Valkey
   access_namespaces = "cloud"
 
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
   depends_on = [module.observability]
 }
