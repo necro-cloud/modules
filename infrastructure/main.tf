@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/99/valkey-dashboard"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -165,13 +165,16 @@ module "keycloak" {
 
 # Valkey Deployment for In Memory Storage Solution
 module "valkey" {
-  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/99/valkey-dashboard"
 
   // Certificate details for TLS Authentication
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
 
   // Granting required namespaces access to the Valkey
   access_namespaces = "cloud"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
   depends_on = [module.observability]
 }

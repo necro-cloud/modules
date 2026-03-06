@@ -24,6 +24,12 @@ variable "namespace" {
   default     = "valkey"
 }
 
+variable "observability_namespace" {
+  description = "Namespace where all components for observability are deployed"
+  type        = string
+  nullable    = false
+}
+
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
@@ -78,5 +84,24 @@ variable "tag" {
 variable "replicas" {
   description = "Number of replicas to run for Valkey Cluster"
   type        = number
-  default     = 6
+  default     = 3
+}
+
+# --------------- VALKEY METRICS VARIABLES --------------- #
+variable "metrics_repository" {
+  description = "Repository to be used for deployment of Valkey Metrics"
+  type        = string
+  default     = "docker.io/oliver006"
+}
+
+variable "metrics_image" {
+  description = "Docker image to be used for deployment of Valkey Metrics"
+  type        = string
+  default     = "redis_exporter"
+}
+
+variable "metrics_tag" {
+  description = "Docker tag to be used for deployment of Valkey Metrics"
+  type        = string
+  default     = "v1.81.0-alpine"
 }
