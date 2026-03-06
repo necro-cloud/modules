@@ -137,6 +137,17 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/keycloak"
               },
+            },
+            {
+              name            = "Valkey In Memory Database Dashboard"
+              orgId           = 1
+              folder          = "Database Dashboards"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/valkey"
+              },
             }
           ]
         }
@@ -157,6 +168,11 @@ resource "helm_release" "grafana" {
         keycloak = {
           keycloak-dashboard = {
             json = file("${path.module}/dashboards/keycloak.json")
+          }
+        }
+        valkey = {
+          valkey-dashboard = {
+            json = file("${path.module}/dashboards/valkey.json")
           }
         }
       }
