@@ -1,6 +1,6 @@
 # necronizer's cloud modules
 
-OpenTofu Modules that can be used to deploy a functioning self hosted cloud solution perfect for side projects. For a guide on how to use these modules, please navigate to the [example](./example) directory.
+OpenTofu Modules that can be used to deploy a functioning self hosted cloud solution perfect for side projects. For a guide on how to use these modules, please navigate to the [infrastructure](./infrastructure) directory.
 
 # Requirements and Dependencies
 
@@ -15,7 +15,7 @@ The following is required to start using this repository:
 The following modules have been implemented and their usage instructions written in README:
 1. [Helm](modules/helm)
 2. [Cluster Issuer for internal certificates](modules/cluster-issuer)
-3. [\[DEPRECATED\] MinIO Storage](modules/minio)
+3. [Observability](modules/observability)
 4. [Garage Storage](modules/garage)
 5. [Cloudnative PG PostgreSQL Database](modules/cnpg)
 6. [FerretDB (MongoDB) Database](modules/ferretdb)

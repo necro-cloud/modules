@@ -6,6 +6,7 @@ Required Modules to deploy FerretDB Database:
 1. [Helm](../helm)
 2. [Cluster Issuer](../cluster-issuer)
 3. [Garage](../garage)
+4. [Observability](../observability)
 
 ## Providers
 
