@@ -18,8 +18,8 @@ resource "kubernetes_manifest" "network_observability" {
           // PRIVILEGED: Required for "PacketDrop" to read kernel drop reasons
           privileged = true
           
-          // FEATURES: Enable drop detection
-          features = ["PacketDrop"] 
+          // Enable drop detection and TCP round trips metrics
+          features = ["PacketDrop", "FlowRTT"] 
           
           // SAMPLING: 25 means 1 in 25 packets
           sampling           = 25
@@ -81,9 +81,8 @@ resource "kubernetes_manifest" "network_observability" {
               expiryTime       = "2m"
             }
             
-            // Disable direct metric export (optional)
             metrics = {
-              enable = false 
+              enable = true
             }
             tls = {
               enable = false
