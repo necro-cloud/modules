@@ -4,6 +4,7 @@ OpenTofu Module to deploy [Valkey](https://valkey.io/) In Memory Database on the
 
 Required Modules to deploy Valkey In Memory Database:
 1. [Cluster Issuer](../cluster-issuer)
+2. [Observability](../observability)
 
 ## Providers
 
@@ -43,6 +44,7 @@ Required Modules to deploy Valkey In Memory Database:
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with Valkey Cache Solution | `string` | `"valkey-internal-certificate"` | no |
 | <a name="input_issuer_name"></a> [issuer\_name](#input\_issuer\_name) | Name of the Issuer to be associated with Valkey Cache Solution | `string` | `"valkey-certificate-issuer"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Valkey Cache Solution | `string` | `"valkey"` | no |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | n/a | yes |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Valkey Cache Solution | `string` | `"cloud"` | no |
 | <a name="input_replicas"></a> [replicas](#input\_replicas) | Number of replicas to run for Valkey Cluster | `number` | `6` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of Valkey | `string` | `"docker.io/valkey"` | no |
