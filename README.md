@@ -15,7 +15,7 @@ The following is required to start using this repository:
 The following modules have been implemented and their usage instructions written in README:
 1. [Helm](modules/helm)
 2. [Cluster Issuer for internal certificates](modules/cluster-issuer)
-3. [\[DEPRECATED\] MinIO Storage](modules/minio)
+3. [Observability](modules/observability)
 4. [Garage Storage](modules/garage)
 5. [Cloudnative PG PostgreSQL Database](modules/cnpg)
 6. [FerretDB (MongoDB) Database](modules/ferretdb)
