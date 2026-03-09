@@ -170,6 +170,17 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/pod"
               },
+            },
+            {
+              name            = "Network Level Monitoring Dashboard"
+              orgId           = 1
+              folder          = "Kubernetes Monitoring"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/network"
+              },
             }
           ]
         }
@@ -205,6 +216,11 @@ resource "helm_release" "grafana" {
         pod = {
           pod-dashboard = {
             json = file("${path.module}/dashboards/pod.json")
+          }
+        }
+        network = {
+          network-dashboard = {
+            json = file("${path.module}/dashboards/network.json")
           }
         }
       }

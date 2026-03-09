@@ -43,7 +43,6 @@ resource "helm_release" "otel_collector" {
         }
       }
 
-      // Contrib image supports all required features
       image = {
         repository = "otel/opentelemetry-collector-contrib"
       }
@@ -107,7 +106,8 @@ resource "helm_release" "otel_collector" {
                   tls_config = {
                     insecure_skip_verify = true
                   }
-                  
+
+                  // Service Discovery Configuration
                   kubernetes_sd_configs = [
                     {
                       role = "pod"
@@ -121,8 +121,6 @@ resource "helm_release" "otel_collector" {
                       regex         = "true"
                     },
                     // Only scrape pods on the SAME NODE as this collector
-                    // This uses the Env Var we injected above.
-                    // Note: The double $$ is for Terraform escaping. Result in YAML: ${env:K8S_NODE_NAME}
                     {
                       source_labels = ["__meta_kubernetes_pod_node_name"]
                       action        = "keep"
@@ -180,13 +178,13 @@ resource "helm_release" "otel_collector" {
                   ]
                   
                   relabel_configs = [
-                    // 1. Only scrape the local node this DaemonSet pod is running on
+                    // Only scrape the local node this DaemonSet pod is running on
                     {
                       source_labels = ["__meta_kubernetes_node_name"]
                       action        = "keep"
                       regex         = "$${env:K8S_NODE_NAME}"
                     },
-                    // 2. Point directly to the internal cAdvisor endpoint
+                    // Point directly to the internal cAdvisor endpoint
                     {
                       action       = "replace"
                       target_label = "__metrics_path__"
@@ -205,7 +203,7 @@ resource "helm_release" "otel_collector" {
           // Strict memory limits for the 512Mi constraint
           memory_limiter = {
             check_interval         = "5s"
-            limit_mib              = 400 // Hard cap for the process (leaving 112Mi buffer for OS)
+            limit_mib              = 400
             spike_limit_mib        = 100
           }
           // Tag Netobserv logs appropriately
@@ -220,6 +218,10 @@ resource "helm_release" "otel_collector" {
           }
 
           transform = {
+            // If a metric comes in missing its namespace or pod label,
+            // look at the underlying server/container it came from.
+            // If that server/container has a namespace or pod name
+            // attached to it, copy it over to the metric.
             metric_statements = [
               {
                 context = "datapoint"

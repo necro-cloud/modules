@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/105/network-dashboard"
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
