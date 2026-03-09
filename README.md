@@ -1,6 +1,6 @@
 # necronizer's cloud modules
 
-OpenTofu Modules that can be used to deploy a functioning self hosted cloud solution perfect for side projects. For a guide on how to use these modules, please navigate to the [example](./example) directory.
+OpenTofu Modules that can be used to deploy a functioning self hosted cloud solution perfect for side projects. For a guide on how to use these modules, please navigate to the [infrastructure](./infrastructure) directory.
 
 # Requirements and Dependencies
 
