@@ -1,5 +1,5 @@
 // Kubernetes Ingress for OpenBao UI
-resource "kubernetes_ingress_v1" "api_ingress" {
+resource "kubernetes_ingress_v1" "ui_ingress" {
   metadata {
     name      = "openbao-ui-ingress"
     namespace = kubernetes_namespace.namespace.metadata[0].name
