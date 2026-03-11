@@ -121,6 +121,25 @@ variable "domain" {
   nullable    = false
 }
 
+# --------------- OPENBAO CONFIGURATION VARIABLES --------------- #
+variable "configurator_repository" {
+  description = "Repository to be used for deployment of OpenBao Configurator"
+  type        = string
+  default     = "quay.io/openbao"
+}
+
+variable "configurator_image" {
+  description = "Docker image to be used for deployment of OpenBao Configurator"
+  type        = string
+  default     = "openbao"
+}
+
+variable "configurator_tag" {
+  description = "Docker tag to be used for deployment of OpenBao Configurator"
+  type        = string
+  default     = "2.5.1"
+}
+
 # --------------- NETWORK POLICY VARIABLES --------------- #
 variable "kubernetes_api_ip" {
   description = "IP Address for the Kubernetes API"

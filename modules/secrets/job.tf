@@ -23,7 +23,7 @@ resource "kubernetes_job" "configurator" {
         
         container {
           name    = "configurator"
-          image   = "quay.io/openbao/openbao:2.5.1"
+          image   = "${var.configurator_repository}/${var.configurator_image}:${var.configurator_tag}"
           command = ["/bin/sh", "/scripts/configurator.sh"]
           
           volume_mount {
