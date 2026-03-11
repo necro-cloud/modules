@@ -62,7 +62,29 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
       }
     }
 
-    # Rule 3: Allow NGINX Ingress Controller to reach the active leader
+    # Rule 3: Allow ingress from configurator job
+    ingress {
+      from {
+        namespace_selector {
+          match_expressions {
+            key      = "kubernetes.io/metadata.name"
+            operator = "In"
+            values   = [kubernetes_namespace.namespace.metadata[0].name]
+          }
+        }
+        pod_selector {
+          match_labels = {
+            "created-by" = "configurator"
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = 8200
+      }
+    }    
+
+    # Rule 4: Allow NGINX Ingress Controller to reach the active leader
     ingress {
       from {
         namespace_selector {
@@ -77,7 +99,7 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
       }
     }
 
-    # Rule 4: Allow OpenTelemetry Collector to scrape metrics from the API port
+    # Rule 5: Allow OpenTelemetry Collector to scrape metrics from the API port
     ingress {
       from {
         namespace_selector {
