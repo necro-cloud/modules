@@ -132,6 +132,10 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
       }
       ports {
         protocol = "TCP"
+        port     = 8200
+      }
+      ports {
+        protocol = "TCP"
         port     = 8201
       }
     }
