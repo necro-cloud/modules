@@ -45,6 +45,14 @@ module "secrets" {
 
   // Observability details
   observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
   
   depends_on = [module.observability]
 }

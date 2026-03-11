@@ -30,6 +30,30 @@ variable "observability_namespace" {
   nullable    = false
 }
 
+variable "access_namespaces" {
+  description = "Namespaces requiring accesses to the OpenBao Cluster in a comma seperated list"
+  type = string
+  nullable = false
+}
+
+# -------------- OPENBAO DEPLOYMENT VARIABLES -------------- #
+variable "openbao_configuration" {
+  description = "Dictionary filled with OpenBao Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "openbao"
+    "repository"       = "https://openbao.github.io/openbao-helm"
+    "chart"            = "openbao"
+    "version"          = "0.25.6"
+  }
+}
+
+variable "cluster_size" {
+  description = "Number of pods to be deployed for High Availability for OpenBao Secrets Management Solution"
+  type = number
+  default = 3
+}
+
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
@@ -94,5 +118,24 @@ variable "host_name" {
 variable "domain" {
   description = "Domain for which Ingress Certificate is to be generated for"
   type        = string
+  nullable    = false
+}
+
+# --------------- NETWORK POLICY VARIABLES --------------- #
+variable "kubernetes_api_ip" {
+  description = "IP Address for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_protocol" {
+  description = "Protocol for the Kubernetes API"
+  type        = string
+  nullable    = false
+}
+
+variable "kubernetes_api_port" {
+  description = "Port for the Kubernetes API"
+  type        = number
   nullable    = false
 }

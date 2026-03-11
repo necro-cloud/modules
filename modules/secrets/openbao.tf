@@ -1,8 +1,8 @@
 resource "helm_release" "openbao" {
-  name = "openbao"
-  repository = "https://openbao.github.io/openbao-helm"
-  chart = "openbao"
-  version = "0.25.6"
+  name = var.openbao_configuration.name
+  repository = var.openbao_configuration.repository
+  chart = var.openbao_configuration.chart
+  version = var.openbao_configuration.version
   
   namespace = kubernetes_namespace.namespace.metadata[0].name
   create_namespace = false
@@ -79,7 +79,7 @@ resource "helm_release" "openbao" {
 
         ha = {
           enabled = true
-          replicas = 3
+          replicas = var.cluster_size
           raft = {
             enabled = true
             setNodeId = true
