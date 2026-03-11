@@ -33,6 +33,30 @@ module "observability" {
   depends_on = [module.cluster-issuer]
 }
 
+# OpenBao Secrets Management Solution deployment
+module "secrets" {
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/110/openbao-deployment"
+  
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+  
+  depends_on = [module.observability]
+}
+
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
   source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
