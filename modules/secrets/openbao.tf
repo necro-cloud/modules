@@ -18,6 +18,50 @@ resource "helm_release" "openbao" {
       }
 
       server = {
+
+        resources = {
+          requests = {
+            memory = "256Mi"
+            cpu    = "100m"
+          }
+          limits = {
+            memory = "512Mi"
+            cpu    = "500m"
+          }
+        }
+
+        affinity = {
+          nodeAffinity = {
+            requiredDuringSchedulingIgnoredDuringExecution = {
+              nodeSelectorTerms = [
+                {
+                  matchExpressions = [
+                    {
+                      key      = "worker"
+                      operator = "Exists"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+        
+        topologySpreadConstraints = [
+          {
+            maxSkew           = 1
+            topologyKey       = "kubernetes.io/hostname"
+            whenUnsatisfiable = "DoNotSchedule"
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"     = "openbao"
+                "app.kubernetes.io/instance" = "openbao"
+                "component"                  = "server"
+              }
+            }
+          }
+        ]
+ 
         extraSecretEnvironmentVars = [
           {
             envName = "OPENBAO_STATIC_UNSEAL_KEY"

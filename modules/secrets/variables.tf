@@ -21,7 +21,7 @@ variable "country_name" {
 variable "namespace" {
   description = "Namespace to be used for deploying OpenBao Secrets Management Solution"
   type        = string
-  default     = "secrets"
+  default     = "openbao"
 }
 
 variable "observability_namespace" {
