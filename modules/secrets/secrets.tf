@@ -1,3 +1,4 @@
+// Static Unsealing key to be used for OpenBao Auto-Unsealing
 resource "random_id" "static_unseal_key" {
   byte_length = 32
 }

@@ -1,3 +1,4 @@
+// Service account to be used by the Configurator Job
 resource "kubernetes_service_account" "configurator" {
   metadata {
     name      = "openbao-configurator"
@@ -9,6 +10,7 @@ resource "kubernetes_service_account" "configurator" {
   }
 }
 
+// Allow the Configurator Job to create Kubernetes Secrets
 resource "kubernetes_role" "configurator" {
   metadata {
     name      = "openbao-configurator-role"
@@ -25,6 +27,7 @@ resource "kubernetes_role" "configurator" {
   }
 }
 
+// Binding the role to the Service Account
 resource "kubernetes_role_binding" "configurator" {
   metadata {
     name      = "openbao-configurator-binding"

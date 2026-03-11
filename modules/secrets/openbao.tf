@@ -1,9 +1,11 @@
+// OpenBao Deployment Configuration
 resource "helm_release" "openbao" {
   name = var.openbao_configuration.name
   repository = var.openbao_configuration.repository
   chart = var.openbao_configuration.chart
   version = var.openbao_configuration.version
-  
+
+  // Deploy it in the same namespace
   namespace = kubernetes_namespace.namespace.metadata[0].name
   create_namespace = false
 
@@ -19,6 +21,7 @@ resource "helm_release" "openbao" {
 
       server = {
 
+        // Resource Requests and Limits
         resources = {
           requests = {
             memory = "256Mi"
@@ -30,6 +33,7 @@ resource "helm_release" "openbao" {
           }
         }
 
+        // Node Affinity for worker nodes
         affinity = {
           nodeAffinity = {
             requiredDuringSchedulingIgnoredDuringExecution = {
@@ -46,7 +50,8 @@ resource "helm_release" "openbao" {
             }
           }
         }
-        
+
+        // Topology Spread Constraints
         topologySpreadConstraints = [
           {
             maxSkew           = 1
@@ -61,7 +66,8 @@ resource "helm_release" "openbao" {
             }
           }
         ]
- 
+
+       // Environment variable for unsealing the cluster
         extraSecretEnvironmentVars = [
           {
             envName = "OPENBAO_STATIC_UNSEAL_KEY"
@@ -70,6 +76,7 @@ resource "helm_release" "openbao" {
           }
         ]
 
+        // TLS Certificates Mounting
         extraVolumes = [
           {
             type = "secret"
@@ -77,13 +84,17 @@ resource "helm_release" "openbao" {
           }
         ]
 
+        // High availability configuration
         ha = {
           enabled = true
           replicas = var.cluster_size
+
+          // Raft Storage Configuration
           raft = {
             enabled = true
             setNodeId = true
 
+            // Config loaded as a configuration file
             config = templatefile("${path.module}/config/openbao.hcl", {
               namespace = kubernetes_namespace.namespace.metadata[0].name,
               cert_secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
@@ -91,6 +102,7 @@ resource "helm_release" "openbao" {
           }
         }
 
+        // Data Storage Configuration
         dataStorage = {
           enabled = true
           size = "5Gi"
@@ -98,10 +110,14 @@ resource "helm_release" "openbao" {
           storageClass = "local-path"
         }
 
+        // Enable Auth Delegator
+        // for Kubernetes Authentication
         authDelegator = {
           enabled = true
         }
 
+        // Enable permissions for
+        // Service Discovery
         serviceAccount = {
           create = true
           serviceDiscovery = {
@@ -109,6 +125,7 @@ resource "helm_release" "openbao" {
           }
         }
 
+        // UI Service
         ui = {
           enabled = true
           serviceType = "ClusterIP"

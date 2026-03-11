@@ -1,3 +1,4 @@
+// Configurator Job for the OpenBao Cluster
 resource "kubernetes_job" "configurator" {
   metadata {
     name      = "openbao-configurator"
@@ -18,6 +19,8 @@ resource "kubernetes_job" "configurator" {
         }
       }
       spec {
+
+        // Service Account to be used for the configurator job
         service_account_name = kubernetes_service_account.configurator.metadata[0].name
         restart_policy       = "OnFailure"
         
@@ -25,12 +28,14 @@ resource "kubernetes_job" "configurator" {
           name    = "configurator"
           image   = "${var.configurator_repository}/${var.configurator_image}:${var.configurator_tag}"
           command = ["/bin/sh", "/scripts/configurator.sh"]
-          
+
+          // Load the configurator script as a volume
           volume_mount {
             name       = "scripts"
             mount_path = "/scripts"
           }
-          
+
+          // Load the TLS certificates used by the cluster as a volume
           volume_mount {
             name       = "tls"
             mount_path = "/openbao/userconfig/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
@@ -38,6 +43,7 @@ resource "kubernetes_job" "configurator" {
           }
         }
 
+        // Volume for the configurator script
         volume {
           name = "scripts"
           config_map {
@@ -46,6 +52,7 @@ resource "kubernetes_job" "configurator" {
           }
         }
 
+        // Volume for the TLS certificates used by the cluster
         volume {
           name = "tls"
           secret {

@@ -1,3 +1,4 @@
+// Configurator Script uploaded as a configmap
 resource "kubernetes_config_map" "configurator_script" {
   metadata {
     name = "openbao-configurator-script"
