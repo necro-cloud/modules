@@ -60,8 +60,15 @@ if ! bao operator init -status > /dev/null 2>&1; then
   # Setup ESO Access
   bao secrets enable -path=secret kv-v2
   bao policy write eso-policy - <<EOF
-path "secret/data/*" { capabilities = ["create", "read", "update", "delete", "list"] }
-path "secret/metadata/*" { capabilities = ["list"] }
+# Capabilities for the actual secret data
+path "secret/data/*" { 
+  capabilities = ["create", "read", "update", "delete", "list"] 
+}
+
+# Capabilities for secret metadata
+path "secret/metadata/*" { 
+  capabilities = ["create", "read", "update", "delete", "list"] 
+}
 EOF
 
   bao write auth/kubernetes/role/eso-role \
