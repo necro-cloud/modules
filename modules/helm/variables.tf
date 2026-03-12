@@ -100,7 +100,7 @@ variable "calico_configuration" {
   }
 }
 
-# --------------- CALICO OPERATOR VARIABLES --------------- #
+# --------------- NETOBSERV VARIABLES --------------- #
 variable "netobserv_configuration" {
   description = "Dictionary filled with Netobserv Operator Configuration Details"
   type        = map(string)
@@ -110,6 +110,20 @@ variable "netobserv_configuration" {
     "repository"       = "https://netobserv.io/static/helm"
     "chart"            = "netobserv-operator"
     "version"          = "1.11.0"
+    "create_namespace" = true
+  }
+}
+
+# --------------- EXTERNAL SECRETS VARIABLES --------------- #
+variable "external_secrets_configuration" {
+  description = "Dictionary filled with External Secrets Operator Configuration Details"
+  type        = map(string)
+  default = {
+    "name"             = "external-secrets"
+    "namespace"        = "external-secrets"
+    "repository"       = "https://charts.external-secrets.io"
+    "chart"            = "external-secrets"
+    "version"          = "2.1.0"
     "create_namespace" = true
   }
 }

@@ -119,6 +119,26 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
       }
     }
 
+    # Rule 6: Allow External Secrets Operator to interact with OpenBao
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = "external-secrets"
+          }
+        }
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/instance" = "external-secrets"
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = 8200
+      }
+    }
+
     # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to other OpenBao pods for Raft consensus
     egress {
