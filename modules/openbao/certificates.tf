@@ -131,6 +131,59 @@ resource "kubernetes_manifest" "internal_certificate" {
   }
 }
 
+// Push the certificates to OpenBao
+resource "kubernetes_manifest" "push_internal_certificate" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = var.internal_certificate_name
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRefs = [
+        {
+          name = kubernetes_manifest.cluster_store.manifest.metadata.name
+          kind = "ClusterSecretStore"
+        }
+      ]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  // Wait for the sync to complete
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+  }
+
+  // Waiting till the store is created
+  depends_on = [
+    kubernetes_manifest.cluster_store,
+  ]  
+}
+
 // Kubernetes Secret for Cloudflare Tokens
 resource "kubernetes_secret" "cloudflare_token" {
   metadata {
