@@ -9,7 +9,7 @@ data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
 
 # Deploy all required helm charts for deploying the infrastructure
 module "helm" {
-  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=task/111/eso-deployment"
+  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=main"
   server_node_selector = "cloud"
 }
 
@@ -35,7 +35,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "secrets" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/111/eso-deployment"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
