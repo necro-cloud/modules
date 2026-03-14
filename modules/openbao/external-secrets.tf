@@ -1,3 +1,4 @@
+// Setup OpenBao as the Cluster Secret Store
 resource "kubernetes_manifest" "cluster_store" {
   manifest = {
     apiVersion = "external-secrets.io/v1"

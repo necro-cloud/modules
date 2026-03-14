@@ -82,7 +82,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.admin_password.metadata[0].name
+              name = kubernetes_manifest.admin_password_sync.object.spec.target.name
             }
           }
 
@@ -209,7 +209,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         volume {
           name = "certificates"
           secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.metadata.name
+            secret_name = kubernetes_manifest.internal_certificate.object.spec.secretName
           }
         }
       }
@@ -245,4 +245,8 @@ resource "kubernetes_stateful_set" "statefulset" {
       }
     }
   }
+
+  depends_on = [
+    kubernetes_manifest.admin_password_sync,
+  ]
 }

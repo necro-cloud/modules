@@ -136,6 +136,49 @@ resource "kubernetes_manifest" "internal_certificate" {
   }
 }
 
+resource "kubernetes_manifest" "push_internal_certificate" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-internal-certificate"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.internal_certificate.object.spec.secretName
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate.object.spec.secretName}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  // Ensure the certificate is actually issued before trying to push it
+  depends_on = [kubernetes_manifest.internal_certificate]
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+}
+
 // Kubernetes Secret for Cloudflare Tokens
 resource "kubernetes_secret" "cloudflare_token" {
   metadata {

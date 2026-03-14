@@ -1,30 +1,40 @@
 // Garage Credentials for storing PostgreSQL PITR Backups
-resource "kubernetes_secret" "garage_configuration" {
-  metadata {
-    name      = var.garage_configuration
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "garage_configuration_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = var.garage_configuration
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
     }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "${var.garage_namespace}/${var.garage_configuration}"
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = var.garage_configuration
+      }
+      dataFrom = [
+        {
+          extract = {
+            key = "${var.garage_namespace}/access-key/${var.garage_configuration}"
+          }
+        }
+      ]
     }
   }
 
-  data = {
-    KEY_NAME          = ""
-    ACCESS_KEY_ID     = ""
-    SECRET_ACCESS_KEY = ""
-    S3_REGION         = ""
-  }
-
-  type = "Opaque"
-
-  lifecycle {
-    ignore_changes = [metadata[0].annotations]
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
   }
 }
 

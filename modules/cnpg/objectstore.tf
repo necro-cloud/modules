@@ -22,21 +22,21 @@ resource "kubernetes_manifest" "barman_object_store" {
         "destinationPath" = "s3://${var.backup_bucket_name}/"
         "endpointCA" = {
           "key"  = "ca.crt"
-          "name" = kubernetes_secret.garage_certificate_authority.metadata[0].name
+          "name" = kubernetes_manifest.garage_certificate_authority_sync.object.metadata.name
         }
         "endpointURL" = "https://garage-service.${var.garage_namespace}.svc.cluster.local:3940"
         "s3Credentials" = {
           "accessKeyId" = {
             "key"  = "ACCESS_KEY_ID"
-            "name" = kubernetes_secret.garage_configuration.metadata[0].name
+            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
           }
           "secretAccessKey" = {
             "key"  = "SECRET_ACCESS_KEY"
-            "name" = kubernetes_secret.garage_configuration.metadata[0].name
+            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
           }
           "region" = {
             "key"  = "S3_REGION"
-            "name" = kubernetes_secret.garage_configuration.metadata[0].name
+            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
           }
         }
         "wal" = {
@@ -45,4 +45,9 @@ resource "kubernetes_manifest" "barman_object_store" {
       }
     }
   }
+
+  depends_on = [
+    kubernetes_manifest.garage_certificate_authority_sync,
+    kubernetes_manifest.garage_configuration_sync
+  ]  
 }

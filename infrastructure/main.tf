@@ -34,7 +34,7 @@ module "observability" {
 }
 
 # OpenBao Secrets Management Solution deployment
-module "secrets" {
+module "openbao" {
   source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
   
   // Certificates Details
@@ -59,7 +59,10 @@ module "secrets" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/116/garage-eso"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -82,17 +85,20 @@ module "garage" {
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
-  depends_on = [module.observability]
+  depends_on = [module.observability, module.openbao]
 }
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/116/garage-eso"
+  
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
-  garage_configuration         = "walbackups-credentials"
+  garage_configuration         = "walbackups"
   backup_bucket_name           = "postgresql"
 
   // Observability details
@@ -121,17 +127,20 @@ module "cnpg" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Dependency on Garage Deployment  
-  depends_on = [module.garage, module.observability]
+  depends_on = [module.garage, module.observability, module.openbao]
 }
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/116/garage-eso"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
-  garage_configuration         = "walbackups-credentials"
+  garage_configuration         = "walbackups"
   backup_bucket_name           = "ferret"
 
   // Observability details
@@ -157,7 +166,7 @@ module "ferretdb" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Dependency on Garage Deployment  
-  depends_on = [module.garage, module.observability]
+  depends_on = [module.garage, module.observability, module.openbao]
 }
 
 # Keycloak Cluster Deployment for Identity Solution
