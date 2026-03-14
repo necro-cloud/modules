@@ -1,6 +1,5 @@
 resource "kubernetes_manifest" "push_access_keys" {
-  for_each = toset(var.required_access_keys)
-
+  for_each = { for key in var.required_access_keys : key.name => key }
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
