@@ -34,9 +34,6 @@ resource "kubernetes_manifest" "garage_certificate_authority_sync" {
     }
   }
 
-  # Ensure the cert is pushed to Vault before we try to pull it
-  depends_on = [kubernetes_manifest.push_internal_certificate]
-
   wait {
     condition {
       type   = "Ready"
