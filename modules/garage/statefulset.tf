@@ -247,7 +247,6 @@ resource "kubernetes_stateful_set" "statefulset" {
   }
 
   depends_on = [
-    kubernetes_manifest.rpc_secret_sync,
     kubernetes_manifest.admin_password_sync,
   ]
 }

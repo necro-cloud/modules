@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "push_rpc_secret" {
       data = [{
         match = {
           remoteRef = {
-            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_manifest.rpc_secret_sync.object.spec.target.name}"
+            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_secret.rpc_secret.metadata[0].name}"
           }
         }
       }]
