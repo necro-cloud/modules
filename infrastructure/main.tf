@@ -127,44 +127,47 @@ module "cnpg" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Dependency on Garage Deployment  
-  depends_on = [module.garage, module.observability]
+  depends_on = [module.garage, module.observability, module.openbao]
 }
 
-# # FerretDB Deployment for MongoDB Database Solution
-# module "ferretdb" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+# FerretDB Deployment for MongoDB Database Solution
+module "ferretdb" {
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/116/garage-eso"
 
-#   // Garage Cluster Details for configuration of PITR Backups
-#   garage_certificate_authority = module.garage.garage_internal_certificate_secret
-#   garage_namespace             = module.garage.garage_namespace
-#   garage_configuration         = "walbackups-credentials"
-#   backup_bucket_name           = "ferret"
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Garage Cluster Details for configuration of PITR Backups
+  garage_certificate_authority = module.garage.garage_internal_certificate_secret
+  garage_namespace             = module.garage.garage_namespace
+  garage_configuration         = "walbackups"
+  backup_bucket_name           = "ferret"
 
-#   // Required client details to allow access and generate credentials and certificates for
-#   clients = [
-#     {
-#       namespace          = "cloud"
-#       user               = "cloud"
-#     }
-#   ]
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Certificate details for internal and ingress certificates
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-#   cloudflare_token    = var.cloudflare_token
-#   cloudflare_email    = var.cloudflare_email
-#   domain              = var.domain
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+    }
+  ]
 
-#   // Whitelisting Kubernetes API Endpoints in the Network Policy
-#   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
-#   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
-#   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+  // Certificate details for internal and ingress certificates
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
-#   // Dependency on Garage Deployment  
-#   depends_on = [module.garage, module.observability]
-# }
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Dependency on Garage Deployment  
+  depends_on = [module.garage, module.observability, module.openbao]
+}
 
 # # Keycloak Cluster Deployment for Identity Solution
 # module "keycloak" {
