@@ -88,7 +88,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
           env_from {
             secret_ref {
-              name = kubernetes_manifest.rpc_secret_sync.object.spec.target.name
+              name = kubernetes_secret.rpc_secret.metadata[0].name
             }
           }
 
