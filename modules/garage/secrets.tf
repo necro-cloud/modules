@@ -1,20 +1,6 @@
 // Garage RPC Secret required for nodes formation
-resource "kubernetes_manifest" "rpc_secret_generator" {
-  manifest = {
-    apiVersion = "generators.external-secrets.io/v1alpha1"
-    kind       = "Password"
-    metadata = {
-      name      = "garage-rpc-generator"
-      namespace = kubernetes_namespace.namespace.metadata[0].name
-    }
-    spec = {
-      length  = 64
-      digits  = 20
-      symbols = 0
-      noUpper = true
-      allowRepeat = true
-    }
-  }
+resource "random_id" "rpc_secret" {
+  byte_length = 32
 }
 
 resource "kubernetes_manifest" "rpc_secret_sync" {
@@ -31,19 +17,11 @@ resource "kubernetes_manifest" "rpc_secret_sync" {
         name = "garage-rpc-secret"
         template = {
           data = {
-            "GARAGE_RPC_SECRET" = "{{ .password }}"
+            "GARAGE_RPC_SECRET" = random_id.rpc_secret.hex
           }
         }
       }
-      dataFrom = [{
-        sourceRef = {
-          generatorRef = {
-            apiVersion = "generators.external-secrets.io/v1alpha1"
-            kind       = "Password"
-            name       = kubernetes_manifest.rpc_secret_generator.object.metadata.name
-          }
-        }
-      }]
+      data = []
     }
   }
 
