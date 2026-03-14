@@ -3,33 +3,18 @@ resource "random_id" "rpc_secret" {
   byte_length = 32
 }
 
-resource "kubernetes_manifest" "rpc_secret_sync" {
-  manifest = {
-    apiVersion = "external-secrets.io/v1"
-    kind       = "ExternalSecret"
-    metadata = {
-      name      = "rpc-secret-sync"
-      namespace = kubernetes_namespace.namespace.metadata[0].name
-    }
-    spec = {
-      refreshInterval = "0"
-      target = {
-        name = "garage-rpc-secret"
-        template = {
-          data = {
-            "GARAGE_RPC_SECRET" = random_id.rpc_secret.hex
-          }
-        }
-      }
-      data = []
+resource "kubernetes_secret" "rpc_secret" {
+  metadata {
+    name      = "garage-rpc-secret"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "secret"
     }
   }
 
-  wait {
-    condition {
-      type   = "Ready"
-      status = "True"
-    }
+  data = {
+    "GARAGE_RPC_SECRET" = random_bytes.rpc_secret.hex
   }
 }
 
@@ -50,7 +35,7 @@ resource "kubernetes_manifest" "push_rpc_secret" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.rpc_secret_sync.object.spec.target.name
+          name = kubernetes_secret.rpc_secret.metadata[0].name
         }
       }
       data = [{
