@@ -36,6 +36,13 @@ variable "observability_namespace" {
   nullable    = false
 }
 
+# --------------- CLUSTER SECRET STORE VARIABLES --------------- #
+variable "cluster_secret_store_name" {
+  description = "Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao"
+  type        = string
+  nullable    = false
+}
+
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "garage_certificate_authority" {
   description = "Name of the Certificate Authority associated with the Garage Storage Solution"

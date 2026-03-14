@@ -1,29 +1,47 @@
 // Fetch Garage Certificate Authority for PITR Backups
-resource "kubernetes_secret" "garage_certificate_authority" {
-  metadata {
-    name      = var.garage_certificate_authority
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "garage_certificate_authority_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1beta1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = var.garage_certificate_authority
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
     }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" : "${var.garage_namespace}/${var.garage_certificate_authority}"
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = var.garage_certificate_authority
+        template = {
+          type = "kubernetes.io/tls"
+          engineVersion = "v2"
+        }
+      }
+      dataFrom = [
+        {
+          extract = {
+            key = "${var.garage_namespace}/certificates/${var.garage_certificate_authority}"
+          }
+        }
+      ]
     }
   }
 
-  data = {
-    "tls.crt" = ""
-    "tls.key" = ""
-    "ca.crt"  = ""
-  }
+  # Ensure the cert is pushed to Vault before we try to pull it
+  depends_on = [kubernetes_manifest.push_internal_certificate]
 
-  type = "kubernetes.io/tls"
-
-  lifecycle {
-    ignore_changes = [metadata[0].annotations]
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
   }
 }
 

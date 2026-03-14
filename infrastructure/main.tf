@@ -88,44 +88,47 @@ module "garage" {
   depends_on = [module.observability, module.openbao]
 }
 
-# # Cloudnative PG Deployment for PostgreSQL Database Solution
-# module "cnpg" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/116/garage-eso"
+  
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // Garage Cluster Details for configuration of PITR Backups
-#   garage_certificate_authority = module.garage.garage_internal_certificate_secret
-#   garage_namespace             = module.garage.garage_namespace
-#   garage_configuration         = "walbackups-credentials"
-#   backup_bucket_name           = "postgresql"
+  // Garage Cluster Details for configuration of PITR Backups
+  garage_certificate_authority = module.garage.garage_internal_certificate_secret
+  garage_namespace             = module.garage.garage_namespace
+  garage_configuration         = "walbackups-credentials"
+  backup_bucket_name           = "postgresql"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Required client details to allow access and generate credentials and certificates for
-#   clients = [
-#     {
-#       namespace          = "cloud"
-#       user               = "cloud"
-#       database           = "cloud"
-#       derRequired        = false
-#       privateKeyEncoding = "PKCS1"
-#     }
-#   ]
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
 
-#   // Certificate details for internal and ingress(pgadmin) certificates
-#   cloudflare_token    = var.cloudflare_token
-#   cloudflare_email    = var.cloudflare_email
-#   domain              = var.domain
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  // Certificate details for internal and ingress(pgadmin) certificates
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
 
-#   // Whitelisting Kubernetes API Endpoints in the Network Policy
-#   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
-#   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
-#   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
-#   // Dependency on Garage Deployment  
-#   depends_on = [module.garage, module.observability]
-# }
+  // Dependency on Garage Deployment  
+  depends_on = [module.garage, module.observability]
+}
 
 # # FerretDB Deployment for MongoDB Database Solution
 # module "ferretdb" {
