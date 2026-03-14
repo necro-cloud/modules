@@ -12,6 +12,7 @@ resource "kubernetes_manifest" "rpc_secret_generator" {
       digits  = 20
       symbols = 0
       noUpper = true
+      allowRepeat = true
     }
   }
 }
