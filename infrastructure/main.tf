@@ -169,45 +169,45 @@ module "ferretdb" {
   depends_on = [module.garage, module.observability, module.openbao]
 }
 
-# # Keycloak Cluster Deployment for Identity Solution
-# module "keycloak" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
+# Keycloak Cluster Deployment for Identity Solution
+module "keycloak" {
+  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
 
-#   // PostgreSQL Database Details for database details
-#   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
-#   postgres_namespace                         = module.cnpg.namespace
-#   cluster_name                               = module.cnpg.cluster_name
-#   database_server_certificate_authority_name = module.cnpg.server-certificate-authority
-#   database_client_certificate_name           = "postgresql-keycloak-client-certificate"
-#   database_credentials                       = "credentials-keycloak"
+  // PostgreSQL Database Details for database details
+  cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
+  postgres_namespace                         = module.cnpg.namespace
+  cluster_name                               = module.cnpg.cluster_name
+  database_server_certificate_authority_name = module.cnpg.server-certificate-authority
+  database_client_certificate_name           = "postgresql-keycloak-client-certificate"
+  database_credentials                       = "credentials-keycloak"
 
-#   // Certificate details for ingress
-#   cloudflare_token = var.cloudflare_token
-#   cloudflare_email = var.cloudflare_email
-#   domain           = var.domain
+  // Certificate details for ingress
+  cloudflare_token = var.cloudflare_token
+  cloudflare_email = var.cloudflare_email
+  domain           = var.domain
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Realm Settings for auto configuration of required clients
-#   realm_settings = local.keycloak_realm_settings
+  // Realm Settings for auto configuration of required clients
+  realm_settings = local.keycloak_realm_settings
 
-#   // Dependency on CNPG PostgreSQL Deployment
-#   depends_on = [module.cnpg, module.observability]
-# }
+  // Dependency on CNPG PostgreSQL Deployment
+  depends_on = [module.cnpg, module.observability]
+}
 
-# # Valkey Deployment for In Memory Storage Solution
-# module "valkey" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+# Valkey Deployment for In Memory Storage Solution
+module "valkey" {
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
 
-#   // Certificate details for TLS Authentication
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  // Certificate details for TLS Authentication
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
 
-#   // Granting required namespaces access to the Valkey
-#   access_namespaces = "cloud"
+  // Granting required namespaces access to the Valkey
+  access_namespaces = "cloud"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   depends_on = [module.observability]
-# }
+  depends_on = [module.observability]
+}
