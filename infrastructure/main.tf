@@ -59,7 +59,7 @@ module "openbao" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/116/garage-eso"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -90,7 +90,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/116/garage-eso"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -132,7 +132,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/116/garage-eso"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
