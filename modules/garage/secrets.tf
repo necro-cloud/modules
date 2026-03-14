@@ -18,7 +18,7 @@ resource "kubernetes_manifest" "rpc_secret_generator" {
 
 resource "kubernetes_manifest" "rpc_secret_sync" {
   manifest = {
-    apiVersion = "external-secrets.io/v1beta1"
+    apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
     metadata = {
       name      = "rpc-secret-sync"
@@ -105,7 +105,7 @@ resource "kubernetes_manifest" "admin_password_generator" {
 
 resource "kubernetes_manifest" "admin_password_sync" {
   manifest = {
-    apiVersion = "external-secrets.io/v1beta1"
+    apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
     metadata = {
       name      = "admin-password-sync"
