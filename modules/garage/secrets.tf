@@ -1,6 +1,6 @@
 // Garage RPC Secret required for nodes formation
-resource "random_id" "rpc_secret" {
-  byte_length = 32
+resource "random_bytes" "rpc_secret" {
+  length = 32
 }
 
 resource "kubernetes_secret" "rpc_secret" {
