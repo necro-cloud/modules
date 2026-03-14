@@ -98,7 +98,7 @@ module "cnpg" {
   // Garage Cluster Details for configuration of PITR Backups
   garage_certificate_authority = module.garage.garage_internal_certificate_secret
   garage_namespace             = module.garage.garage_namespace
-  garage_configuration         = "walbackups-credentials"
+  garage_configuration         = "walbackups"
   backup_bucket_name           = "postgresql"
 
   // Observability details
