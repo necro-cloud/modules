@@ -41,7 +41,7 @@ resource "kubernetes_job" "configurator" {
             name = "GARAGE_ADMIN_TOKEN"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.admin_password.metadata[0].name
+                name = kubernetes_manifest.admin_password_sync.object.spec.target.name
                 key  = "GARAGE_ADMIN_TOKEN"
               }
             }
@@ -86,5 +86,9 @@ resource "kubernetes_job" "configurator" {
     }
   }
 
-  depends_on = [kubernetes_stateful_set.statefulset]
+  depends_on = [
+    kubernetes_stateful_set.statefulset,
+    kubernetes_manifest.rpc_secret_sync,
+    kubernetes_manifest.admin_password_sync,
+  ]
 }
