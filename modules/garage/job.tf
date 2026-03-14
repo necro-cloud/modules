@@ -88,7 +88,6 @@ resource "kubernetes_job" "configurator" {
 
   depends_on = [
     kubernetes_stateful_set.statefulset,
-    kubernetes_manifest.rpc_secret_sync,
     kubernetes_manifest.admin_password_sync,
   ]
 }
