@@ -55,7 +55,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           args = [
-            "apk add --no-cache openssl && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der"
+            "echo 'Starting certificate conversion...' && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der && echo 'Conversion successful!'"
           ]
 
           volume_mount {
