@@ -98,6 +98,49 @@ resource "kubernetes_manifest" "server_certificate_authority" {
   }
 }
 
+resource "kubernetes_manifest" "push_server_certificate_authority" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-server-certificate-authority"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.server_certificate_authority.object.spec.secretName
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.server_certificate_authority.object.spec.secretName}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  // Ensure the certificate is actually issued before trying to push it
+  depends_on = [kubernetes_manifest.server_certificate_authority]
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+}
+
 // Issuer to be used with PostgreSQL Server
 resource "kubernetes_manifest" "server_issuer" {
   manifest = {
@@ -367,6 +410,49 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
   }
 }
 
+resource "kubernetes_manifest" "push_client_keycloak_certificate" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-client-keycloak-certificate"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.client_keycloak_certificate.object.spec.secretName
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.client_keycloak_certificate.object.spec.secretName}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  // Ensure the certificate is actually issued before trying to push it
+  depends_on = [kubernetes_manifest.client_keycloak_certificate]
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+}
+
 // Certificates for all clients
 resource "kubernetes_manifest" "client_certificates" {
   count = length(var.clients)
@@ -421,6 +507,50 @@ resource "kubernetes_manifest" "client_certificates" {
     create = "5m"
     update = "5m"
     delete = "5m"
+  }
+}
+
+resource "kubernetes_manifest" "push_client_certificates" {
+  count = length(var.clients)
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${var.clients[count.index].user}-client-certificate"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.client_certificates[count.index].object.spec.secretName
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.client_certificates[count.index].object.spec.secretName}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  // Ensure the certificate is actually issued before trying to push it
+  depends_on = [kubernetes_manifest.client_certificates]
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
   }
 }
 
