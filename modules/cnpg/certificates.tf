@@ -437,6 +437,9 @@ resource "kubernetes_manifest" "push_client_keycloak_certificate" {
               remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.client_keycloak_certificate.object.spec.secretName}"
             }
           }
+          metadata = {
+            encoding = "base64"
+          }
         }
       ]
     }

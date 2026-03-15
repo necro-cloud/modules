@@ -70,7 +70,7 @@ resource "kubernetes_manifest" "database_client_certificate_sync" {
             "ca.crt"  = "{{ .ca_crt }}"
             "tls.crt" = "{{ .tls_crt }}"
             "tls.key" = "{{ .tls_key }}"
-            "key.der" = "{{ .key_der }}" 
+            "key.der" = "{{ .key_der | base64decode }}" 
           }          
         }
       }
