@@ -1,7 +1,7 @@
 // Database Certificate Authority to be used for database connections
 resource "kubernetes_manifest" "database_server_certificate_authority_sync" {
   manifest = {
-    apiVersion = "external-secrets.io/v1beta1"
+    apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
     metadata = {
       name      = var.database_server_certificate_authority_name
@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "database_server_certificate_authority_sync" {
 // Database Client Certificate to be used for database connections
 resource "kubernetes_manifest" "database_client_certificate_sync" {
   manifest = {
-    apiVersion = "external-secrets.io/v1beta1"
+    apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
     metadata = {
       name      = var.database_client_certificate_name
