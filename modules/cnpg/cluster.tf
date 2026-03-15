@@ -56,7 +56,7 @@ resource "kubernetes_manifest" "cluster" {
             "login"           = true
             "name"            = "keycloak"
             "passwordSecret" = {
-              "name" = kubernetes_secret.keycloak_database_credentials.metadata[0].name
+              "name" = kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name
             }
             "replication" = false
             "superuser"   = false
@@ -123,4 +123,11 @@ resource "kubernetes_manifest" "cluster" {
     update = "10m"
     delete = "10m"
   }
+
+  depends_on = [
+    kubernetes_manifest.barman_object_store,
+    kubernetes_manifest.keycloak_database_credentials_sync,
+    kubernetes_manifest.client_database_credentials_sync,
+    kubernetes_manifest.garage_configuration_sync   
+  ]
 }

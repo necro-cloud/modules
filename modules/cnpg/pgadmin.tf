@@ -30,7 +30,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.pgadmin_credentials.metadata[0].name
+              name = kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name
             }
           }
 
@@ -175,7 +175,7 @@ resource "kubernetes_deployment" "pgadmin" {
           projected {
             sources {
               secret {
-                name = kubernetes_secret.keycloak_database_credentials.metadata[0].name
+                name = kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name
                 items {
                   key  = "password"
                   path = "keycloak/password"
@@ -183,12 +183,12 @@ resource "kubernetes_deployment" "pgadmin" {
               }
 
               dynamic "secret" {
-                for_each = kubernetes_secret.client_database_credentials
+                for_each = kubernetes_manifest.client_database_credentials_sync
                 content {
-                  name = secret.value.metadata[0].name
+                  name = secret.value.object.spec.target.name
                   items {
                     key  = "password"
-                    path = "${split("-", secret.value.metadata[0].name)[1]}/password"
+                    path = "${split("-", secret.value.object.spec.target.name)[1]}/password"
                   }
                 }
               }
