@@ -45,19 +45,28 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
       // Pod Spec
       spec {
 
+        // Using init container to convert
+        // PEM Key to a DER Key for Keycloak
+        // to consume
         init_container {
           name = "certificate-converter"
           image = "alpine/openssl:3.5.5"
           command = ["/bin/sh", "-c"]
 
+          // User 1000 does not
+          // exist in Alpine
           security_context {
             run_as_user = 0
           }
 
+          // Generate some logs
+          // to indicate signs
+          // of life
           args = [
             "echo 'Starting certificate conversion...' && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der && echo 'Conversion successful!'"
           ]
 
+          // Volume Mounts
           volume_mount {
             name       = "database-client-certificate"
             mount_path = "/mnt/certs/database/certificate"
