@@ -41,35 +41,6 @@ resource "kubernetes_manifest" "database_credentials_sync" {
   }
 }
 
-resource "kubernetes_secret" "database_credentials" {
-  metadata {
-    name      = var.database_credentials
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
-    }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "${var.postgres_namespace}/${var.database_credentials}"
-    }
-
-
-  }
-
-  data = {
-    username = ""
-    password = ""
-  }
-
-  type = "Opaque"
-
-  lifecycle {
-    ignore_changes = [metadata[0].annotations]
-  }
-}
-
 // Keycloak Credentials
 resource "random_password" "keycloak_password" {
   length           = 20

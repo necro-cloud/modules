@@ -382,11 +382,6 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
           "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = "keycloak"
         }
       }
-      "additionalOutputFormats" = [
-        {
-          "type" : "DER"
-        }
-      ]
       "privateKey" = {
         "encoding" = "PKCS8"
       }
