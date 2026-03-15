@@ -19,5 +19,5 @@ resource "kubernetes_pod_disruption_budget_v1" "keycloak_pdb" {
     }
   }
 
-  # depends_on = [kubernetes_stateful_set.keycloak_cluster]
+  depends_on = [kubernetes_stateful_set.keycloak_cluster]
 }
