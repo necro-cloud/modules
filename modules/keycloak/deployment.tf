@@ -47,7 +47,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
 
         init_container {
           name = "certificate-converter"
-          image = "alpine:3.23.3"
+          image = "alpine/openssl:3.5.5"
           command = ["/bin/sh", "-c"]
 
           security_context {
