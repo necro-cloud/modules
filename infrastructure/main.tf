@@ -131,83 +131,86 @@ module "cnpg" {
 }
 
 # FerretDB Deployment for MongoDB Database Solution
-# module "ferretdb" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+module "ferretdb" {
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
 
-#   // Cluster Secret Store Details
-#   cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // Garage Cluster Details for configuration of PITR Backups
-#   garage_certificate_authority = module.garage.garage_internal_certificate_secret
-#   garage_namespace             = module.garage.garage_namespace
-#   garage_configuration         = "walbackups"
-#   backup_bucket_name           = "ferret"
+  // Garage Cluster Details for configuration of PITR Backups
+  garage_certificate_authority = module.garage.garage_internal_certificate_secret
+  garage_namespace             = module.garage.garage_namespace
+  garage_configuration         = "walbackups"
+  backup_bucket_name           = "ferret"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Required client details to allow access and generate credentials and certificates for
-#   clients = [
-#     {
-#       namespace          = "cloud"
-#       user               = "cloud"
-#     }
-#   ]
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+    }
+  ]
 
-#   // Certificate details for internal and ingress certificates
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-#   cloudflare_token    = var.cloudflare_token
-#   cloudflare_email    = var.cloudflare_email
-#   domain              = var.domain
+  // Certificate details for internal and ingress certificates
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
-#   // Whitelisting Kubernetes API Endpoints in the Network Policy
-#   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
-#   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
-#   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
-#   // Dependency on Garage Deployment  
-#   depends_on = [module.garage, module.observability, module.openbao]
-# }
+  // Dependency on Garage Deployment  
+  depends_on = [module.garage, module.observability, module.openbao]
+}
 
-# # Keycloak Cluster Deployment for Identity Solution
-# module "keycloak" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
+# Keycloak Cluster Deployment for Identity Solution
+module "keycloak" {
+  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=task/117/cnpg-external-secrets"
 
-#   // PostgreSQL Database Details for database details
-#   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
-#   postgres_namespace                         = module.cnpg.namespace
-#   cluster_name                               = module.cnpg.cluster_name
-#   database_server_certificate_authority_name = module.cnpg.server-certificate-authority
-#   database_client_certificate_name           = "postgresql-keycloak-client-certificate"
-#   database_credentials                       = "credentials-keycloak"
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  
+  // PostgreSQL Database Details for database details
+  cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
+  postgres_namespace                         = module.cnpg.namespace
+  cluster_name                               = module.cnpg.cluster_name
+  database_server_certificate_authority_name = module.cnpg.server-certificate-authority
+  database_client_certificate_name           = "postgresql-keycloak-client-certificate"
+  database_credentials                       = "credentials-keycloak"
 
-#   // Certificate details for ingress
-#   cloudflare_token = var.cloudflare_token
-#   cloudflare_email = var.cloudflare_email
-#   domain           = var.domain
+  // Certificate details for ingress
+  cloudflare_token = var.cloudflare_token
+  cloudflare_email = var.cloudflare_email
+  domain           = var.domain
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Realm Settings for auto configuration of required clients
-#   realm_settings = local.keycloak_realm_settings
+  // Realm Settings for auto configuration of required clients
+  realm_settings = local.keycloak_realm_settings
 
-#   // Dependency on CNPG PostgreSQL Deployment
-#   depends_on = [module.cnpg, module.observability]
-# }
+  // Dependency on CNPG PostgreSQL Deployment
+  depends_on = [module.cnpg, module.observability]
+}
 
-# # Valkey Deployment for In Memory Storage Solution
-# module "valkey" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+# Valkey Deployment for In Memory Storage Solution
+module "valkey" {
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
 
-#   // Certificate details for TLS Authentication
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  // Certificate details for TLS Authentication
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
 
-#   // Granting required namespaces access to the Valkey
-#   access_namespaces = "cloud"
+  // Granting required namespaces access to the Valkey
+  access_namespaces = "cloud"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   depends_on = [module.observability]
-# }
+  depends_on = [module.observability]
+}

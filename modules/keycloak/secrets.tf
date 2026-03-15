@@ -1,4 +1,46 @@
 // Database Credentials to connect to the PostgreSQL Database
+resource "kubernetes_manifest" "database_credentials_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1beta1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = var.database_credentials
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
+    }
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = var.database_credentials
+        template = {
+          # Using Opaque since the original secret was Opaque
+          type = "Opaque"
+          engineVersion = "v2"
+        }
+      }
+      dataFrom = [{
+        extract = {
+          key = "${var.postgres_namespace}/credentials/${var.database_credentials}"
+        }
+      }]
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+}
+
 resource "kubernetes_secret" "database_credentials" {
   metadata {
     name      = var.database_credentials
