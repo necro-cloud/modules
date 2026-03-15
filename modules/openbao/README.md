@@ -2,9 +2,10 @@
 
 OpenTofu Module to deploy [OpenBao](https://openbao.org/) Secrets Management Solution on the Kubernetes Cluster.
 
-Required Modules to deploy OpenBao Secrets Manageemnt Solution:
-1. [Cluster Issuer](../cluster-issuer)
-2. [Observability](../observability)
+Required Modules to deploy OpenBao Secrets Management Solution:
+1. [Helm](../helm)
+2. [Cluster Issuer](../cluster-issuer)
+3. [Observability](../observability)
 
 ## Providers
 

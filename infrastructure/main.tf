@@ -90,7 +90,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/117/cnpg-external-secrets"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -171,8 +171,11 @@ module "ferretdb" {
 
 # Keycloak Cluster Deployment for Identity Solution
 module "keycloak" {
-  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=task/117/cnpg-external-secrets"
 
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  
   // PostgreSQL Database Details for database details
   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
   postgres_namespace                         = module.cnpg.namespace

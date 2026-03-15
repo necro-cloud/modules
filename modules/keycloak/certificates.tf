@@ -1,53 +1,88 @@
 // Database Certificate Authority to be used for database connections
-resource "kubernetes_secret" "database_server_certificate_authority" {
-  metadata {
-    name      = var.database_server_certificate_authority_name
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "database_server_certificate_authority_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = var.database_server_certificate_authority_name
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
     }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "${var.postgres_namespace}/${var.database_server_certificate_authority_name}"
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = var.database_server_certificate_authority_name
+        template = {
+          type = "kubernetes.io/tls"
+          engineVersion = "v2"
+        }
+      }
+      dataFrom = [
+          {
+          extract = {
+            key = "${var.postgres_namespace}/certificates/${var.database_server_certificate_authority_name}"
+          }
+        }
+      ]
     }
   }
 
-  data = {
-    "ca.crt"  = ""
-    "tls.crt" = ""
-    "tls.key" = ""
-  }
-
-  lifecycle {
-    ignore_changes = [metadata[0].annotations]
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
   }
 }
 
 // Database Client Certificate to be used for database connections
-resource "kubernetes_secret" "database_client_certificate" {
-  metadata {
-    name      = var.database_client_certificate_name
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "database_client_certificate_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = var.database_client_certificate_name
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
     }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflects" = "${var.postgres_namespace}/${var.database_client_certificate_name}"
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = var.database_client_certificate_name
+        template = {
+          type = "kubernetes.io/tls"
+          engineVersion = "v2"
+        }
+      }
+      dataFrom = [
+        {
+          extract = {
+            key = "${var.postgres_namespace}/certificates/${var.database_client_certificate_name}"
+          }
+        }
+      ]
     }
   }
 
-  data = {
-    "ca.crt"  = ""
-    "tls.crt" = ""
-    "tls.key" = ""
-    "key.der" = ""
-  }
-
-  lifecycle {
-    ignore_changes = [metadata[0].annotations]
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
   }
 }
 

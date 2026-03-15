@@ -36,6 +36,13 @@ variable "observability_namespace" {
   nullable    = false
 }
 
+# --------------- CLUSTER SECRET STORE VARIABLES --------------- #
+variable "cluster_secret_store_name" {
+  description = "Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao"
+  type        = string
+  nullable    = false
+}
+
 # --------------- DATABASE VARIABLES --------------- #
 variable "cluster_name" {
   description = "Database Cluster Name to allow Network Connections to"
@@ -198,7 +205,7 @@ variable "keycloak_environment_variables" {
     },
     {
       name  = "KC_DB_URL"
-      value = "jdbc:postgresql://postgresql-cluster-rw.postgres.svc/keycloak?ssl=true&sslmode=verify-full&sslrootcert=/mnt/certs/database/certificate-authority/ca.crt&sslcert=/mnt/certs/database/certificate/tls.crt&sslkey=/mnt/certs/database/certificate/key.der"
+      value = "jdbc:postgresql://postgresql-cluster-rw.postgres.svc/keycloak?ssl=true&sslmode=verify-full&sslrootcert=/mnt/certs/database/certificate-authority/ca.crt&sslcert=/mnt/certs/database/certificate/tls.crt&sslkey=/mnt/der/key.der"
     },
     {
       name  = "KC_DB_POOL_INITIAL_SIZE"

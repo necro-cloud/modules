@@ -5,6 +5,7 @@ OpenTofu Module to deploy [Garage](https://garagehq.deuxfleurs.fr/) Object Stora
 Required Modules to deploy Garage Object Storage:
 1. [Cluster Issuer](../cluster-issuer)
 2. [Observability](../observability)
+3. [OpenBao](../openbao)
 
 ## Providers
 
