@@ -50,6 +50,10 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           image = "alpine:3.23.3"
           command = ["/bin/sh", "-c"]
 
+          security_context {
+            run_as_user = 0
+          }
+
           args = [
             "apk add --no-cache openssl && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der"
           ]
