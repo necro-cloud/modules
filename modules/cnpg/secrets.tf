@@ -38,6 +38,7 @@ resource "kubernetes_manifest" "garage_configuration_sync" {
   }
 }
 
+// Password Generator for generating random passwords
 resource "kubernetes_manifest" "password_generator" {
   manifest = {
     apiVersion = "generators.external-secrets.io/v1alpha1"
@@ -193,6 +194,7 @@ resource "kubernetes_manifest" "push_client_database_credentials" {
   depends_on = [kubernetes_manifest.client_database_credentials_sync]
 }
 
+// PGAdmin UI Credentials
 resource "kubernetes_manifest" "pgadmin_credentials_sync" {
   manifest = {
     apiVersion = "external-secrets.io/v1"

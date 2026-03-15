@@ -98,6 +98,7 @@ resource "kubernetes_manifest" "server_certificate_authority" {
   }
 }
 
+// Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_server_certificate_authority" {
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
@@ -405,6 +406,7 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
   }
 }
 
+// Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_client_keycloak_certificate" {
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
@@ -508,6 +510,7 @@ resource "kubernetes_manifest" "client_certificates" {
   }
 }
 
+// Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_client_certificates" {
   count = length(var.clients)
   manifest = {
