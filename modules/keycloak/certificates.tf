@@ -66,6 +66,12 @@ resource "kubernetes_manifest" "database_client_certificate_sync" {
         template = {
           type = "kubernetes.io/tls"
           engineVersion = "v2"
+          data = {
+            "ca.crt"  = "{{ .ca_crt }}"
+            "tls.crt" = "{{ .tls_crt }}"
+            "tls.key" = "{{ .tls_key }}"
+            "key.der" = "{{ .key_der }}" 
+          }          
         }
       }
       dataFrom = [
