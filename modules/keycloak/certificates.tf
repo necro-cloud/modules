@@ -67,10 +67,10 @@ resource "kubernetes_manifest" "database_client_certificate_sync" {
           type = "kubernetes.io/tls"
           engineVersion = "v2"
           data = {
-            "ca.crt"  = "{{ .ca_crt }}"
-            "tls.crt" = "{{ .tls_crt }}"
-            "tls.key" = "{{ .tls_key }}"
-            "key.der" = "{{ .key_der | base64decode }}" 
+            "ca.crt"  = "{{ index . \"ca.crt\" }}"
+            "tls.crt" = "{{ index . \"tls.crt\" }}"
+            "tls.key" = "{{ index . \"tls.key\" }}"
+            "key.der" = "{{ index . \"key.der\" | b64dec }}" 
           }          
         }
       }
