@@ -65,4 +65,10 @@ resource "kubernetes_job" "configurator" {
   
   # Ensure OpenBao is fully up before running
   depends_on = [helm_release.openbao, kubernetes_manifest.internal_certificate]
+  
+  timeouts {
+    create = "10m"
+    update = "10m"
+    delete = "10m"
+  }
 }
