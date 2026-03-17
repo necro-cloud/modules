@@ -35,7 +35,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/118/ferret-secrets"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
