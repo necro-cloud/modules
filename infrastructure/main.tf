@@ -35,7 +35,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/118/ferret-secrets"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -132,7 +132,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/118/ferret-secrets"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
