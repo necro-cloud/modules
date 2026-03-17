@@ -95,7 +95,7 @@ resource "kubernetes_manifest" "push_ferret_database_credentials" {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-${kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name}"
+      name      = "push-${kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name}"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
@@ -107,7 +107,7 @@ resource "kubernetes_manifest" "push_ferret_database_credentials" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name
+          name = kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name
         }
       }
       data = [
