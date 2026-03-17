@@ -132,7 +132,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/118/ferret-secrets"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name

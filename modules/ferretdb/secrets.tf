@@ -38,90 +38,226 @@ resource "kubernetes_manifest" "garage_configuration_sync" {
   }
 }
 
-// Database credentials configuration for Ferret
-resource "random_password" "ferret_password" {
-  length  = 20
-  lower   = true
-  numeric = true
-  special = false
-}
-
-resource "kubernetes_secret" "ferret_database_credentials" {
-  metadata {
-    name      = "credentials-ferret"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
+// Password Generator for generating random passwords
+resource "kubernetes_manifest" "password_generator" {
+  manifest = {
+    apiVersion = "generators.external-secrets.io/v1alpha1"
+    kind       = "Password"
+    metadata = {
+      name      = "password-generator"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      length  = 20
+      digits  = 5
+      symbols = 0
+      noUpper = true
     }
   }
-
-  data = {
-    "username" = "ferret"
-    "password" = random_password.ferret_password.result
-  }
-
-  type = "kubernetes.io/basic-auth"
 }
+
+// Database credentials configuration for Ferret
+resource "kubernetes_manifest" "ferret_database_credentials_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "credentials-ferret"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "credentials-ferret"
+        template = {
+          type = "kubernetes.io/basic-auth"
+          data = {
+            username = "ferret"
+            password = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.password_generator.object.metadata.name
+          }
+        }
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "push_ferret_database_credentials" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name}"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.keycloak_database_credentials_sync.object.spec.target.name
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/${kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name}"
+            }
+          }
+        }
+      ]
+    }
+  }
+  depends_on = [kubernetes_manifest.ferret_database_credentials_sync]
+}
+
 
 // Database credentials configuration for all clients
-resource "random_password" "client_password" {
+resource "kubernetes_manifest" "client_database_credentials_sync" {
   count   = length(var.clients)
-  length  = 20
-  lower   = true
-  numeric = true
-  special = false
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "credentials-${var.clients[count.index].user}"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "credentials-${var.clients[count.index].user}"
+        template = {
+          type = "kubernetes.io/basic-auth"
+          data = {
+            username = var.clients[count.index].user
+            password = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.password_generator.object.metadata.name
+          }
+        }
+      }]
+    }
+  }
 }
 
-resource "kubernetes_secret" "client_database_credentials" {
-  count = length(var.clients)
-  metadata {
-    name      = "credentials-${var.clients[count.index].user}"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "push_client_database_credentials" {
+  count   = length(var.clients)
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${kubernetes_manifest.client_database_credentials_sync[count.index].object.spec.target.name}"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
     }
-
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.clients[count.index].namespace
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.client_database_credentials_sync[count.index].object.spec.target.name
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/${kubernetes_manifest.client_database_credentials_sync[count.index].object.spec.target.name}"
+            }
+          }
+        }
+      ]
     }
   }
-
-  data = {
-    "username" = var.clients[count.index].user
-    "password" = random_password.client_password[count.index].result
-  }
-
-  type = "kubernetes.io/basic-auth"
+  depends_on = [kubernetes_manifest.client_database_credentials_sync]
 }
 
 // UI credentials configuration for MongoExpress
-resource "random_password" "ui_password" {
-  length  = 20
-  lower   = true
-  numeric = true
-  special = false
-}
-
-resource "kubernetes_secret" "ui_credentials" {
-  metadata {
-    name      = "ui-ferret"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "mongo_express_credentials_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "mongo-express-credentials"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "mongo-express-credentials"
+        template = {
+          data = {
+            username = "ferret"
+            password = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.password_generator.object.metadata.name
+          }
+        }
+      }]
     }
   }
+}
 
-  data = {
-    "username" = "ferret"
-    "password" = random_password.ferret_password.result
+resource "kubernetes_manifest" "push_mongo_express_credentials" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${kubernetes_manifest.mongo_express_credentials_sync.object.spec.target.name}"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.mongo_express_credentials_sync.object.spec.target.name
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.mongo_express_credentials_sync.object.spec.target.name}"
+            }
+          }
+        }
+      ]
+    }
   }
-
-  type = "kubernetes.io/basic-auth"
+  depends_on = [kubernetes_manifest.mongo_express_credentials_sync]
 }

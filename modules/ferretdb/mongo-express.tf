@@ -63,7 +63,7 @@ resource "kubernetes_deployment" "mongo_express" {
             name = "DB_USERNAME"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ferret_database_credentials.metadata[0].name
+                name = kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name
                 key  = "username"
               }
             }
@@ -73,7 +73,7 @@ resource "kubernetes_deployment" "mongo_express" {
             name = "DB_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ferret_database_credentials.metadata[0].name
+                name = kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name
                 key  = "password"
               }
             }
@@ -99,7 +99,7 @@ resource "kubernetes_deployment" "mongo_express" {
             name = "ME_CONFIG_BASICAUTH_USERNAME"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ui_credentials.metadata[0].name
+                name = kubernetes_manifest.client_database_credentials_sync[count.index].object.spec.target.name
                 key = "username"
               }
             }
@@ -109,7 +109,7 @@ resource "kubernetes_deployment" "mongo_express" {
             name = "ME_CONFIG_BASICAUTH_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.ui_credentials.metadata[0].name
+                name = kubernetes_manifest.client_database_credentials_sync[count.index].object.spec.target.name
                 key = "password"
               }
             }

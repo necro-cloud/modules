@@ -82,7 +82,7 @@ resource "kubernetes_manifest" "cluster" {
             "login"           = true
             "name"            = "ferret"
             "passwordSecret" = {
-              "name" = kubernetes_secret.ferret_database_credentials.metadata[0].name
+              "name" = kubernetes_manifest.ferret_database_credentials_sync.object.spec.target.name
             }
             "replication" = false
             "superuser"   = false
