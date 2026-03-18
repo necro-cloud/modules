@@ -204,7 +204,7 @@ module "keycloak" {
 
 # Valkey Deployment for In Memory Storage Solution
 module "valkey" {
-  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/120/valkey-secrets"
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
