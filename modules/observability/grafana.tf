@@ -11,7 +11,7 @@ resource "helm_release" "grafana" {
 
       // Authentication Credentials
       admin = {
-        existingSecret = kubernetes_secret.observability_credentials.metadata[0].name
+        existingSecret = kubernetes_manifest.grafana_credentials_sync.object.spec.target.name
         userKey = "username"
         passwordKey = "password"
       }

@@ -22,8 +22,11 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/119/observability-secrets"
 
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
   cloudflare_token    = var.cloudflare_token
@@ -35,7 +38,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/119/observability-secrets"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -54,7 +57,7 @@ module "openbao" {
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
   
-  depends_on = [module.observability]
+  depends_on = [module.cluster-issuer]
 }
 
 # Garage Deployment for an S3 compatible object storage solution
@@ -196,7 +199,7 @@ module "keycloak" {
   realm_settings = local.keycloak_realm_settings
 
   // Dependency on CNPG PostgreSQL Deployment
-  depends_on = [module.cnpg, module.observability]
+  depends_on = [module.cnpg, module.observability, module.openbao]
 }
 
 # Valkey Deployment for In Memory Storage Solution
