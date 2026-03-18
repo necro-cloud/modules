@@ -203,17 +203,17 @@ module "keycloak" {
 }
 
 # Valkey Deployment for In Memory Storage Solution
-# module "valkey" {
-#   source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/120/valkey-secrets"
+module "valkey" {
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/120/valkey-secrets"
 
-#   // Certificate details for TLS Authentication
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  // Certificate details for TLS Authentication
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
 
-#   // Granting required namespaces access to the Valkey
-#   access_namespaces = "cloud"
+  // Granting required namespaces access to the Valkey
+  access_namespaces = "cloud"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   depends_on = [module.observability]
-# }
+  depends_on = [module.observability]
+}
