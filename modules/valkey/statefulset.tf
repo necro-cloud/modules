@@ -85,7 +85,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           // Valkey Password Environment Variable
           env_from {
             secret_ref {
-              name = kubernetes_secret.valkey_password.metadata[0].name
+              name = kubernetes_manifest.valkey_credentials_sync.object.spec.target.name
             }
           }
 
@@ -173,7 +173,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             name = "REDIS_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.valkey_password.metadata[0].name
+                name = kubernetes_manifest.valkey_credentials_sync.object.spec.target.name
                 key  = "VALKEY_PASSWORD"
               }
             }

@@ -204,7 +204,10 @@ module "keycloak" {
 
 # Valkey Deployment for In Memory Storage Solution
 module "valkey" {
-  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/120/valkey-secrets"
+  
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
   // Certificate details for TLS Authentication
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -215,5 +218,5 @@ module "valkey" {
   // Observability details
   observability_namespace = module.observability.observability_namespace
 
-  depends_on = [module.observability]
+  depends_on = [module.observability, module.openbao]
 }
