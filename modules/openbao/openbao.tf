@@ -71,7 +71,7 @@ resource "helm_release" "openbao" {
         extraSecretEnvironmentVars = [
           {
             envName = "OPENBAO_STATIC_UNSEAL_KEY"
-            secretName = kubernetes_secret.static_unseal_key.metadata[0].name
+            secretName = kubernetes_manifest.static_unseal_key_sync.object.spec.target.name
             secretKey = "OPENBAO_STATIC_UNSEAL_KEY"
           }
         ]

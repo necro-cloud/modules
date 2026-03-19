@@ -129,13 +129,13 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.keycloak_credentials.metadata[0].name
+              name = kubernetes_manifest.keycloak_credentials_sync.object.spec.target.name
             }
           }
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.realm_secrets.metadata[0].name
+              name = kubernetes_manifest.realm_secrets_sync.object.spec.target.name
             }
           }
 
@@ -325,6 +325,8 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     kubernetes_service.keycloak_discovery,
     kubernetes_manifest.database_credentials_sync,
     kubernetes_manifest.database_client_certificate_sync,
-    kubernetes_manifest.database_server_certificate_authority_sync
+    kubernetes_manifest.database_server_certificate_authority_sync,
+    kubernetes_manifest.realm_secrets_sync,
+    kubernetes_manifest.keycloak_credentials_sync  
   ]
 }

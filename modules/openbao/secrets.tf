@@ -1,50 +1,75 @@
 // Static Unsealing key to be used for OpenBao Auto-Unsealing
-resource "random_id" "static_unseal_key" {
-  byte_length = 32
-}
-
-resource "kubernetes_secret" "static_unseal_key" {
-  metadata {
-    name = "openbao-static-unseal-key"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "static_unseal_generator" {
+  manifest = {
+    apiVersion = "generators.external-secrets.io/v1alpha1"
+    kind       = "Password"
+    metadata = {
+      name      = "static-unseal-generator"
+      namespace = var.namespace
+    }
+    spec = {
+      length   = 32
+      encoding = "hex"
     }
   }
+}
 
-  data = {
-    "OPENBAO_STATIC_UNSEAL_KEY" = random_id.static_unseal_key.b64_std
+resource "kubernetes_manifest" "static_unseal_key_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "static-unseal-key"
+      namespace = var.namespace
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "static-unseal-key"
+        template = {
+          data = {
+            "OPENBAO_STATIC_UNSEAL_KEY" = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.static_unseal_generator.object.metadata.name
+          }
+        }
+      }]
+    }
   }
 }
 
-// Push the secret to OpenBao
-resource "kubernetes_manifest" "static_unseal_key" {
+resource "kubernetes_manifest" "push_static_unseal_key" {
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "static-unseal-key"
-      namespace = kubernetes_namespace.namespace.metadata[0].name
+      name      = "push-${kubernetes_manifest.static_unseal_key_sync.object.spec.target.name}"
+      namespace = var.namespace
     }
     spec = {
       refreshInterval = "1h"
-      secretStoreRefs = [
-        {
-          name = kubernetes_manifest.cluster_store.manifest.metadata.name
-          kind = "ClusterSecretStore"
-        }
-      ]
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = kubernetes_manifest.cluster_store.manifest.metadata.name
+        kind = "ClusterSecretStore"
+      }]
       selector = {
         secret = {
-          name = kubernetes_secret.static_unseal_key.metadata[0].name
+          name = kubernetes_manifest.static_unseal_key_sync.object.spec.target.name
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_secret.static_unseal_key.metadata[0].name}"
+              remoteKey = "${var.namespace}/infrastructure/${kubernetes_manifest.static_unseal_key_sync.object.spec.target.name}"
             }
           }
         }
@@ -52,22 +77,5 @@ resource "kubernetes_manifest" "static_unseal_key" {
     }
   }
 
-  // Wait for the sync to complete
-  wait {
-    condition {
-      type   = "Ready"
-      status = "True"
-    }
-  }
-
-  timeouts {
-    create = "5m"
-    update = "5m"
-  }
-
-  // Waiting till the store and the source secret actually exist
-  depends_on = [
-    kubernetes_manifest.cluster_store,
-    kubernetes_secret.static_unseal_key
-  ]  
+  depends_on = [kubernetes_manifest.static_unseal_key_sync]
 }
