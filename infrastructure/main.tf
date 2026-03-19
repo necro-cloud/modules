@@ -38,7 +38,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/121/openbao-keycloak-credentials"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -62,7 +62,7 @@ module "openbao" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/121/openbao-keycloak-credentials"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -174,7 +174,7 @@ module "ferretdb" {
 
 # Keycloak Cluster Deployment for Identity Solution
 module "keycloak" {
-  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=task/121/openbao-keycloak-credentials"
+  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
