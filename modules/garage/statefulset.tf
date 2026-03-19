@@ -88,7 +88,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.rpc_secret.metadata[0].name
+              name = kubernetes_manifest.garage_rpc_sync.object.spec.target.name
             }
           }
 
@@ -248,5 +248,6 @@ resource "kubernetes_stateful_set" "statefulset" {
 
   depends_on = [
     kubernetes_manifest.admin_password_sync,
+    kubernetes_manifest.garage_rpc_sync
   ]
 }
