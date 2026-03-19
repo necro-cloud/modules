@@ -62,7 +62,7 @@ module "openbao" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/116/garage-rpc-secret"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
