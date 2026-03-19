@@ -1,52 +1,79 @@
 // Garage RPC Secret required for nodes formation
-resource "random_bytes" "rpc_secret" {
-  length = 32
-}
-
-resource "kubernetes_secret" "rpc_secret" {
-  metadata {
-    name      = "garage-rpc-secret"
-    namespace = kubernetes_namespace.namespace.metadata[0].name
-    labels = {
-      app       = var.app_name
-      component = "secret"
+resource "kubernetes_manifest" "garage_rpc_generator" {
+  manifest = {
+    apiVersion = "generators.external-secrets.io/v1alpha1"
+    kind       = "Password"
+    metadata = {
+      name      = "garage-rpc-generator"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      length   = 32
+      encoding = "hex"
     }
   }
+}
 
-  data = {
-    "GARAGE_RPC_SECRET" = random_bytes.rpc_secret.hex
+resource "kubernetes_manifest" "garage_rpc_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "garage-rpc-secret"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "garage-rpc-secret"
+        template = {
+          data = {
+            "GARAGE_RPC_SECRET" = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.garage_rpc_generator.object.metadata.name
+          }
+        }
+      }]
+    }
   }
 }
 
-resource "kubernetes_manifest" "push_rpc_secret" {
+resource "kubernetes_manifest" "push_garage_rpc_secret" {
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-rpc-secret"
+      name      = "push-garage-rpc-secret"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
       refreshInterval = "1h"
-      deletionPolicy  = "None"
       secretStoreRefs = [{
         name = var.cluster_secret_store_name
         kind = "ClusterSecretStore"
       }]
       selector = {
         secret = {
-          name = kubernetes_secret.rpc_secret.metadata[0].name
+          name = "garage-rpc-secret"
         }
       }
       data = [{
         match = {
           remoteRef = {
-            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_secret.rpc_secret.metadata[0].name}"
+            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/garage/rpc-secret"
           }
         }
       }]
     }
   }
+  depends_on = [kubernetes_manifest.garage_rpc_sync]
 }
 
 // Garage Admin Password required for cluster, buckets and access keys creation
