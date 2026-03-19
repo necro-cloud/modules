@@ -37,7 +37,7 @@ resource "kubernetes_manifest" "static_unseal_key_sync" {
           generatorRef = {
             apiVersion = "generators.external-secrets.io/v1alpha1"
             kind       = "Password"
-            name       = kubernetes_manifest.openbao_static_unseal_generator.object.metadata.name
+            name       = kubernetes_manifest.static_unseal_generator.object.metadata.name
           }
         }
       }]
