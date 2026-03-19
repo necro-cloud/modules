@@ -50,7 +50,7 @@ resource "kubernetes_manifest" "push_garage_rpc_secret" {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-${kubernetes_manifest.garage_rpc_sync.object.spec.target.name}"
+      name      = "push-${kubernetes_manifest.garage_rpc_secret_sync.object.spec.target.name}"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
@@ -61,19 +61,19 @@ resource "kubernetes_manifest" "push_garage_rpc_secret" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.garage_rpc_sync.object.spec.target.name
+          name = kubernetes_manifest.garage_rpc_secret_sync.object.spec.target.name
         }
       }
       data = [{
         match = {
           remoteRef = {
-            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_manifest.garage_rpc_sync.object.spec.target.name}"
+            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_manifest.garage_rpc_secret_sync.object.spec.target.name}"
           }
         }
       }]
     }
   }
-  depends_on = [kubernetes_manifest.garage_rpc_sync]
+  depends_on = [kubernetes_manifest.garage_rpc_secret_sync]
 }
 
 // Garage Admin Password required for cluster, buckets and access keys creation
