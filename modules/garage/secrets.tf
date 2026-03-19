@@ -14,7 +14,7 @@ resource "kubernetes_manifest" "garage_rpc_generator" {
   }
 }
 
-resource "kubernetes_manifest" "garage_rpc_sync" {
+resource "kubernetes_manifest" "garage_rpc_secret_sync" {
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -50,7 +50,7 @@ resource "kubernetes_manifest" "push_garage_rpc_secret" {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-garage-rpc-secret"
+      name      = "push-${kubernetes_manifest.garage_rpc_sync.object.spec.target.name}"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
@@ -61,13 +61,13 @@ resource "kubernetes_manifest" "push_garage_rpc_secret" {
       }]
       selector = {
         secret = {
-          name = "garage-rpc-secret"
+          name = kubernetes_manifest.garage_rpc_sync.object.spec.target.name
         }
       }
       data = [{
         match = {
           remoteRef = {
-            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/garage/rpc-secret"
+            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/infrastructure/${kubernetes_manifest.garage_rpc_sync.object.spec.target.name}"
           }
         }
       }]
