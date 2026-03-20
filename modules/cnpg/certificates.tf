@@ -65,12 +65,6 @@ resource "kubernetes_manifest" "server_certificate_authority" {
       }
       "commonName" = var.server_certificate_authority_name
       "secretName" = var.server_certificate_authority_name
-      "secretTemplate" = {
-        "annotations" = {
-          "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = length(var.clients) == 0 ? "keycloak" : "keycloak,${join(",", local.access_namespaces)}"
-        }
-      }
       "duration" = "70128h"
       "privateKey" = {
         "algorithm" = "ECDSA"
@@ -377,12 +371,6 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
       }
       "commonName" = "keycloak"
       "secretName" = "postgresql-keycloak-client-certificate"
-      "secretTemplate" = {
-        "annotations" = {
-          "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = "keycloak"
-        }
-      }
       "privateKey" = {
         "encoding" = "PKCS8"
       }
@@ -476,12 +464,6 @@ resource "kubernetes_manifest" "client_certificates" {
       }
       "commonName" = var.clients[count.index].user
       "secretName" = "postgresql-${var.clients[count.index].user}-client-certificate"
-      "secretTemplate" = {
-        "annotations" = {
-          "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.clients[count.index].namespace
-        }
-      }
       "additionalOutputFormats" = var.clients[count.index].derRequired ? [
         {
           "type" : "DER"
