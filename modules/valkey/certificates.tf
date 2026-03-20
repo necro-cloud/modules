@@ -119,12 +119,6 @@ resource "kubernetes_manifest" "internal_certificate" {
       }
       "commonName" = var.internal_certificate_name
       "secretName" = var.internal_certificate_name
-      "secretTemplate" = {
-        "annotations" = {
-          "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.access_namespaces
-        }
-      }
       "issuerRef" = {
         "name" = kubernetes_manifest.issuer.manifest.metadata.name
       }
