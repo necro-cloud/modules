@@ -8,10 +8,7 @@ locals {
     nodeTags            = var.garage_node_tags
     buckets             = var.required_buckets
     storagePerNodeInGBs = var.required_storage
-    accessKeysSecretAnnotations = {
-      "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-      "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = var.access_namespaces
-    }
+    accessKeysSecretAnnotations = {}
     accessKeysSecretLabels = {
       app            = var.app_name
       component      = "secret"

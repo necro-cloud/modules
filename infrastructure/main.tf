@@ -9,7 +9,7 @@ data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
 
 # Deploy all required helm charts for deploying the infrastructure
 module "helm" {
-  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=main"
+  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=task/136-137/removals"
   server_node_selector = "cloud"
 }
 
@@ -62,7 +62,7 @@ module "openbao" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=task/136-137/removals"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -93,7 +93,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=task/136-137/removals"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -135,7 +135,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=task/136-137/removals"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -204,7 +204,7 @@ module "keycloak" {
 
 # Valkey Deployment for In Memory Storage Solution
 module "valkey" {
-  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=task/136-137/removals"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name

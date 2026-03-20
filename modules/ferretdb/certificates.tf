@@ -65,12 +65,6 @@ resource "kubernetes_manifest" "server_certificate_authority" {
       }
       "commonName" = var.server_certificate_authority_name
       "secretName" = var.server_certificate_authority_name
-      "secretTemplate" = {
-        "annotations" = {
-          "reflector.v1.k8s.emberstack.com/reflection-allowed"            = "true"
-          "reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces" = length(var.clients) == 0 ? "keycloak" : "keycloak,${join(",", local.access_namespaces)}"
-        }
-      }
       "duration" = "70128h"
       "privateKey" = {
         "algorithm" = "ECDSA"

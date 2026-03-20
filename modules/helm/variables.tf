@@ -1,17 +1,3 @@
-# -------------- KUBERNETES REFLECTOR VARIABLES -------------- #
-variable "reflector_configuration" {
-  description = "Dictionary filled with Kubernetes Reflector Configuration Details"
-  type        = map(string)
-  default = {
-    "name"             = "reflector"
-    "namespace"        = "reflector"
-    "repository"       = "https://emberstack.github.io/helm-charts"
-    "chart"            = "reflector"
-    "version"          = "v9.1.35"
-    "create_namespace" = true
-  }
-}
-
 # -------------- NGINX INGRESS VARIABLES -------------- #
 variable "nginx_configuration" {
   description = "Dictionary filled with NGINX Controller Configuration Details"
