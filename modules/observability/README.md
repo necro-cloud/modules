@@ -16,7 +16,6 @@ These components are being deployed as part of the Observability Module:
 |------|---------|
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 3.1.1 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.7.2 |
 
 ## Resources
 
