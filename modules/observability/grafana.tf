@@ -185,7 +185,7 @@ resource "helm_release" "grafana" {
             {
               name            = "OpenBao Secrets Management Monitoring Dashboard"
               orgId           = 1
-              folder          = "Secrets Management"
+              folder          = "Secrets Management Monitoring"
               type            = "file"
               disableDeletion = false
               editable        = true
