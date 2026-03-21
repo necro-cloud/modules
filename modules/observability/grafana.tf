@@ -181,8 +181,18 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/network"
               },
-            }
-          ]
+            },
+            {
+              name            = "OpenBao Secrets Management Monitoring Dashboard"
+              orgId           = 1
+              folder          = "Secrets Management Monitoring"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/openbao"
+              },
+            }          ]
         }
       }
 
@@ -221,6 +231,11 @@ resource "helm_release" "grafana" {
         network = {
           network-dashboard = {
             json = file("${path.module}/dashboards/network.json")
+          }
+        }
+        openbao = {
+          network-dashboard = {
+            json = file("${path.module}/dashboards/openbao.json")
           }
         }
       }

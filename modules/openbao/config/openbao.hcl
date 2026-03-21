@@ -9,6 +9,10 @@ listener "tcp" {
   tls_cert_file = "/openbao/userconfig/${cert_secret_name}/tls.crt"
   tls_key_file  = "/openbao/userconfig/${cert_secret_name}/tls.key"
   tls_client_ca_file = "/openbao/userconfig/${cert_secret_name}/ca.crt"
+
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
 }
 
 storage "raft" {
@@ -28,3 +32,9 @@ seal "static" {
 }
 
 service_registration "kubernetes" {}
+
+telemetry {
+  prometheus_retention_time = "30m"
+  usage_gauge_period = "1m"
+  disable_hostname = true
+}

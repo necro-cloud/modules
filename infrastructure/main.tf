@@ -22,7 +22,7 @@ module "cluster-issuer" {
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=task/138/openbao-dashboard"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -38,7 +38,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
+  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=task/138/openbao-dashboard"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
