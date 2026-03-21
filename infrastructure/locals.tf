@@ -11,10 +11,4 @@ locals {
     smtp_username              = var.smtp_username
     smtp_password              = var.smtp_password
   }
-  bold          = "\\033[1m"
-  green         = "\\033[32m"
-  yellow        = "\\033[33m"
-  blue          = "\\033[34m"
-  cyan          = "\\033[36m"
-  reset         = "\\033[0m"
 }
