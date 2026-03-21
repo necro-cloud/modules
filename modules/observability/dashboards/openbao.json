@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 12,
+  "id": 13,
   "links": [],
   "panels": [
     {
@@ -1619,7 +1619,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "OpenBao",
+  "title": "OpenBao Secrets Management Monitoring Dashboard",
   "uid": "obbjlwt",
   "version": 1
 }
