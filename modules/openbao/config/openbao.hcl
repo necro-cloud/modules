@@ -28,3 +28,10 @@ seal "static" {
 }
 
 service_registration "kubernetes" {}
+
+telemetry {
+  unauthenticated_metrics_access = true
+  prometheus_retention_time = "30m"
+  usage_gauge_period = "1m"
+  disable_hostname = true
+}
