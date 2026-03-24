@@ -144,14 +144,14 @@ jobs:
             PR_REF=$(echo "$SUBJECT" | grep -o '(#[0-9]\+)' | sed 's/[()]//g' || echo "N/A")
 
             # Fetch the issue number from the body of the commit            
-            CLOSE_REF=$(echo "$BODY" | grep -o '\*\*Closes: #[0-9]\+\*\*' | grep -o '#[0-9]\+' || echo "N/A")
+            CLOSE_REF=$(echo "$BODY" | grep -i "Closes:" | sed 's/.*Closes://I' | sed 's/[*]//g' | xargs || echo "N/A")
 
             # Fetch all the changes made in the body and ignore everything apart from the changes points
             CHANGES=$(echo "$BODY" | awk '/# Implemented Changes/{flag=1; next} /\*\*Closes:/{flag=0} flag' | sed '/^[[:space:]]*$/d')
 
             # Take the changes points and output it as the changelogs
             if [ ! -z "$CHANGES" ]; then
-              echo "#### From PR: #$PR_REF (Closes: $CLOSE_REF)" >> $GITHUB_OUTPUT
+              echo "#### From PR: #$PR_REF (Issues closed: $CLOSE_REF)" >> $GITHUB_OUTPUT
               echo "$CHANGES" >> $GITHUB_OUTPUT
               echo "" >> $GITHUB_OUTPUT
             fi
