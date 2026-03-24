@@ -195,7 +195,7 @@ jobs:
 
       - name: Finalize the release version in GitHub Environment for ${{ inputs.module_name }}
         env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         run: gh variable set MODULE_VERSION --body "${{ env.version }}" --env "${{ inputs.module_name }}"
 
       - name: Create GitHub Release for the ${{ inputs.module_name }}
@@ -208,5 +208,3 @@ jobs:
             ${{ env.changelog }}
           prerelease: ${{ inputs.is_dev_release }}
           make_latest: ${{ inputs.is_dev_release == 'false' }}
-        env:
-          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
