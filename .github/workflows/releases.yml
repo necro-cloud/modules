@@ -30,6 +30,9 @@ jobs:
       RELEASE_TYPE: ${{ inputs.release_type }}
       IS_DEV_RELEASE: ${{ inputs.is_dev_release }}
       CURRENT_FULL_VERSION: ${{ vars.FULL_VERSION || '0.0.0' }}
+    outputs:
+      version: ${{ steps.version.outputs.NEXT_RELEASE_VERSION }}
+      changelog: ${{ steps.changelog.outputs.NOTES }}
     steps:
       - name: Checking out the repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -173,3 +176,30 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "> **Note:** Please review the details above. If correct, approve the next job to finalize the release." >> $GITHUB_STEP_SUMMARY
+
+  perform_release:
+    name: Create the release for the ${{ inputs.module_name }} module
+    runs-on: ubuntu-latest
+    environment: "manual-approval"
+    needs: prepare_release_details
+    env:
+      version: ${{ needs.prepare_release_details.outputs.version }}
+      changelog: ${{ needs.prepare_release_details.outputs.changelog }}
+    permissions:
+      contents: write
+    steps:
+      - name: Finalize the release version in GitHub Environment for ${{ inputs.module_name }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: gh variable set MODULE_VERSION --body "${{ env.version }}" --env "${{ inputs.module_name }}"
+
+      - name: Create GitHub Release for the ${{ inputs.module_name }}
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
+        with:
+          tag_name: ${{ env.version }}
+          name: ${{ inputs.module_name }} v${{ env.version }}
+          body: |
+            ## Changes in ${{ github.event.inputs.module_name }}
+            ${{ env.changelog }}
+          prerelease: ${{ inputs.is_dev_release }}
+          make_latest: ${{ inputs.is_dev_release == 'false' }}
