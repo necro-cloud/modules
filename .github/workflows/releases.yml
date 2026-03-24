@@ -1,7 +1,6 @@
 name: Generate GH Release with Proper Release Notes for OpenTofu Modules
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       module_name:
@@ -23,6 +22,7 @@ on:
 
 jobs:
   prepare_release_details:
+    name: Preparing release details such as next release version and changelogs
     runs-on: ubuntu-latest
     environment: ${{ inputs.module_name }}
     env:
@@ -36,135 +36,135 @@ jobs:
         with:
           fetch-depth: 0
       
-      # - name: Checking if there's anything committed to create a new release
-      #   run: |
+      - name: Checking if there's anything committed to create a new release
+        run: |
          
-      #     # Count commits in the module path excluding [INF]
-      #     CHANGE_COUNT=$(git log $CURRENT_FULL_VERSION..HEAD --oneline -- "modules/$MODULE" | grep -v "\[INF\]" | wc -l)
+          # Count commits in the module path excluding [INF]
+          CHANGE_COUNT=$(git log $CURRENT_FULL_VERSION..HEAD --oneline -- "modules/$MODULE" | grep -v "\[INF\]" | wc -l)
           
-      #     if [ "$CHANGE_COUNT" -eq "0" ]; then
-      #       echo "::error title=No Changes Detected::No non-[INF] commits found in modules/$MODULE since $CURRENT_FULL_VERSION."
-      #       exit 1
-      #     fi
-      #     echo "Found $CHANGE_COUNT relevant changes."
+          if [ "$CHANGE_COUNT" -eq "0" ]; then
+            echo "::error title=No Changes Detected::No non-[INF] commits found in modules/$MODULE since $CURRENT_FULL_VERSION."
+            exit 1
+          fi
+          echo "Found $CHANGE_COUNT relevant changes."
 
-      # - id: version
-      #   name: Calculating the next release version from the previous if it exists
-      #   run: |
+      - id: version
+        name: Calculating the next release version from the previous if it exists
+        run: |
 
-      #     # Fetch the raw version without any development tags if it exists
-      #     BASE_VERSION=$(echo "$CURRENT_FULL_VERSION" | cut -d "." -f1)
+          # Fetch the raw version without any development tags if it exists
+          BASE_VERSION=$(echo "$CURRENT_FULL_VERSION" | cut -d "." -f1)
 
-      #     # If the previous release was a development version, extract the release number
-      #     DEV_VERSION=$(echo "$CURRENT_FULL_VERSION" | grep -oP 'dev\.\K\d+' || echo "0")
+          # If the previous release was a development version, extract the release number
+          DEV_VERSION=$(echo "$CURRENT_FULL_VERSION" | grep -oP 'dev\.\K\d+' || echo "0")
 
-      #     # Calculating the next release version
-      #     # Case 1: if the current release was a dev version and the next one is not, the next
-      #     # release version will be the base version without any dev tags added onto it
-      #     if [[ "$CURRENT_FULL_VERSION" == *"dev."* && "$IS_DEV_RELEASE" == "false" ]]; then
-      #       NEXT_RELEASE_VERSION="$BASE_VERSION"
+          # Calculating the next release version
+          # Case 1: if the current release was a dev version and the next one is not, the next
+          # release version will be the base version without any dev tags added onto it
+          if [[ "$CURRENT_FULL_VERSION" == *"dev."* && "$IS_DEV_RELEASE" == "false" ]]; then
+            NEXT_RELEASE_VERSION="$BASE_VERSION"
 
-      #     # Case 2: if the current release was a dev version and the next one is also a dev
-      #     # release, the next release version will be the same with the dev version incremented
-      #     elif [[ "$CURRENT_FULL_VERSION" == *"dev."* && "$IS_DEV_RELEASE" == "true" ]]; then
-      #       DEV_VERSION=$(( DEV_VERSION + 1 ))
-      #       NEXT_RELEASE_VERSION="$BASE_VERSION-dev.$DEV_VERSION"
+          # Case 2: if the current release was a dev version and the next one is also a dev
+          # release, the next release version will be the same with the dev version incremented
+          elif [[ "$CURRENT_FULL_VERSION" == *"dev."* && "$IS_DEV_RELEASE" == "true" ]]; then
+            DEV_VERSION=$(( DEV_VERSION + 1 ))
+            NEXT_RELEASE_VERSION="$BASE_VERSION-dev.$DEV_VERSION"
 
-      #     # Case 3: if the current release is not a dev version and the next too is not
-      #     # According to the provided inputs, increment major/minor/patch version and
-      #     # make that as the next release version to be performed
-      #     else
-      #       # Split the basen version up using period
-      #       # and extract the individual versions
-      #       IFS='.' read -ra VERSIONS <<< "$BASE_VERSION"
-      #       MAJOR_VERSION=${VERSIONS[0]}
-      #       MINOR_VERSION=${VERSIONS[1]}
-      #       PATCH_VERSION=${VERSIONS[2]}
+          # Case 3: if the current release is not a dev version and the next too is not
+          # According to the provided inputs, increment major/minor/patch version and
+          # make that as the next release version to be performed
+          else
+            # Split the basen version up using period
+            # and extract the individual versions
+            IFS='.' read -ra VERSIONS <<< "$BASE_VERSION"
+            MAJOR_VERSION=${VERSIONS[0]}
+            MINOR_VERSION=${VERSIONS[1]}
+            PATCH_VERSION=${VERSIONS[2]}
 
-      #       # Increment the version according to the inputs and create the final version
-      #       if [[ "$RELEASE_TYPE" == "major" ]]; then MAJOR_VERSION=$(( MAJOR_VERSION + 1 )); MINOR_VERSION=0; PATCH_VERSION=0;
-      #       elif [[ "$RELEASE_TYPE" == "minor" ]]; then MINOR_VERSION=$(( MINOR_VERSION + 1 )); PATCH_VERSION=0;
-      #       else PATCH_VERSION=$(( PATCH_VERSION + 1 )); fi
+            # Increment the version according to the inputs and create the final version
+            if [[ "$RELEASE_TYPE" == "major" ]]; then MAJOR_VERSION=$(( MAJOR_VERSION + 1 )); MINOR_VERSION=0; PATCH_VERSION=0;
+            elif [[ "$RELEASE_TYPE" == "minor" ]]; then MINOR_VERSION=$(( MINOR_VERSION + 1 )); PATCH_VERSION=0;
+            else PATCH_VERSION=$(( PATCH_VERSION + 1 )); fi
 
-      #       NEXT_RELEASE_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+            NEXT_RELEASE_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 
-      #       # If its a development release, attach the tag accordingly
-      #       if [[ "$IS_DEV_RELEASE" == "true" ]]; then
-      #         NEXT_RELEASE_VERSION="$NEXT_RELEASE_VERSION0-dev.1"
-      #       fi
-      #     fi
+            # If its a development release, attach the tag accordingly
+            if [[ "$IS_DEV_RELEASE" == "true" ]]; then
+              NEXT_RELEASE_VERSION="$NEXT_RELEASE_VERSION0-dev.1"
+            fi
+          fi
 
-      #     # Outputting the version as a GH Output
-      #     echo "NEXT_RELEASE_VERSION=$NEXT_RELEASE_VERSION" >> $GITHUB_OUTPUT
+          # Outputting the version as a GH Output
+          echo "NEXT_RELEASE_VERSION=$NEXT_RELEASE_VERSION" >> $GITHUB_OUTPUT
 
-      # - id: changelog
-      #   name: Generating Change log from the previous versions if exists for the new release
-      #   run: |
+      - id: changelog
+        name: Generating Change log from the previous versions if exists for the new release
+        run: |
 
-      #     # We will output the change log
-      #     # as one big blob of text
-      #     echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          # We will output the change log
+          # as one big blob of text
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
 
-      #     # Fetching the current release tag if it exists
-      #     # If it does not, we are starting from scratch
-      #     CURRENT_TAG=$(git tag -l "$MODULE/v*" --sort=-v:refname | head -n 1)
-      #     CURRENT_TAG=${CURRENT_TAG:-$(git rev-list --max-parents=0 HEAD)}
+          # Fetching the current release tag if it exists
+          # If it does not, we are starting from scratch
+          CURRENT_TAG=$(git tag -l "$MODULE/v*" --sort=-v:refname | head -n 1)
+          CURRENT_TAG=${CURRENT_TAG:-$(git rev-list --max-parents=0 HEAD)}
 
-      #     # Fetch all commits since the previous release for this specific module
-      #     COMMITS=$(it log $CURRENT_TAG..HEAD --format="%H" -- "modules/$MODULE")
+          # Fetch all commits since the previous release for this specific module
+          COMMITS=$(it log $CURRENT_TAG..HEAD --format="%H" -- "modules/$MODULE")
 
-      #     # Looping across all commits to pull out
-      #     # Change log for the next release
-      #     for SHASUM in $COMMITS; do
-      #       # Fetch the body of the commit
-      #       # Since all commits on the main
-      #       # branch is PRs getting squashed
-      #       # and merged, the body will contain
-      #       # the changes made
-      #       BODY=$(git log -1 --format="%b" $SHASUM)
+          # Looping across all commits to pull out
+          # Change log for the next release
+          for SHASUM in $COMMITS; do
+            # Fetch the body of the commit
+            # Since all commits on the main
+            # branch is PRs getting squashed
+            # and merged, the body will contain
+            # the changes made
+            BODY=$(git log -1 --format="%b" $SHASUM)
 
-      #       # If the body is garbage, DO NOT INCLUDE
-      #       # IN THE CHANGELOG
-      #       if [[ ! "$BODY" == *"# Implemented Changes"* ]]; then
-      #         continue
-      #       fi
+            # If the body is garbage, DO NOT INCLUDE
+            # IN THE CHANGELOG
+            if [[ ! "$BODY" == *"# Implemented Changes"* ]]; then
+              continue
+            fi
 
-      #       # Fetch the commit message
-      #       SUBJECT=$(git log -1 --format="%s" $SHASUM)
+            # Fetch the commit message
+            SUBJECT=$(git log -1 --format="%s" $SHASUM)
 
-      #       # If the commit message is for an infrastructure
-      #       # folder update, ignore it safely
-      #       if [[ $SUBJECT == "[INF]"* ]]; then
-      #         continue
-      #       fi
+            # If the commit message is for an infrastructure
+            # folder update, ignore it safely
+            if [[ $SUBJECT == "[INF]"* ]]; then
+              continue
+            fi
 
-      #       # Fetch the PR number from the commit message
-      #       PR_REF=$(echo "$SUBJECT" | grep -o '(#[0-9]\+)' | sed 's/[()]//g' || echo "N/A")
+            # Fetch the PR number from the commit message
+            PR_REF=$(echo "$SUBJECT" | grep -o '(#[0-9]\+)' | sed 's/[()]//g' || echo "N/A")
 
-      #       # Fetch the issue number from the body of the commit            
-      #       CLOSE_REF=$(echo "$BODY" | grep -o '\*\*Closes: #[0-9]\+\*\*' | grep -o '#[0-9]\+' || echo "N/A")
+            # Fetch the issue number from the body of the commit            
+            CLOSE_REF=$(echo "$BODY" | grep -o '\*\*Closes: #[0-9]\+\*\*' | grep -o '#[0-9]\+' || echo "N/A")
 
-      #       # Fetch all the changes made in the body and ignore everything apart from the changes points
-      #       CHANGES=$(echo "$BODY" | sed -n '/# Implemented Changes/,/\*\*Closes:/p' | grep -vE '(# Implemented Changes|\*\*Closes:|^$)' | sed 's/^[[:space:]]*[-*][[:space:]]*//')
+            # Fetch all the changes made in the body and ignore everything apart from the changes points
+            CHANGES=$(echo "$BODY" | sed -n '/# Implemented Changes/,/\*\*Closes:/p' | grep -vE '(# Implemented Changes|\*\*Closes:|^$)' | sed 's/^[[:space:]]*[-*][[:space:]]*//')
 
-      #       # Take the changes points and output it as the changelogs
-      #       if [ ! -z "$CHANGES" ]; then
-      #         while read -r line; do echo "- $line (PR: $PR_REF, Closes: $CLOSE_REF)" >> $GITHUB_OUTPUT; done <<< "$CHANGES"
-      #       fi
+            # Take the changes points and output it as the changelogs
+            if [ ! -z "$CHANGES" ]; then
+              while read -r line; do echo "- $line (PR: $PR_REF, Closes: $CLOSE_REF)" >> $GITHUB_OUTPUT; done <<< "$CHANGES"
+            fi
 
-      #     done
-      #     echo "EOF" >> $GITHUB_OUTPUT
+          done
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      # - name: Printing out the release information as a step summary for validation
-      #   run: |
-      #     echo "### Release Preview: ${{ inputs.module_name }}" >> $GITHUB_STEP_SUMMARY
-      #     echo "**New Version:** \`${{ steps.version.outputs.NEXT_RELEASE_VERSION }}\`" >> $GITHUB_STEP_SUMMARY
-      #     echo "**Release Type:** ${{ inputs.is_dev_release && 'In Development (Dev)' || 'Stable' }}" >> $GITHUB_STEP_SUMMARY
-      #     echo "#### Proposed Changelogs:" >> $GITHUB_STEP_SUMMARY
-      #     if [ -z "${{ steps.changelog.outputs.NOTES }}" ]; then
-      #       echo "*No descriptive changes found (commits may lack the 'Implemented Changes' section).*" >> $GITHUB_STEP_SUMMARY
-      #     else
-      #       echo "${{ steps.changelog.outputs.NOTES }}" >> $GITHUB_STEP_SUMMARY
-      #     fi
-      #     echo "" >> $GITHUB_STEP_SUMMARY
-      #     echo "> **Note:** Please review the details above. If correct, approve the next job to finalize the release." >> $GITHUB_STEP_SUMMARY
+      - name: Printing out the release information as a step summary for validation
+        run: |
+          echo "### Release Preview: ${{ inputs.module_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**New Version:** \`${{ steps.version.outputs.NEXT_RELEASE_VERSION }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Release Type:** ${{ inputs.is_dev_release && 'In Development (Dev)' || 'Stable' }}" >> $GITHUB_STEP_SUMMARY
+          echo "#### Proposed Changelogs:" >> $GITHUB_STEP_SUMMARY
+          if [ -z "${{ steps.changelog.outputs.NOTES }}" ]; then
+            echo "*No descriptive changes found (commits may lack the 'Implemented Changes' section).*" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "${{ steps.changelog.outputs.NOTES }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> **Note:** Please review the details above. If correct, approve the next job to finalize the release." >> $GITHUB_STEP_SUMMARY
