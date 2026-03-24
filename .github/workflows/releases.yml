@@ -55,7 +55,7 @@ jobs:
         run: |
 
           # Fetch the raw version without any development tags if it exists
-          BASE_VERSION=$(echo "$CURRENT_FULL_VERSION" | cut -d "." -f1)
+          BASE_VERSION=$(echo "$CURRENT_FULL_VERSION" | cut -d- -f1)
 
           # If the previous release was a development version, extract the release number
           DEV_VERSION=$(echo "$CURRENT_FULL_VERSION" | grep -oP 'dev\.\K\d+' || echo "0")
@@ -92,7 +92,7 @@ jobs:
 
             # If its a development release, attach the tag accordingly
             if [[ "$IS_DEV_RELEASE" == "true" ]]; then
-              NEXT_RELEASE_VERSION="$NEXT_RELEASE_VERSION0-dev.1"
+              NEXT_RELEASE_VERSION="$NEXT_RELEASE_VERSION-dev.1"
             fi
           fi
 
