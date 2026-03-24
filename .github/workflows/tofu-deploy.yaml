@@ -3,6 +3,9 @@ name: Infrastructure Deployment on Self Hosted Kubernetes Cluster
 on:
   workflow_dispatch:
   push:
+    paths:
+      - infrastructure/**
+      - modules/**
     branches:
       - task/**
       - bug/**
