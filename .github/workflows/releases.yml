@@ -39,8 +39,10 @@ jobs:
       - name: Checking if there's anything committed to create a new release
         run: |
          
+          CURRENT_TAG=$(git tag -l "$MODULE/v*" --sort=-v:refname | head -n 1)
+          CURRENT_TAG=${CURRENT_TAG:-$(git rev-list --max-parents=0 HEAD)}
           # Count commits in the module path excluding [INF]
-          CHANGE_COUNT=$(git log $CURRENT_FULL_VERSION..HEAD --oneline -- "modules/$MODULE" | grep -v "\[INF\]" | wc -l)
+          CHANGE_COUNT=$(git log $CURRENT_TAG..HEAD --oneline -- "modules/$MODULE" | grep -v "\[INF\]" | wc -l)
           
           if [ "$CHANGE_COUNT" -eq "0" ]; then
             echo "::error title=No Changes Detected::No non-[INF] commits found in modules/$MODULE since $CURRENT_FULL_VERSION."
