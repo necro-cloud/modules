@@ -113,7 +113,7 @@ jobs:
           CURRENT_TAG=${CURRENT_TAG:-$(git rev-list --max-parents=0 HEAD)}
 
           # Fetch all commits since the previous release for this specific module
-          COMMITS=$(it log $CURRENT_TAG..HEAD --format="%H" -- "modules/$MODULE")
+          COMMITS=$(git log $CURRENT_TAG..HEAD --format="%H" -- "modules/$MODULE")
 
           # Looping across all commits to pull out
           # Change log for the next release
