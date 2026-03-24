@@ -208,3 +208,5 @@ jobs:
             ${{ env.changelog }}
           prerelease: ${{ inputs.is_dev_release }}
           make_latest: ${{ inputs.is_dev_release == 'false' }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
