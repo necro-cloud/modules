@@ -155,7 +155,7 @@ jobs:
 
             # Take the changes points and output it as the changelogs
             if [ ! -z "$CHANGES" ]; then
-              echo "#### From PR: #$PR_REF (Issues closed: $CLOSE_REF)" >> $GITHUB_OUTPUT
+              echo "#### From PR: $PR_REF (Issues closed: $CLOSE_REF)" >> $GITHUB_OUTPUT
               echo "$CHANGES" >> $GITHUB_OUTPUT
               echo "" >> $GITHUB_OUTPUT
             fi
