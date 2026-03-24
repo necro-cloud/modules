@@ -147,11 +147,13 @@ jobs:
             CLOSE_REF=$(echo "$BODY" | grep -o '\*\*Closes: #[0-9]\+\*\*' | grep -o '#[0-9]\+' || echo "N/A")
 
             # Fetch all the changes made in the body and ignore everything apart from the changes points
-            CHANGES=$(echo "$BODY" | sed -n '/# Implemented Changes/,/\*\*Closes:/p' | grep -vE '(# Implemented Changes|\*\*Closes:|^$)' | sed 's/^[[:space:]]*[-*][[:space:]]*//')
+            CHANGES=$(echo "$BODY" | awk '/# Implemented Changes/{flag=1; next} /\*\*Closes:/{flag=0} flag' | sed 's/^[[:space:]]*[-*][[:space:]]*//' | sed '/^[[:space:]]*$/d')
 
             # Take the changes points and output it as the changelogs
             if [ ! -z "$CHANGES" ]; then
-              while read -r line; do echo "- $line (PR: $PR_REF, Closes: $CLOSE_REF)" >> $GITHUB_OUTPUT; done <<< "$CHANGES"
+              echo "$CHANGES" | while read -r line; do
+                echo "- $line (PR: $PR_REF, Closes: $CLOSE_REF)" >> $GITHUB_OUTPUT
+              done
             fi
 
           done
