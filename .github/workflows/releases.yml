@@ -188,6 +188,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checking out the repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+
       - name: Finalize the release version in GitHub Environment for ${{ inputs.module_name }}
         env:
           GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
