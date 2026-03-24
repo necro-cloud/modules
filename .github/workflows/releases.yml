@@ -201,7 +201,7 @@ jobs:
       - name: Create GitHub Release for the ${{ inputs.module_name }}
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
         with:
-          tag_name: ${{ env.version }}
+          tag_name: ${{ inputs.module_name }}/v${{ env.version }}
           name: ${{ inputs.module_name }} v${{ env.version }}
           body: |
             ## Changes in ${{ github.event.inputs.module_name }}
