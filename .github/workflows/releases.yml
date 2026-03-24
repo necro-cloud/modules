@@ -145,6 +145,7 @@ jobs:
 
             # Fetch the issue number from the body of the commit            
             CLOSE_REF=$(echo "$BODY" | grep -i "Closes:" | sed 's/.*Closes://I' | sed 's/[*]//g' | xargs || echo "N/A")
+            CLOSE_REF=${CLOSE_REF:-"N/A"}
 
             # Fetch all the changes made in the body and ignore everything apart from the changes points
             CHANGES=$(echo "$BODY" | awk '/# Implemented Changes/{flag=1; next} /\*\*Closes:/{flag=0} flag' | sed '/^[[:space:]]*$/d')
