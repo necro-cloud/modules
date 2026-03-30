@@ -36,3 +36,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 /infrastructure/.terraform.lock.hcl
+/infrastructure/kpxc.env
