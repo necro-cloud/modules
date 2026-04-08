@@ -1,14 +1,14 @@
-# -------------- NGINX INGRESS VARIABLES -------------- #
-variable "nginx_configuration" {
-  description = "Dictionary filled with NGINX Controller Configuration Details"
+# -------------- TRAEFIK INGRESS VARIABLES -------------- #
+variable "traefik_configuration" {
+  description = "Dictionary filled with Traefik Controller Configuration Details"
   type        = map(string)
   default = {
-    "name"             = "ingress-nginx"
-    "namespace"        = "ingress-nginx"
-    "repository"       = "https://kubernetes.github.io/ingress-nginx"
-    "chart"            = "ingress-nginx"
-    "version"          = "4.13.3"
-    "create_namespace" = true
+    "name"             = "traefik"
+    "namespace"        = "traefik"
+    "repository"       = "https://traefik.github.io/charts"
+    "chart"            = "traefik"
+    "version"          = "v39.0.7"
+    "create_namespace" = "true"
   }
 }
 

@@ -1,19 +1,70 @@
-// NGINX Ingress Controller Configuration
-resource "helm_release" "nginx" {
-  name             = var.nginx_configuration.name
-  namespace        = var.nginx_configuration.namespace
-  repository       = var.nginx_configuration.repository
-  chart            = var.nginx_configuration.chart
-  version          = var.nginx_configuration.version
-  create_namespace = var.nginx_configuration.create_namespace
+# Traefik Ingress Controller Configuration
+resource "helm_release" "traefik" {
+  name             = var.traefik_configuration.name
+  namespace        = var.traefik_configuration.namespace
+  repository       = var.traefik_configuration.repository
+  chart            = var.traefik_configuration.chart
+  version          = var.traefik_configuration.version
+  create_namespace = var.traefik_configuration.create_namespace
 
-  set = [
-    {
-      name  = "nodeSelector.server"
-      value = var.server_node_selector
-    }
+  values = [
+    yamlencode({
+      nodeSelector = {
+        server = var.server_node_selector
+      }
+
+      providers = {
+        kubernetesCRD = {
+          enabled = true
+          allowCrossNamespace = true 
+        }
+        kubernetesIngress = {
+          enabled      = true
+          ingressClass = "traefik"
+          publishedService = {
+            enabled = true
+          }
+        }
+      }
+
+      ports = {
+        web = {
+          http = {
+            redirections = {
+              entryPoint = {
+                to     = "websecure"
+                scheme = "https"
+              }
+            }
+          }
+        }
+        websecure = {
+          expose = {
+            default = true
+          }
+          exposedPort = 443
+        }
+      }
+
+      logs = {
+        general = {
+          level  = "DEBUG"
+        }
+      }
+
+      
+      additionalArguments = [
+        "--serverstransport.insecureSkipVerify=true"
+      ]
+
+      ingressClass = {
+        enabled        = true
+        isDefaultClass = true
+        name           = "traefik"
+      }
+    })
   ]
 
-  depends_on = [ helm_release.calico ]
-  timeout = 1800
+  depends_on = [helm_release.calico]
+  timeout    = 1800
 }
