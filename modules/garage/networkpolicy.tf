@@ -60,20 +60,12 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
     }
 
-    # Rule 3: Allow ingress from NGINX Ingress pods
+    # Rule 3: Allow ingress from Traefik Ingress pods
     ingress {
       from {
         namespace_selector {
-          match_expressions {
-            key      = "kubernetes.io/metadata.name"
-            operator = "In"
-            values   = ["ingress-nginx"]
-          }
-        }
-        pod_selector {
           match_labels = {
-            "app.kubernetes.io/component" = "controller"
-            "app.kubernetes.io/name"      = "ingress-nginx"
+            "kubernetes.io/metadata.name" = "traefik"
           }
         }
       }

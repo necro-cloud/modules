@@ -1,14 +1,14 @@
-# -------------- NGINX INGRESS VARIABLES -------------- #
-variable "nginx_configuration" {
-  description = "Dictionary filled with NGINX Controller Configuration Details"
+# -------------- TRAEFIK INGRESS VARIABLES -------------- #
+variable "traefik_configuration" {
+  description = "Dictionary filled with Traefik Controller Configuration Details"
   type        = map(string)
   default = {
-    "name"             = "ingress-nginx"
-    "namespace"        = "ingress-nginx"
-    "repository"       = "https://kubernetes.github.io/ingress-nginx"
-    "chart"            = "ingress-nginx"
-    "version"          = "4.13.3"
-    "create_namespace" = true
+    "name"             = "traefik"
+    "namespace"        = "traefik"
+    "repository"       = "https://traefik.github.io/charts"
+    "chart"            = "traefik"
+    "version"          = "v39.0.7"
+    "create_namespace" = "true"
   }
 }
 
@@ -22,26 +22,6 @@ variable "cert_manager_configuration" {
     "repository"       = "https://charts.jetstack.io"
     "chart"            = "cert-manager"
     "version"          = "v1.19.0"
-    "create_namespace" = true
-  }
-}
-
-# --------------- MINIO OPERATOR VARIABLES --------------- #
-variable "enable_minio" {
-  description = "To enable MinIO Deployment or not"
-  type        = bool
-  default     = false
-}
-
-variable "minio_operator_configuration" {
-  description = "Dictionary filled with MinIO Operator Configuration Details"
-  type        = map(string)
-  default = {
-    "name"             = "minio-operator"
-    "namespace"        = "minio-operator"
-    "repository"       = "https://operator.min.io"
-    "chart"            = "operator"
-    "version"          = "7.0.0"
     "create_namespace" = true
   }
 }

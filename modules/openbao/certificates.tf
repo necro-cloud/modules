@@ -104,6 +104,10 @@ resource "kubernetes_manifest" "internal_certificate" {
         "openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc",
         "openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
         "*.openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "openbao-active",
+        "openbao-active.${kubernetes_namespace.namespace.metadata[0].name}.svc",
+        "openbao-active.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "*.openbao-active.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
       ]
       "subject" = {
         "organizations"       = [var.organization_name]

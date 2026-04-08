@@ -7,19 +7,21 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       app       = var.app_name
       component = "ingress"
     }
+    
+    // Attaching all middlewares and server transports
     annotations = {
-      "nginx.ingress.kubernetes.io/proxy-ssl-verify" : "on"
-      "nginx.ingress.kubernetes.io/proxy-ssl-secret" : "${kubernetes_namespace.namespace.metadata[0].name}/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
-      "nginx.ingress.kubernetes.io/proxy-ssl-name" : "openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
-      "nginx.ingress.kubernetes.io/backend-protocol" : "HTTPS"
-      "nginx.ingress.kubernetes.io/rewrite-target" : "/"
-      "nginx.ingress.kubernetes.io/proxy-body-size" : 0
-      "nginx.ingress.kubernetes.io/client-body-buffer-size" : "500M"
+      "traefik.ingress.kubernetes.io/router.middlewares" = join(",", [
+        "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_rewrite.manifest.metadata.name}@kubernetescrd",
+        "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
+      ])
+      "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
+      "traefik.ingress.kubernetes.io/router.tls" = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
     }
   }
 
   spec {
-    ingress_class_name = "nginx"
+    ingress_class_name = "traefik"
     tls {
       hosts       = ["${var.host_name}.${var.domain}"]
       secret_name = kubernetes_manifest.ingress_certificate.manifest.spec.secretName
@@ -29,6 +31,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       http {
         path {
           path = "/"
+          path_type = "Prefix"
           backend {
             service {
               name = "openbao-active"
@@ -41,4 +44,13 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       }
     }
   }
+
+
+depends_on = [
+    kubernetes_manifest.middleware_rewrite,
+    kubernetes_manifest.middleware_buffering,
+    kubernetes_manifest.transport,
+    kubernetes_manifest.ingress_certificate
+  ]  
+
 }

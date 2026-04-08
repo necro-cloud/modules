@@ -36,6 +36,9 @@ resource "kubernetes_service" "garage-service" {
       app       = var.app_name
       component = "service"
     }
+    annotations = {
+      "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+    }
   }
 
   spec {

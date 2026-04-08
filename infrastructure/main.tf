@@ -9,20 +9,20 @@ data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
 
 # Deploy all required helm charts for deploying the infrastructure
 module "helm" {
-  source               = "git::https://github.com/necro-cloud/modules//modules/helm?ref=main"
+  source               = "../modules/helm"
   server_node_selector = "cloud"
 }
 
 # Setup a Cluster Issuer for all private TLS certificates
 module "cluster-issuer" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cluster-issuer?ref=main"
+  source = "../modules/cluster-issuer"
 
   depends_on = [module.helm]
 }
 
 # Complete Observability Stack Deployment
 module "observability" {
-  source = "git::https://github.com/necro-cloud/modules//modules/observability?ref=main"
+  source = "../modules/observability"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -38,7 +38,7 @@ module "observability" {
 
 # OpenBao Secrets Management Solution deployment
 module "openbao" {
-  source = "git::https://github.com/necro-cloud/modules//modules/openbao?ref=main"
+  source = "../modules/openbao"
   
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
@@ -62,7 +62,7 @@ module "openbao" {
 
 # Garage Deployment for an S3 compatible object storage solution
 module "garage" {
-  source = "git::https://github.com/necro-cloud/modules//modules/garage?ref=main"
+  source = "../modules/garage"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -93,7 +93,7 @@ module "garage" {
 
 # Cloudnative PG Deployment for PostgreSQL Database Solution
 module "cnpg" {
-  source = "git::https://github.com/necro-cloud/modules//modules/cnpg?ref=main"
+  source = "../modules/cnpg"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -135,7 +135,7 @@ module "cnpg" {
 
 # FerretDB Deployment for MongoDB Database Solution
 module "ferretdb" {
-  source = "git::https://github.com/necro-cloud/modules//modules/ferretdb?ref=main"
+  source = "../modules/ferretdb"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -174,7 +174,7 @@ module "ferretdb" {
 
 # Keycloak Cluster Deployment for Identity Solution
 module "keycloak" {
-  source = "git::https://github.com/necro-cloud/modules//modules/keycloak?ref=main"
+  source = "../modules/keycloak"
 
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
@@ -204,7 +204,7 @@ module "keycloak" {
 
 # Valkey Deployment for In Memory Storage Solution
 module "valkey" {
-  source = "git::https://github.com/necro-cloud/modules//modules/valkey?ref=main"
+  source = "../modules/valkey"
   
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
