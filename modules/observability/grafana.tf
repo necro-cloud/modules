@@ -99,6 +99,15 @@ resource "helm_release" "grafana" {
         }
       }
 
+      // Service Configuration for HTTPS
+      service = {
+        port = 8443
+        targetPort = 3000
+        annotations = {
+          "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+        }
+      }
+
       
       // Deploy dashboards to Grafana
       dashboardProviders = {
@@ -192,7 +201,8 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/openbao"
               },
-            }          ]
+            }
+          ]
         }
       }
 
