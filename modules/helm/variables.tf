@@ -26,26 +26,6 @@ variable "cert_manager_configuration" {
   }
 }
 
-# --------------- MINIO OPERATOR VARIABLES --------------- #
-variable "enable_minio" {
-  description = "To enable MinIO Deployment or not"
-  type        = bool
-  default     = false
-}
-
-variable "minio_operator_configuration" {
-  description = "Dictionary filled with MinIO Operator Configuration Details"
-  type        = map(string)
-  default = {
-    "name"             = "minio-operator"
-    "namespace"        = "minio-operator"
-    "repository"       = "https://operator.min.io"
-    "chart"            = "operator"
-    "version"          = "7.0.0"
-    "create_namespace" = true
-  }
-}
-
 # --------------- CLOUDNATIVE PG OPERATOR VARIABLES --------------- #
 variable "cnpg_configuration" {
   description = "Dictionary filled with Cloud Native PG Operator Configuration Details"
