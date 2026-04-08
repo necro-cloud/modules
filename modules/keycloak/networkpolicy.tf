@@ -19,18 +19,10 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
     ingress {
       from {
         namespace_selector {
-          match_expressions {
-            key      = "kubernetes.io/metadata.name"
-            operator = "In"
-            values   = ["ingress-nginx"]
-          }
-        }
-        pod_selector {
           match_labels = {
-            "app.kubernetes.io/component" = "controller"
-            "app.kubernetes.io/name"      = "ingress-nginx"
+            "kubernetes.io/metadata.name" = "traefik"
           }
-        }
+        }        
       }
 
       ports {
