@@ -84,7 +84,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the PostgreSQL Database Cluster to be created | `string` | `"postgresql-cluster"` | no |
 | <a name="input_cluster_postgresql_version"></a> [cluster\_postgresql\_version](#input\_cluster\_postgresql\_version) | Version of PostgreSQL Database to use and deploy | `number` | `17` | no |
-| <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and push
+| <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the PostgreSQL Cluster | `number` | `2` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying PostgreSQL Database | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
