@@ -84,12 +84,12 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
       }
     }    
 
-    # Rule 4: Allow NGINX Ingress Controller to reach the active leader
+    # Rule 4: Allow Traefik Ingress Controller to reach the active leader
     ingress {
       from {
         namespace_selector {
           match_labels = {
-            "kubernetes.io/metadata.name" = "ingress-nginx"
+            "kubernetes.io/metadata.name" = "traefik"
           }
         }
       }
