@@ -201,6 +201,17 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/openbao"
               },
+            },
+            {
+              name            = "FerretDB NoSQL Database Monitoring Dashboard"
+              orgId           = 1
+              folder          = "Database Dashboards"
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/ferretdb"
+              },
             }
           ]
         }
@@ -246,6 +257,11 @@ resource "helm_release" "grafana" {
         openbao = {
           network-dashboard = {
             json = file("${path.module}/dashboards/openbao.json")
+          }
+        }
+        ferretdb = {
+          ferretdb-dashboard = {
+            json = file("${path.module}/dashboards/ferretdb.json")
           }
         }
       }
