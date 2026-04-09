@@ -25,6 +25,12 @@ resource "kubernetes_deployment" "ferretdb" {
           "ferret-access" = "true"
           "part-of" = "ferretdb"
         }
+        
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/path"   = "/debug/metrics"
+          "prometheus.io/port"   = "8088" 
+        }
       }
 
       spec {

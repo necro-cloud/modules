@@ -233,6 +233,28 @@ resource "kubernetes_network_policy" "ferret_network_policy" {
         port     = 27017
       }
     }
+    
+    # Rule 3: Allow OpenTelemetry Collector to scrape FerretDB metrics
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "kubernetes.io/metadata.name" = var.observability_namespace
+          }
+        }
+
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/instance" = "otel-collector" 
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 8088
+      }
+    }
 
     # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to CNPG pods
