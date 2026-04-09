@@ -234,7 +234,7 @@ resource "kubernetes_network_policy" "ferret_network_policy" {
       }
     }
     
-    # Rule 3: Allow OpenTelemetry Collector to scrape FerretDB metrics
+    # Rule 2: Allow OpenTelemetry Collector to scrape FerretDB metrics
     ingress {
       from {
         namespace_selector {
