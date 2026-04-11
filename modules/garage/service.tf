@@ -50,10 +50,47 @@ resource "kubernetes_service" "garage-service" {
       name        = "proxy-api"
     }
 
+    port {
+      port        = 3943
+      target_port = 3943
+      name        = "admin-api"
+    }
+
     selector = {
       app       = var.app_name
       component = "pod"
       "part-of" = "garage"
+    }
+  }
+}
+
+// Garage UI Service for Ingress Usage
+resource "kubernetes_service" "garage-ui-service" {
+  metadata {
+    name      = "garage-ui-service"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "service"
+    }
+    annotations = {
+      "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+    }
+  }
+
+  spec {
+    type = "ClusterIP"
+
+    port {
+      port        = 8443
+      target_port = 8443
+      name        = "https"
+    }
+
+    selector = {
+      app       = var.app_name
+      component = "pod"
+      "part-of" = "garage-ui"
     }
   }
 }
