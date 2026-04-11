@@ -62,6 +62,12 @@ variable "internal_certificate_name" {
   default     = "garage-internal-certificate"
 }
 
+variable "ui_internal_certificate_name" {
+  description = "Name of the Internal Certificate to be associated with the UI component of Garage Storage Solution"
+  type        = string
+  default     = "garage-ui-internal-certificate"
+}
+
 variable "cloudflare_token" {
   description = "Token for generating Ingress Certificates to be associated with Garage Storage Solution"
   type        = string
@@ -90,6 +96,12 @@ variable "api_ingress_certificate_name" {
   description = "Name of the Ingress Certificate to be associated with Garage API"
   type        = string
   default     = "garage-api-ingress-certificate"
+}
+
+variable "ui_ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with Garage UI"
+  type        = string
+  default     = "garage-ui-ingress-certificate"
 }
 
 variable "host_name" {
@@ -157,6 +169,24 @@ variable "proxy_tag" {
   description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
   type        = string
   default     = "1.29.0"
+}
+
+variable "ui_repository" {
+  description = "Repository to be used for deployment of Garage UI"
+  type        = string
+  default     = "docker.io/noooste"
+}
+
+variable "ui_image" {
+  description = "Docker image to be used for deployment of Garage UI"
+  type        = string
+  default     = "garage-ui"
+}
+
+variable "ui_tag" {
+  description = "Docker tag to be used for deployment of Garage UI"
+  type        = string
+  default     = "v0.2.0"
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
