@@ -114,6 +114,28 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
     }
 
+    # Rule 6: Allow ingress from Garage UI pods
+    ingress {
+      from {
+        pod_selector {
+          match_labels = {
+            app       = var.app_name
+            component = "pod"
+            "part-of" = "garage-ui"
+            "garage-ui-access" = true
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = 3940
+      }
+      ports {
+        protocol = "TCP"
+        port     = 3943
+      }
+    }
+
     # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to other Garage pods
     egress {
