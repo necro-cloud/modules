@@ -162,3 +162,92 @@ resource "kubernetes_manifest" "push_admin_password" {
     }
   }
 }
+
+
+// Garage UI Admin Password required for UI Login
+resource "kubernetes_manifest" "ui_admin_password_generator" {
+  manifest = {
+    apiVersion = "generators.external-secrets.io/v1alpha1"
+    kind       = "Password"
+    metadata = {
+      name      = "ui-admin-password-generator"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      length  = 32
+      digits  = 10
+      symbols = 0
+      noUpper = true
+    }
+  }
+}
+
+resource "kubernetes_manifest" "ui_admin_password_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "ui-admin-password-sync"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0" 
+      target = {
+        name = "garage-ui-admin-password"
+        template = {
+          data = {
+            "GARAGE_UI_AUTH_ADMIN_USERNAME" = "garage.admin"
+            "GARAGE_UI_AUTH_ADMIN_PASSWORD" = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.ui_admin_password_generator.object.metadata.name
+          }
+        }
+      }]
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+}
+
+resource "kubernetes_manifest" "push_ui_admin_password" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-ui-admin-password"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.ui_admin_password_sync.object.spec.target.name
+        }
+      }
+      data = [{
+        match = {
+          remoteRef = {
+            remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.ui_admin_password_sync.object.spec.target.name}"
+          }
+        }
+      }]
+    }
+  }
+}

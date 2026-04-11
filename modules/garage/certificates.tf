@@ -173,6 +173,51 @@ resource "kubernetes_manifest" "push_internal_certificate" {
   }
 }
 
+resource "kubernetes_manifest" "ui_internal_certificate" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = var.ui_internal_certificate_name
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "internal-certificate"
+      }
+    }
+    "spec" = {
+      "dnsNames" = [
+        "*.garage-ui.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "garage-ui.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "127.0.0.1",
+        "localhost",
+      ]
+      "subject" = {
+        "organizations"       = [var.organization_name]
+        "countries"           = [var.country_name]
+        "organizationalUnits" = [var.app_name]
+      }
+      "commonName" = var.ui_internal_certificate_name
+      "secretName" = var.ui_internal_certificate_name
+      "issuerRef" = {
+        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+      }
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
+}
+
 // Kubernetes Secret for Cloudflare Tokens
 resource "kubernetes_secret" "cloudflare_token" {
   metadata {
@@ -272,6 +317,56 @@ resource "kubernetes_manifest" "api_ingress_certificate" {
       }
       "dnsNames"   = ["api.${var.host_name}.${var.domain}"]
       "secretName" = var.api_ingress_certificate_name
+      "issuerRef" = {
+        "name"  = kubernetes_manifest.public_issuer.manifest.metadata.name
+        "kind"  = "Issuer"
+        "group" = "cert-manager.io"
+      }
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
+}
+
+# Certificate to be used for Garage UI Ingress
+resource "kubernetes_manifest" "ui_ingress_certificate" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = var.ui_ingress_certificate_name
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "ingress-certificate"
+      }
+    }
+    "spec" = {
+      "duration"    = "2160h"
+      "renewBefore" = "360h"
+      "subject" = {
+        "organizations"       = [var.organization_name]
+        "countries"           = [var.country_name]
+        "organizationalUnits" = [var.app_name]
+      }
+      "privateKey" = {
+        "algorithm" = "RSA"
+        "encoding"  = "PKCS1"
+        "size"      = "2048"
+      }
+      "dnsNames"   = ["${var.host_name}.${var.domain}"]
+      "secretName" = var.ui_ingress_certificate_name
       "issuerRef" = {
         "name"  = kubernetes_manifest.public_issuer.manifest.metadata.name
         "kind"  = "Issuer"

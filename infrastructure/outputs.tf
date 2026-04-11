@@ -4,13 +4,14 @@ output "deployment_summary" {
   Necronizer's Cloud Deployment is Complete!
   
   Service Access URLs:
-  -------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------
   OpenBao Secrets Management Platform:         https://secrets.${var.domain}
   Observability Platform:                      https://observability.${var.domain}
+  Garage S3 Object Storage Platform:           https://storage.${var.domain}
   PostgreSQL SQL Database Administration:      https://sql.${var.domain}
   FerretDB NoSQL Database Administration:      https://nosql.${var.domain}
   Keycloak Identity Platform:                  https://auth.${var.domain}
-  -------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------------
 
   Security & Credentials:
   
