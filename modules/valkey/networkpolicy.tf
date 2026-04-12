@@ -58,7 +58,7 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
       }
     }
 
-    # Rule 3: Allow OpenTelemetry Collector to scrape Garage metrics
+    # Rule 3: Allow OpenTelemetry Collector to scrape Valkey metrics
     ingress {
       from {
         namespace_selector {
@@ -80,7 +80,25 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
       }
     }
 
-    # -------------- INGRESS RULES -------------- #
+    # Rule 4: Allow ingress from Redis Commander pods
+    ingress {
+      from {
+        pod_selector {
+          match_labels = {
+            app       = var.app_name
+            component = "pod"
+            "part-of" = "valkey-ui"
+            "valkey-ui-access" = true
+          }
+        }
+      }
+      ports {
+        protocol = "TCP"
+        port     = 6379
+      }
+    }
+
+    # -------------- EGRESS RULES -------------- #
     # Rule 1: Allow egress to other Valkey pods
     egress {
       to {
