@@ -62,6 +62,54 @@ variable "internal_certificate_name" {
   default     = "valkey-internal-certificate"
 }
 
+variable "ui_internal_certificate_name" {
+  description = "Name of the Internal Certificate to be associated with Redis Commander"
+  type        = string
+  default     = "ui-internal-certificate"
+}
+
+variable "cloudflare_token" {
+  description = "Token for generating Ingress Certificates to be associated with OpenBao Secrets Management Solution"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_email" {
+  description = "Email for generating Ingress Certificates to be associated with OpenBao Secrets Management Solution"
+  type        = string
+  nullable    = false
+}
+
+variable "cloudflare_issuer_name" {
+  description = "Name of the Cloudflare Issuer to be associated with OpenBao Secrets Management Solution"
+  type        = string
+  default     = "secrets-cloudflare-issuer"
+}
+
+variable "acme_server" {
+  description = "URL for the ACME Server to be used, defaults to production URL for LetsEncrypt"
+  type        = string
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+variable "ingress_certificate_name" {
+  description = "Name of the Ingress Certificate to be associated with Redis Commander"
+  type        = string
+  default     = "valkey-ui-ingress-certificate"
+}
+
+variable "host_name" {
+  description = "Host name for which Ingress Certificate is to be generated for"
+  type        = string
+  default     = "memory"
+}
+
+variable "domain" {
+  description = "Domain for which Ingress Certificate is to be generated for"
+  type        = string
+  nullable    = false
+}
+
 # --------------- REPLICATION VARIABLES --------------- #
 variable "access_namespaces" {
   description = "Namespaces which require access to Valkey through certificates and network"
@@ -111,4 +159,41 @@ variable "metrics_tag" {
   description = "Docker tag to be used for deployment of Valkey Metrics"
   type        = string
   default     = "v1.81.0-alpine"
+}
+
+# --------------- REDIS COMMMANDER VARIABLES --------------- #
+variable "ui_repository" {
+  description = "Repository to be used for deployment of Redis Commander"
+  type        = string
+  default     = "ghcr.io/joeferner"
+}
+
+variable "ui_image" {
+  description = "Docker image to be used for deployment of Redis Commander"
+  type        = string
+  default     = "redis-commander"
+}
+
+variable "ui_tag" {
+  description = "Docker tag to be used for deployment of Redis Commander"
+  type        = string
+  default     = "0.9.1"
+}
+
+variable "proxy_repository" {
+  description = "Repository to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "docker.io/library"
+}
+
+variable "proxy_image" {
+  description = "Docker image to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "nginx"
+}
+
+variable "proxy_tag" {
+  description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
+  type        = string
+  default     = "1.29.0"
 }

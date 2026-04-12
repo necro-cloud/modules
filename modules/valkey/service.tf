@@ -76,3 +76,33 @@ resource "kubernetes_service" "replica_service" {
     }
   }
 }
+
+// Service for Exposing Redis Commander
+resource "kubernetes_service" "ui_service" {
+  metadata {
+    name      = "valkey-ui-service"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "service"
+    }
+    annotations = {
+      "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+    }
+  }
+
+  spec {
+    port {
+      port        = 8443
+      target_port = 8443
+      name        = "https"
+    }
+
+    selector = {
+      app       = var.app_name
+      component = "pod"
+      "part-of" = "valkey-ui"
+      "valkey-ui-access" = true
+    }
+  }
+}

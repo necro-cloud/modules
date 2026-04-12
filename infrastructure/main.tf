@@ -209,8 +209,11 @@ module "valkey" {
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-  // Certificate details for TLS Authentication
+  // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
   // Granting required namespaces access to the Valkey
   access_namespaces = "cloud"
