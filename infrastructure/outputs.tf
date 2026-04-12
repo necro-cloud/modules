@@ -10,6 +10,7 @@ output "deployment_summary" {
   Garage S3 Object Storage Platform:           https://storage.${var.domain}
   PostgreSQL SQL Database Administration:      https://sql.${var.domain}
   FerretDB NoSQL Database Administration:      https://nosql.${var.domain}
+  Valkey In-Memory Database Administration:    https://memory.${var.domain}
   Keycloak Identity Platform:                  https://auth.${var.domain}
   --------------------------------------------------------------------------------------------
 
