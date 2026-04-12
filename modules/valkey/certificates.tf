@@ -138,6 +138,55 @@ resource "kubernetes_manifest" "internal_certificate" {
   }
 }
 
+// Internal Certificate for Redis Commannder
+resource "kubernetes_manifest" "ui_internal_certificate" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = var.ui_internal_certificate_name
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "internal-certificate"
+      }
+    }
+    "spec" = {
+      "dnsNames" = [
+        # For the UI Service
+        "${kubernetes_service.ui_service.metadata[0].name}",
+        "${kubernetes_service.ui_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
+        "${kubernetes_service.ui_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+
+        "127.0.0.1",
+        "localhost",
+      ]
+      "subject" = {
+        "organizations"       = [var.organization_name]
+        "countries"           = [var.country_name]
+        "organizationalUnits" = [var.app_name]
+      }
+      "commonName" = var.ui_internal_certificate_name
+      "secretName" = var.ui_internal_certificate_name
+      "issuerRef" = {
+        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+      }
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
+}
+
 // Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_internal_certificate" {
   manifest = {
@@ -179,5 +228,127 @@ resource "kubernetes_manifest" "push_internal_certificate" {
       type   = "Ready"
       status = "True"
     }
+  }
+}
+
+// Kubernetes Secret for Cloudflare Tokens
+resource "kubernetes_secret" "cloudflare_token" {
+  metadata {
+    name      = "cloudflare-token"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      "app"       = var.app_name
+      "component" = "secret"
+    }
+  }
+
+  data = {
+    cloudflare-token = var.cloudflare_token
+  }
+
+  type = "Opaque"
+}
+
+// Cloudflare Issuer for Redis Commander Ingress Service
+resource "kubernetes_manifest" "public_issuer" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Issuer"
+    "metadata" = {
+      "name"      = var.cloudflare_issuer_name
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "cloudflare-issuer"
+      }
+    }
+    "spec" = {
+      "acme" = {
+        "email"  = var.cloudflare_email
+        "server" = var.acme_server
+        "privateKeySecretRef" = {
+          "name" = var.cloudflare_issuer_name
+        }
+        "solvers" = [
+          {
+            "dns01" = {
+              "cloudflare" = {
+                "email" = var.cloudflare_email
+                "apiTokenSecretRef" = {
+                  "name" = "cloudflare-token"
+                  "key"  = "cloudflare-token"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  depends_on = [kubernetes_secret.cloudflare_token]
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
+  }
+}
+
+// Certificate to be used for Redis Commander Ingress
+resource "kubernetes_manifest" "ingress_certificate" {
+
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = var.ingress_certificate_name
+      "namespace" = kubernetes_namespace.namespace.metadata[0].name
+      "labels" = {
+        "app"       = var.app_name
+        "component" = "ingress-certificate"
+      }
+    }
+    "spec" = {
+      "duration"    = "2160h"
+      "renewBefore" = "360h"
+      "subject" = {
+        "organizations"       = [var.organization_name]
+        "countries"           = [var.country_name]
+        "organizationalUnits" = [var.app_name]
+      }
+      "privateKey" = {
+        "algorithm" = "RSA"
+        "encoding"  = "PKCS1"
+        "size"      = "2048"
+      }
+      "dnsNames"   = ["${var.host_name}.${var.domain}"]
+      "secretName" = var.ingress_certificate_name
+      "issuerRef" = {
+        "name"  = kubernetes_manifest.public_issuer.manifest.metadata.name
+        "kind"  = "Issuer"
+        "group" = "cert-manager.io"
+      }
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
+
+  timeouts {
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
