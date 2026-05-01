@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 9,
   "links": [],
   "panels": [
     {
@@ -415,7 +415,7 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "sum(container_fs_usage_bytes{device=~\"^/dev/[sv]d[a-z][1-9]$\",id=\"/\",instance=~\"^$Node$\"}) / sum(container_fs_limit_bytes{device=~\"^/dev/[sv]d[a-z][1-9]$\",id=\"/\",instance=~\"^$Node$\"}) * 100",
+          "expr": "sum(container_fs_usage_bytes{id=\"/\",instance=~\"^$Node$\"}) / sum(container_fs_limit_bytes{id=\"/\",instance=~\"^$Node$\"}) * 100",
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -780,7 +780,7 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "decbytes"
         },
         "overrides": []
       },
@@ -817,7 +817,7 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "sum(container_fs_usage_bytes{device=~\"^/dev/[sv]d[a-z][1-9]$\",id=\"/\",instance=~\"^$Node$\"})",
+          "expr": "max(container_fs_usage_bytes{device=~\"^/dev/([sv]d[a-z][1-9]|nvme[0-9]n[0-9]p[0-9])$\",id=\"/\",instance=~\"^$Node$\"})",
           "interval": "10s",
           "intervalFactor": 1,
           "range": true,
@@ -897,7 +897,7 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "sum(container_fs_limit_bytes{device=~\"^/dev/[sv]d[a-z][1-9]$\",id=\"/\",instance=~\"^$Node$\"})",
+          "expr": "max(container_fs_limit_bytes{device=~\"^/dev/([sv]d[a-z][1-9]|nvme[0-9]n[0-9]p[0-9])$\",id=\"/\",instance=~\"^$Node$\"})",
           "interval": "10s",
           "intervalFactor": 1,
           "range": true,
@@ -2123,5 +2123,5 @@
   "timezone": "browser",
   "title": "Kubernetes Cluster Level Monitoring",
   "uid": "c98856d7-3f9c-4ab2-bf54-11fd6c046ef1",
-  "version": 4
+  "version": 1
 }
