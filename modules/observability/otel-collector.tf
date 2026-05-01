@@ -68,7 +68,7 @@ resource "helm_release" "otel_collector" {
         }
         // Scrape Node CPU/RAM/Disk
         hostMetrics = {
-          enabled = true
+          enabled = false
         }
         // Scrape Pod CPU/RAM (Kubelet)
         kubeletMetrics = {
@@ -85,6 +85,17 @@ resource "helm_release" "otel_collector" {
       // Custom Configuration for receivers
       config = {
         receivers = {
+          // Custom Host Metrics receiver configuration
+          hostmetrics = {
+            collection_interval = "10s"
+            scrapers = {
+              cpu = {}
+              memory = {}
+              disk = {}
+              network = {}
+              load = {}
+            }
+          }
           // OTLP Endpoints to send stuff to this collector
           otlp = {
             protocols = {
@@ -206,17 +217,6 @@ resource "helm_release" "otel_collector" {
             limit_mib              = 400
             spike_limit_mib        = 100
           }
-          // Tag Netobserv logs appropriately
-          "resource/netobserv" = {
-            attributes = [
-              {
-                key    = "log.source"
-                value  = "netobserv"
-                action = "insert"
-              }
-            ]
-          }
-
           transform = {
             // If a metric comes in missing its namespace or pod label,
             // look at the underlying server/container it came from.
@@ -275,11 +275,6 @@ resource "helm_release" "otel_collector" {
               receivers = ["otlp"]
               processors = ["memory_limiter", "batch"]
               exporters = ["debug"] 
-            }
-            "logs/netobserv" = {
-              receivers  = ["otlp"]
-              processors = ["memory_limiter", "resource/netobserv", "batch"]
-              exporters  = ["otlphttp"]
             }
           }
         }

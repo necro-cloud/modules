@@ -2,7 +2,7 @@
 resource "kubernetes_stateful_set" "keycloak_cluster" {
   metadata {
     name      = "keycloak-cluster"
-    namespace = var.namespace
+    namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = "keycloak"
       component = "statefulset"
@@ -238,7 +238,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
 
             limits = {
               "cpu"    = "500m"
-              "memory" = "1Gi"
+              "memory" = "2Gi"
             }
           }
 

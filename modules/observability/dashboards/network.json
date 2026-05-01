@@ -36,8 +36,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "PD775F2863313E6C7"
       },
       "fieldConfig": {
         "defaults": {
@@ -51,13 +51,13 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
+        "w": 13,
         "x": 0,
         "y": 1
       },
@@ -82,20 +82,23 @@
       "pluginVersion": "12.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "PD775F2863313E6C7"
+          },
           "editorMode": "code",
-          "expr": "sum(rate(netobserv_workload_egress_bytes_total{SrcK8S_Namespace=~\"$SrcNamespace\"}[5m]))",
-          "legendFormat": "__auto",
-          "range": true,
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.reporter:=\"Src\" AND flow.Key.sourceNamespace:~\"^$SrcNamespace$\"\n| stats sum(flow.bytesOut) as Total_Egress_Bytes",
+          "queryType": "statsRange",
           "refId": "A"
         }
       ],
-      "title": "Total Cluster Egress Rate",
+      "title": "Total Cluster Egress",
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "PD775F2863313E6C7"
       },
       "fieldConfig": {
         "defaults": {
@@ -115,8 +118,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
-        "x": 6,
+        "w": 11,
+        "x": 13,
         "y": 1
       },
       "id": 5,
@@ -140,130 +143,17 @@
       "pluginVersion": "12.3.3",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "sum(rate(netobserv_workload_ingress_bytes_total{DstK8S_Namespace=~\"$DstNamespace\"}[5m]))",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Total Cluster Ingress Rate",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "PD775F2863313E6C7"
           },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 1
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(netobserv_workload_rtt_seconds_bucket{SrcK8S_Namespace=~\"$SrcNamespace\"}[5m])) by (le))",
-          "legendFormat": "__auto",
-          "range": true,
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.reporter:=\"Dst\" AND flow.Key.destNamespace:~\"^$DstNamespace$\"\n| stats sum(flow.bytesIn) as Total_Ingress_Bytes",
+          "queryType": "statsRange",
           "refId": "A"
         }
       ],
-      "title": "Global TCP Latency (P95)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 1
-      },
-      "id": 7,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "sum(rate(netobserv_workload_drop_bytes_total{SrcK8S_Namespace=~\"$SrcNamespace\"}[5m]))",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Active Network Drops",
+      "title": "Total Cluster Ingress",
       "type": "stat"
     },
     {
@@ -274,74 +164,6 @@
         "x": 0,
         "y": 9
       },
-      "id": 2,
-      "panels": [],
-      "title": "Visual Network Topology",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 23,
-        "w": 24,
-        "x": 0,
-        "y": 10
-      },
-      "id": 1,
-      "options": {
-        "edges": {},
-        "layoutAlgorithm": "force",
-        "nodes": {},
-        "zoomMode": "greedy"
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "label_join(\n  label_replace(\n    label_replace(\n      sum by (SrcK8S_Namespace, DstK8S_Namespace) (rate(netobserv_workload_flows_total{SrcK8S_Namespace!=\"\", DstK8S_Namespace!=\"\"}[5m])) > 0,\n      \"target\", \"$1\", \"DstK8S_Namespace\", \"(.*)\"\n    ),\n    \"source\", \"$1\", \"SrcK8S_Namespace\", \"(.*)\"\n  ),\n  \"id\", \"-\", \"source\", \"target\"\n)",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Dynamic Namespace Topology Map",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "DstK8S_Namespace": true,
-              "SrcK8S_Namespace": true,
-              "Time": true
-            },
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Value": "mainStat"
-            }
-          }
-        }
-      ],
-      "type": "nodeGraph"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 33
-      },
       "id": 8,
       "panels": [],
       "title": "Cross-Namespace Top Talkers",
@@ -349,8 +171,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "PD775F2863313E6C7"
       },
       "fieldConfig": {
         "defaults": {
@@ -382,7 +204,7 @@
             },
             "showPoints": "auto",
             "showValues": false,
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -398,10 +220,6 @@
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -409,10 +227,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 14,
+        "w": 24,
         "x": 0,
-        "y": 34
+        "y": 10
       },
       "id": 9,
       "options": {
@@ -431,110 +249,18 @@
       "pluginVersion": "12.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "PD775F2863313E6C7"
+          },
           "editorMode": "code",
-          "expr": "topk(10, sum by (SrcK8S_Namespace, DstK8S_Namespace) (rate(netobserv_workload_flows_total{SrcK8S_Namespace=~\"$SrcNamespace\", DstK8S_Namespace=~\"$DstNamespace\"}[5m])))",
-          "legendFormat": "{{SrcK8S_Namespace}} -> {{DstK8S_Namespace}}",
-          "range": true,
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.reporter:=\"Src\" \n| stats by (_time: 1m, flow.Key.sourceNamespace, flow.Key.destNamespace) sum(flow.bytesOut) as Bytes\n| sort by (Bytes) desc \n| limit 10",
+          "legendFormat": "{{ flow.Key.sourceNamespace }} -> {{ flow.Key.destNamespace }}",
+          "queryType": "statsRange",
           "refId": "A"
         }
       ],
       "title": "Top 10 Cross-Namespace Flows",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "red",
-            "mode": "shades"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 34
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "topk(10, sum by (SrcK8S_OwnerName) (rate(netobserv_workload_egress_bytes_total{SrcK8S_Namespace=~\"$SrcNamespace\", DstK8S_Namespace=\"\"}[5m])))",
-          "legendFormat": "{{SrcK8S_OwnerName}} -> External",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Top External Talkers",
       "type": "timeseries"
     },
     {
@@ -543,7 +269,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 24
       },
       "id": 11,
       "panels": [],
@@ -552,8 +278,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "PD775F2863313E6C7"
       },
       "fieldConfig": {
         "defaults": {
@@ -585,7 +311,7 @@
             },
             "showPoints": "auto",
             "showValues": false,
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -616,7 +342,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 25
       },
       "id": 12,
       "options": {
@@ -635,10 +361,14 @@
       "pluginVersion": "12.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "PD775F2863313E6C7"
+          },
           "editorMode": "code",
-          "expr": "topk(10, sum by (SrcK8S_OwnerName) (rate(netobserv_workload_egress_bytes_total{SrcK8S_Namespace=~\"$SrcNamespace\", SrcK8S_OwnerName=~\"$Pod\"}[5m])))",
-          "legendFormat": "__auto",
-          "range": true,
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.reporter:=\"Src\" AND flow.Key.sourceNamespace:~\"^$SrcNamespace$\"\n| stats by (_time: 1m, flow.Key.sourceName) sum(flow.bytesOut) as Egress_Bytes\n| sort by (Egress_Bytes) desc \n| limit 10",
+          "legendFormat": "{{ flow.Key.sourceName }}",
+          "queryType": "statsRange",
           "refId": "A"
         }
       ],
@@ -647,8 +377,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "PD775F2863313E6C7"
       },
       "fieldConfig": {
         "defaults": {
@@ -680,7 +410,7 @@
             },
             "showPoints": "auto",
             "showValues": false,
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -707,7 +437,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 25
       },
       "id": 13,
       "options": {
@@ -726,10 +456,14 @@
       "pluginVersion": "12.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "PD775F2863313E6C7"
+          },
           "editorMode": "code",
-          "expr": "topk(10, sum by (DstK8S_OwnerName) (rate(netobserv_workload_ingress_bytes_total{DstK8S_Namespace=~\"$DstNamespace\", DstK8S_OwnerName=~\"$Pod\"}[5m])))",
-          "legendFormat": "__auto",
-          "range": true,
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.reporter:=\"Dst\" AND flow.Key.destNamespace:~\"^$DstNamespace$\"\n| stats by (_time: 1m, flow.Key.destName) sum(flow.bytesIn) as Ingress_Bytes\n| sort by (Ingress_Bytes) desc \n| limit 10",
+          "legendFormat": "{{ flow.Key.destName }}",
+          "queryType": "statsRange",
           "refId": "A"
         }
       ],
@@ -742,211 +476,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
-      },
-      "id": 14,
-      "panels": [],
-      "title": "TCP Health & Network Drops",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 52
-      },
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, SrcK8S_OwnerName) (rate(netobserv_workload_rtt_seconds_bucket{SrcK8S_Namespace=~\"$SrcNamespace\", SrcK8S_OwnerName=~\"$Pod\"}[5m])))",
-          "legendFormat": "{{ SrcK8S_OwnerName }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "TCP Latency (RTT) by Pod",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P4169E866C3094E38"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "red",
-            "mode": "shades"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 52
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.3.3",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "sum by (SrcK8S_OwnerName) (rate(netobserv_workload_drop_bytes_total{SrcK8S_Namespace=~\"$SrcNamespace\", SrcK8S_OwnerName=~\"$Pod\"}[5m]))",
-          "legendFormat": "Dropped: {{SrcK8S_OwnerName}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Dropped Traffic by Pod",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 60
+        "y": 33
       },
       "id": 17,
       "panels": [],
@@ -966,18 +496,20 @@
         "h": 24,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 34
       },
       "id": 18,
       "options": {
         "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
+        "detailsMode": "inline",
+        "enableInfiniteScrolling": true,
         "enableLogDetails": true,
         "prettifyLogMessage": true,
         "showControls": true,
         "showLabels": true,
         "showTime": true,
         "sortOrder": "Descending",
+        "syntaxHighlighting": true,
         "wrapLogMessage": true
       },
       "pluginVersion": "12.3.3",
@@ -989,12 +521,12 @@
           },
           "direction": "desc",
           "editorMode": "code",
-          "expr": "source.k8s.namespace.name: \"$SrcNamespace\"",
+          "expr": "service.name:=\"goldmane-otel-adapter\"\n| unpack_json\n| filter flow.Key.sourceNamespace:~\"^$SrcNamespace$\" OR flow.Key.destNamespace:~\"^$SrcNamespace$\"",
           "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Real-Time eBPF Network Logs",
+      "title": "Real-Time Network Logs",
       "type": "logs"
     }
   ],
@@ -1013,16 +545,21 @@
             "postgres"
           ]
         },
-        "definition": "label_values(netobserv_workload_egress_bytes_total,SrcK8S_Namespace)",
+        "datasource": {
+          "type": "victoriametrics-logs-datasource",
+          "uid": "PD775F2863313E6C7"
+        },
+        "definition": "service.name:=\"goldmane-otel-adapter\" | unpack_json | stats by (flow.Key.sourceNamespace) count() | keep flow.Key.sourceNamespace",
         "includeAll": true,
         "label": "Source Namespace",
-        "multi": true,
         "name": "SrcNamespace",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(netobserv_workload_egress_bytes_total,SrcK8S_Namespace)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "field": "flow.Key.sourceNamespace",
+          "limit": 25,
+          "query": "service.name:=\"goldmane-otel-adapter\" | unpack_json | stats by (flow.Key.sourceNamespace) count() | keep flow.Key.sourceNamespace",
+          "refId": "VictoriaLogsVariableQueryEditor-VariableQuery",
+          "type": "fieldValue"
         },
         "refresh": 1,
         "regex": "",
@@ -1037,16 +574,21 @@
             "garage"
           ]
         },
-        "definition": "label_values(netobserv_workload_ingress_bytes_total,DstK8S_Namespace)",
+        "datasource": {
+          "type": "victoriametrics-logs-datasource",
+          "uid": "PD775F2863313E6C7"
+        },
+        "definition": "service.name:=\"goldmane-otel-adapter\" | unpack_json | stats by (flow.Key.destNamespace) count() | keep flow.Key.destNamespace",
         "includeAll": true,
         "label": "Destination Namespace",
-        "multi": true,
         "name": "DstNamespace",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(netobserv_workload_ingress_bytes_total,DstK8S_Namespace)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "field": "flow.Key.destNamespace",
+          "limit": 25,
+          "query": "service.name:=\"goldmane-otel-adapter\" | unpack_json | stats by (flow.Key.destNamespace) count() | keep flow.Key.destNamespace",
+          "refId": "VictoriaLogsVariableQueryEditor-VariableQuery",
+          "type": "fieldValue"
         },
         "refresh": 1,
         "regex": "",
@@ -1061,16 +603,22 @@
             "postgresql-cluster"
           ]
         },
-        "definition": "label_values(netobserv_workload_egress_bytes_total{SrcK8S_Namespace=\"$SrcNamespace\"},SrcK8S_OwnerName)",
+        "datasource": {
+          "type": "victoriametrics-logs-datasource",
+          "uid": "PD775F2863313E6C7"
+        },
+        "definition": "service.name:=\"goldmane-otel-adapter\" | unpack_json | filter flow.Key.sourceNamespace:=\"$SrcNamespace\" | stats by (flow.Key.sourceName) count() | keep flow.Key.sourceName",
         "includeAll": true,
         "label": "Pod Name",
         "multi": true,
         "name": "Pod",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(netobserv_workload_egress_bytes_total{SrcK8S_Namespace=\"$SrcNamespace\"},SrcK8S_OwnerName)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "field": "flow.Key.sourceName",
+          "limit": 1000,
+          "query": "service.name:=\"goldmane-otel-adapter\" | unpack_json | filter flow.Key.sourceNamespace:=\"$SrcNamespace\" | stats by (flow.Key.sourceName) count() | keep flow.Key.sourceName",
+          "refId": "VictoriaLogsVariableQueryEditor-VariableQuery",
+          "type": "fieldValue"
         },
         "refresh": 1,
         "regex": "",

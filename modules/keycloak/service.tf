@@ -2,7 +2,7 @@
 resource "kubernetes_service" "keycloak_discovery" {
   metadata {
     name      = "keycloak-discovery"
-    namespace = var.namespace
+    namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
@@ -25,7 +25,7 @@ resource "kubernetes_service" "keycloak_discovery" {
 resource "kubernetes_service" "keycloak_service" {
   metadata {
     name      = "keycloak-cluster-service"
-    namespace = var.namespace
+    namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
   spec {
