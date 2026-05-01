@@ -7,8 +7,7 @@ These components are being deployed as part of the Observability Module:
 2. [VictoriaLogs](https://victoriametrics.com/products/victorialogs/) for logs storage generated from the cluster.
 3. [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) for receiving and processing and export telemetry data to the storage databases.
 4. [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) to generate and expose cluster-level metrics.
-5. [NetObserv](https://github.com/netobserv) for components related to Network Observability in Kubernetes based on eBPF.
-6. [Grafana](https://grafana.com/oss/grafana/?plcmt=oss-nav) for the visual layer for observability.
+5. [Grafana](https://grafana.com/oss/grafana/?plcmt=oss-nav) for the visual layer for observability.
 
 ## Providers
 
@@ -26,6 +25,8 @@ These components are being deployed as part of the Observability Module:
 | [helm_release.logs](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.metrics](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.otel_collector](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [kubernetes_config_map.goldmane_api_proto](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
+| [kubernetes_deployment.goldmane_otel_adapter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
 | [kubernetes_ingress_v1.ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
 | [kubernetes_manifest.certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.grafana_credentials_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -34,7 +35,6 @@ These components are being deployed as part of the Observability Module:
 | [kubernetes_manifest.issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.middleware_buffering](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.middleware_rewrite](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
-| [kubernetes_manifest.network_observability](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.public_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_grafana_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
