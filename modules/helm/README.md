@@ -5,7 +5,7 @@ OpenTofu Module to deploy the following required helm charts:
 2. [Cloudnative PG (including Barman Plugin)](https://cloudnative-pg.io/)
 3. [Traefik](https://traefik.io/)
 4. [Calico CNI](https://www.tigera.io/project-calico/)
-5. [NetObserv](https://github.com/netobserv)
+5. [External Secrets](https://external-secrets.io)
 
 ## Providers
 
@@ -22,7 +22,6 @@ OpenTofu Module to deploy the following required helm charts:
 | [helm_release.cnpg](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.cnpg_barman_plugin](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.external_secrets](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
-| [helm_release.netobserv](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.traefik](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 
 ## Inputs
@@ -34,7 +33,6 @@ OpenTofu Module to deploy the following required helm charts:
 | <a name="input_cnpg_barman_configuration"></a> [cnpg\_barman\_configuration](#input\_cnpg\_barman\_configuration) | Dictionary filled with Cloud Native PG Barman Configuration Details | `map(string)` | <pre>{<br/>  "chart": "plugin-barman-cloud",<br/>  "name": "cnpg-barman",<br/>  "namespace": "cnpg-system",<br/>  "repository": "https://cloudnative-pg.github.io/charts",<br/>  "version": "v0.2.0"<br/>}</pre> | no |
 | <a name="input_cnpg_configuration"></a> [cnpg\_configuration](#input\_cnpg\_configuration) | Dictionary filled with Cloud Native PG Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "cloudnative-pg",<br/>  "create_namespace": true,<br/>  "name": "cnpg",<br/>  "namespace": "cnpg-system",<br/>  "repository": "https://cloudnative-pg.github.io/charts",<br/>  "version": "v0.26.0"<br/>}</pre> | no |
 | <a name="input_external_secrets_configuration"></a> [external\_secrets\_configuration](#input\_external\_secrets\_configuration) | Dictionary filled with External Secrets Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "external-secrets",<br/>  "create_namespace": true,<br/>  "name": "external-secrets",<br/>  "namespace": "external-secrets",<br/>  "repository": "https://charts.external-secrets.io",<br/>  "version": "2.1.0"<br/>}</pre> | no |
-| <a name="input_netobserv_configuration"></a> [netobserv\_configuration](#input\_netobserv\_configuration) | Dictionary filled with Netobserv Operator Configuration Details | `map(string)` | <pre>{<br/>  "chart": "netobserv-operator",<br/>  "create_namespace": true,<br/>  "name": "netobserv",<br/>  "namespace": "netobserv",<br/>  "repository": "https://netobserv.io/static/helm",<br/>  "version": "1.11.0"<br/>}</pre> | no |
 | <a name="input_server_node_selector"></a> [server\_node\_selector](#input\_server\_node\_selector) | Node Selector Label Value to be used for deploying required foundation components | `string` | n/a | yes |
 | <a name="input_traefik_configuration"></a> [traefik\_configuration](#input\_traefik\_configuration) | Dictionary filled with Traefik Controller Configuration Details | `map(string)` | <pre>{<br/>  "chart": "traefik",<br/>  "create_namespace": "true",<br/>  "name": "traefik",<br/>  "namespace": "traefik",<br/>  "repository": "https://traefik.github.io/charts",<br/>  "version": "v39.0.7"<br/>}</pre> | no |
 
