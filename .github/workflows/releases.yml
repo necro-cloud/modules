@@ -29,7 +29,7 @@ jobs:
       MODULE: ${{ inputs.module_name }}
       RELEASE_TYPE: ${{ inputs.release_type }}
       IS_DEV_RELEASE: ${{ inputs.is_dev_release }}
-      CURRENT_FULL_VERSION: ${{ vars.FULL_VERSION || '0.0.0' }}
+      CURRENT_FULL_VERSION: ${{ vars.MODULE_VERSION || '0.0.0' }}
     outputs:
       version: ${{ steps.version.outputs.NEXT_RELEASE_VERSION }}
       changelog: ${{ steps.changelog.outputs.NOTES }}
@@ -166,15 +166,17 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Printing out the release information as a step summary for validation
+        env:
+          CHANGELOG_NOTES: ${{ steps.changelog.outputs.NOTES }}
         run: |
           echo "### Release Preview: ${{ inputs.module_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**New Version:** \`${{ steps.version.outputs.NEXT_RELEASE_VERSION }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Release Type:** ${{ inputs.is_dev_release && 'In Development (Dev)' || 'Stable' }}" >> $GITHUB_STEP_SUMMARY
           echo "#### Proposed Changelogs:" >> $GITHUB_STEP_SUMMARY
-          if [ -z "${{ steps.changelog.outputs.NOTES }}" ]; then
+          if [ -z "$CHANGELOG_NOTES" ]; then
             echo "*No descriptive changes found (commits may lack the 'Implemented Changes' section).*" >> $GITHUB_STEP_SUMMARY
           else
-            echo "${{ steps.changelog.outputs.NOTES }}" >> $GITHUB_STEP_SUMMARY
+            echo "$CHANGELOG_NOTES" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "> **Note:** Please review the details above. If correct, approve the next job to finalize the release." >> $GITHUB_STEP_SUMMARY
