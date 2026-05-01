@@ -35,6 +35,11 @@ resource "helm_release" "calico" {
     {
       name = "installation.calicoNetwork.mtu"
       value = "1440"
+    },
+    {
+      name  = "kubeletVolumePluginPath"
+      value = "None"
+      type  = "string"
     }
   ]
 

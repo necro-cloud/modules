@@ -66,20 +66,6 @@ variable "calico_configuration" {
   }
 }
 
-# --------------- NETOBSERV VARIABLES --------------- #
-variable "netobserv_configuration" {
-  description = "Dictionary filled with Netobserv Operator Configuration Details"
-  type        = map(string)
-  default = {
-    "name"             = "netobserv"
-    "namespace"        = "netobserv"
-    "repository"       = "https://netobserv.io/static/helm"
-    "chart"            = "netobserv-operator"
-    "version"          = "1.11.0"
-    "create_namespace" = true
-  }
-}
-
 # --------------- EXTERNAL SECRETS VARIABLES --------------- #
 variable "external_secrets_configuration" {
   description = "Dictionary filled with External Secrets Operator Configuration Details"
