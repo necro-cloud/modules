@@ -2,7 +2,7 @@
 resource "kubernetes_network_policy" "keycloak_network_access_policy" {
   metadata {
     name      = "keycloak-network-access-policy"
-    namespace = var.namespace
+    namespace = kubernetes_namespace.namespace.metadata[0].name
   }
   spec {
     policy_types = ["Ingress", "Egress"]

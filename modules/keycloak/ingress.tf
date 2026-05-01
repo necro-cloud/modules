@@ -2,7 +2,7 @@
 resource "kubernetes_ingress_v1" "ingress" {
   metadata {
     name      = "ingress"
-    namespace = var.namespace
+    namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
       component = "ingress"
