@@ -90,12 +90,12 @@ resource "kubernetes_manifest" "cluster" {
         }
         "size" = "5Gi"
       }
-      "certificates" = {
-        "serverTLSSecret"      = kubernetes_manifest.server_certificate.manifest.spec.secretName
+      "certificates" = var.enable_internal_tls_certificates ? {
+        "serverTLSSecret"      = kubernetes_manifest.server_certificate[0].manifest.spec.secretName
         "serverCASecret"       = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
-        "clientCASecret"       = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
-        "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate.manifest.spec.secretName
-      }
+        "clientCASecret"       = kubernetes_manifest.client_certificate_authority[0].manifest.spec.secretName
+        "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate[0].manifest.spec.secretName
+      } : null
       "plugins" = [
         {
           "name"          = "barman-cloud.cloudnative-pg.io"

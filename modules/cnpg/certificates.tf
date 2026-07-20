@@ -94,6 +94,7 @@ resource "kubernetes_manifest" "server_certificate_authority" {
 
 // Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_server_certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
@@ -172,6 +173,7 @@ resource "kubernetes_manifest" "server_issuer" {
 
 // Certificate for PostgreSQL Server
 resource "kubernetes_manifest" "server_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -226,6 +228,7 @@ resource "kubernetes_manifest" "server_certificate" {
 # --------------- POSTGRESQL CLIENT CERTIFICATES CONFIGURATION --------------- #
 // Certificate Authority to be used with PostgreSQL Client
 resource "kubernetes_manifest" "client_certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -275,6 +278,7 @@ resource "kubernetes_manifest" "client_certificate_authority" {
 
 // Issuer to be used with PostgreSQL Client
 resource "kubernetes_manifest" "client_issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -288,7 +292,7 @@ resource "kubernetes_manifest" "client_issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.client_certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -309,6 +313,7 @@ resource "kubernetes_manifest" "client_issuer" {
 
 // Certificate for Streaming Replica
 resource "kubernetes_manifest" "client_streaming_replica_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -330,7 +335,7 @@ resource "kubernetes_manifest" "client_streaming_replica_certificate" {
       "commonName" = "streaming_replica"
       "secretName" = var.client_streaming_replica_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.client_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.client_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -351,6 +356,7 @@ resource "kubernetes_manifest" "client_streaming_replica_certificate" {
 
 // Certificate for Keycloak User
 resource "kubernetes_manifest" "client_keycloak_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -375,7 +381,7 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
         "encoding" = "PKCS8"
       }
       "issuerRef" = {
-        "name" = kubernetes_manifest.client_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.client_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -396,6 +402,7 @@ resource "kubernetes_manifest" "client_keycloak_certificate" {
 
 // Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_client_keycloak_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
@@ -412,14 +419,14 @@ resource "kubernetes_manifest" "push_client_keycloak_certificate" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.client_keycloak_certificate.object.spec.secretName
+          name = kubernetes_manifest.client_keycloak_certificate[0].object.spec.secretName
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.client_keycloak_certificate.object.spec.secretName}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.client_keycloak_certificate[0].object.spec.secretName}"
             }
           }
           metadata = {
@@ -443,7 +450,7 @@ resource "kubernetes_manifest" "push_client_keycloak_certificate" {
 
 // Certificates for all clients
 resource "kubernetes_manifest" "client_certificates" {
-  count = length(var.clients)
+  count = var.enable_internal_tls_certificates ? length(var.clients) : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -473,7 +480,7 @@ resource "kubernetes_manifest" "client_certificates" {
         "encoding" = var.clients[count.index].privateKeyEncoding
       }
       "issuerRef" = {
-        "name" = kubernetes_manifest.client_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.client_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -494,7 +501,7 @@ resource "kubernetes_manifest" "client_certificates" {
 
 // Pushing the certificate to OpenBao for distribution
 resource "kubernetes_manifest" "push_client_certificates" {
-  count = length(var.clients)
+  count = var.enable_internal_tls_certificates ? length(var.clients) : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"

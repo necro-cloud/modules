@@ -56,9 +56,12 @@ resource "kubernetes_deployment" "pgadmin" {
             mount_path = "/mnt/passwords"
           }
 
-          volume_mount {
-            name       = "client-certificates"
-            mount_path = "/mnt/certs"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "client-certificates"
+              mount_path = "/mnt/certs"
+            }
           }
         }
 
@@ -125,43 +128,46 @@ resource "kubernetes_deployment" "pgadmin" {
         }
 
         // PostgreSQL Client Certificates Projected Volume
-        volume {
-          name = "client-certificates"
-          projected {
-            sources {
-              secret {
-                name = kubernetes_manifest.client_keycloak_certificate.manifest.spec.secretName
-
-                items {
-                  key  = "ca.crt"
-                  path = "keycloak/ca.crt"
-                }
-                items {
-                  key  = "tls.crt"
-                  path = "keycloak/tls.crt"
-                }
-                items {
-                  key  = "tls.key"
-                  path = "keycloak/tls.key"
-                }
-              }
-
-              dynamic "secret" {
-                for_each = kubernetes_manifest.client_certificates
-                content {
-                  name = secret.value.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "client-certificates"
+            projected {
+              sources {
+                secret {
+                  name = kubernetes_manifest.client_keycloak_certificate.manifest.spec.secretName
 
                   items {
                     key  = "ca.crt"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/ca.crt"
+                    path = "keycloak/ca.crt"
                   }
                   items {
                     key  = "tls.crt"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.crt"
+                    path = "keycloak/tls.crt"
                   }
                   items {
                     key  = "tls.key"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.key"
+                    path = "keycloak/tls.key"
+                  }
+                }
+
+                dynamic "secret" {
+                  for_each = kubernetes_manifest.client_certificates
+                  content {
+                    name = secret.value.manifest.spec.secretName
+
+                    items {
+                      key  = "ca.crt"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/ca.crt"
+                    }
+                    items {
+                      key  = "tls.crt"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.crt"
+                    }
+                    items {
+                      key  = "tls.key"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.key"
+                    }
                   }
                 }
               }
