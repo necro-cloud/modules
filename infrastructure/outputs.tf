@@ -1,5 +1,5 @@
 output "deployment_summary" {
-  value       = <<EOT
+  value = <<EOT
 
   Necronizer's Cloud Deployment is Complete!
   
