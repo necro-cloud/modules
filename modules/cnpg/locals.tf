@@ -16,7 +16,7 @@ locals {
     "replication" = false
     "superuser"   = false
   }]
-  pgadmin_servers = var.enable_internal_tls_certificates ? {
+  pgadmin_servers = {
     for index, client in concat(var.clients, [{ user = "keycloak", database = "keycloak" }]) : "${index + 1}" => {
       "Name"                = client.database
       "Group"               = "PostgreSQL Server Access",
@@ -24,23 +24,11 @@ locals {
       "Port"                = 5432
       "MaintenanceDB"       = client.database
       "Username"            = client.user
-      "SSLMode"             = "require"
+      "SSLMode"             = var.enable_internal_tls_certificates ? "require" : "disable"
       "Comment"             = "PostgreSQL Server Access for Database: ${client.database}"
-      "SSLCert"             = "/mnt/certs/${client.user}/tls.crt"
-      "SSLKey"              = "/mnt/certs/${client.user}/tls.key"
-      "SSLRootCert"         = "/mnt/certs/${client.user}/ca.crt"
-      "PasswordExecCommand" = "cat /mnt/passwords/${client.user}/password"
-    }
-  } : {
-    for index, client in concat(var.clients, [{ user = "keycloak", database = "keycloak" }]) : "${index + 1}" => {
-      "Name"                = client.database
-      "Group"               = "PostgreSQL Server Access",
-      "Host"                = "${var.cluster_name}-rw"
-      "Port"                = 5432
-      "MaintenanceDB"       = client.database
-      "Username"            = client.user
-      "SSLMode"             = "require"
-      "Comment"             = "PostgreSQL Server Access for Database: ${client.database}"
+      "SSLCert"             = var.enable_internal_tls_certificates ? "/mnt/certs/${client.user}/tls.crt" : null
+      "SSLKey"              = var.enable_internal_tls_certificates ? "/mnt/certs/${client.user}/tls.key" : null
+      "SSLRootCert"         = var.enable_internal_tls_certificates ? "/mnt/certs/${client.user}/ca.crt" : null
       "PasswordExecCommand" = "cat /mnt/passwords/${client.user}/password"
     }
   }

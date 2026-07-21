@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "pgadmin" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "pgadmin"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -30,7 +31,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           env_from {
             secret_ref {
-              name = kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name
+              name = kubernetes_manifest.pgadmin_credentials_sync[0].object.spec.target.name
             }
           }
 
@@ -107,7 +108,7 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "nginx-config"
           config_map {
-            name = kubernetes_config_map.nginx_conf.metadata[0].name
+            name = kubernetes_config_map.nginx_conf[0].metadata[0].name
           }
         }
 
@@ -115,7 +116,7 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "servers-configuration"
           config_map {
-            name = kubernetes_config_map.pgadmin_servers_configuration.metadata[0].name
+            name = kubernetes_config_map.pgadmin_servers_configuration[0].metadata[0].name
           }
         }
 
@@ -123,7 +124,7 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "internal-certificate"
           secret {
-            secret_name = kubernetes_manifest.pgadmin_internal_certificate.manifest.spec.secretName
+            secret_name = kubernetes_manifest.pgadmin_internal_certificate[0].manifest.spec.secretName
           }
         }
 
@@ -135,7 +136,7 @@ resource "kubernetes_deployment" "pgadmin" {
             projected {
               sources {
                 secret {
-                  name = kubernetes_manifest.client_keycloak_certificate.manifest.spec.secretName
+                  name = kubernetes_manifest.client_keycloak_certificate[0].manifest.spec.secretName
 
                   items {
                     key  = "ca.crt"

@@ -1,5 +1,6 @@
 // Server Transport Resource for HTTPS Backend Connections
 resource "kubernetes_manifest" "transport" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "ServersTransport"
@@ -11,7 +12,7 @@ resource "kubernetes_manifest" "transport" {
       insecureSkipVerify = true
       rootCAs = [
         {
-          secret = kubernetes_manifest.pgadmin_internal_certificate.manifest.spec.secretName
+          secret = kubernetes_manifest.pgadmin_internal_certificate[0].manifest.spec.secretName
         }
       ]
     }

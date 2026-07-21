@@ -246,3 +246,9 @@ variable "enable_internal_tls_certificates" {
   type        = bool
   default     = true
 }
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}

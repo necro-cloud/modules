@@ -196,6 +196,7 @@ resource "kubernetes_manifest" "push_client_database_credentials" {
 
 // PGAdmin UI Credentials
 resource "kubernetes_manifest" "pgadmin_credentials_sync" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -228,11 +229,12 @@ resource "kubernetes_manifest" "pgadmin_credentials_sync" {
 }
 
 resource "kubernetes_manifest" "push_pgadmin_credentials" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-${kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name}"
+      name      = "push-${kubernetes_manifest.pgadmin_credentials_sync[0].object.spec.target.name}"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
@@ -244,14 +246,14 @@ resource "kubernetes_manifest" "push_pgadmin_credentials" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name
+          name = kubernetes_manifest.pgadmin_credentials_sync[0].object.spec.target.name
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.pgadmin_credentials_sync[0].object.spec.target.name}"
             }
           }
         }
