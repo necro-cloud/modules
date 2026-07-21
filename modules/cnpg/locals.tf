@@ -32,4 +32,9 @@ locals {
       "PasswordExecCommand" = "cat /mnt/passwords/${client.user}/password"
     }
   }
+  size_lookup = {
+    small = 1
+    medium = 2
+    large = 3
+  }
 }

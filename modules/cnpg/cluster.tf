@@ -42,7 +42,7 @@ resource "kubernetes_manifest" "cluster" {
       }
       "description"           = "PostgreSQL Cluster for storing relational data"
       "enableSuperuserAccess" = true
-      "instances"             = var.cluster_size
+      "instances"             = lookup(local.size_lookup, var.cluster_size, 1)
       "managed" = {
         "roles" = concat([
           {

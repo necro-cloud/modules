@@ -174,8 +174,13 @@ variable "cluster_postgresql_version" {
 
 variable "cluster_size" {
   description = "Number of pods to deploy for the PostgreSQL Cluster"
-  type        = number
-  default     = 2
+  type = string
+  default = "small"
+
+  validation {
+    condition = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 variable "backup_bucket_name" {
