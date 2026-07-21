@@ -133,102 +133,103 @@ module "cnpg" {
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
   // Enabling and disabling features
-  enable_internal_tls_certificates = false
-  enable_ui                        = false
-  enable_pitr_backups              = false
-  enable_observability             = false
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_pitr_backups              = true
+  enable_observability             = true
 
   // Dependency on Garage Deployment  
   depends_on = [module.garage, module.observability, module.openbao]
 }
 
-# # FerretDB Deployment for MongoDB Database Solution
-# module "ferretdb" {
-#   source = "../modules/ferretdb"
+# FerretDB Deployment for MongoDB Database Solution
+module "ferretdb" {
+  source = "../modules/ferretdb"
 
-#   // Cluster Secret Store Details
-#   cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // Garage Cluster Details for configuration of PITR Backups
-#   garage_certificate_authority = module.garage.garage_internal_certificate_secret
-#   garage_namespace             = module.garage.garage_namespace
-#   garage_configuration         = "walbackups"
-#   backup_bucket_name           = "ferret"
+  // Garage Cluster Details for configuration of PITR Backups
+  garage_certificate_authority = module.garage.garage_internal_certificate_secret
+  garage_namespace             = module.garage.garage_namespace
+  garage_configuration         = "walbackups"
+  backup_bucket_name           = "ferret"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Required client details to allow access and generate credentials and certificates for
-#   clients = [
-#     {
-#       namespace          = "cloud"
-#       user               = "cloud"
-#     }
-#   ]
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace = "cloud"
+      user      = "cloud"
+    }
+  ]
 
-#   // Certificate details for internal and ingress certificates
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-#   cloudflare_token    = var.cloudflare_token
-#   cloudflare_email    = var.cloudflare_email
-#   domain              = var.domain
+  // Certificate details for internal and ingress certificates
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
-#   // Whitelisting Kubernetes API Endpoints in the Network Policy
-#   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
-#   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
-#   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
 
-#   // Dependency on Garage Deployment  
-#   depends_on = [module.garage, module.observability, module.openbao]
-# }
+  // Dependency on Garage Deployment  
+  depends_on = [module.garage, module.observability, module.openbao]
+}
 
-# # Keycloak Cluster Deployment for Identity Solution
-# module "keycloak" {
-#   source = "../modules/keycloak"
+# Keycloak Cluster Deployment for Identity Solution
+module "keycloak" {
+  source = "../modules/keycloak"
 
-#   // Cluster Secret Store Details
-#   cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // PostgreSQL Database Details for database details
-#   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
-#   postgres_namespace                         = module.cnpg.namespace
-#   cluster_name                               = module.cnpg.cluster_name
-#   database_server_certificate_authority_name = module.cnpg.server-certificate-authority
-#   database_client_certificate_name           = "postgresql-keycloak-client-certificate"
-#   database_credentials                       = "credentials-keycloak"
+  // PostgreSQL Database Details for database details
+  cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
+  postgres_namespace                         = module.cnpg.namespace
+  cluster_name                               = module.cnpg.cluster_name
+  database_certificates_required             = true
+  database_server_certificate_authority_name = module.cnpg.server-certificate-authority
+  database_client_certificate_name           = "postgresql-keycloak-client-certificate"
+  database_credentials                       = "credentials-keycloak"
 
-#   // Certificate details for ingress
-#   cloudflare_token = var.cloudflare_token
-#   cloudflare_email = var.cloudflare_email
-#   domain           = var.domain
+  // Certificate details for ingress
+  cloudflare_token = var.cloudflare_token
+  cloudflare_email = var.cloudflare_email
+  domain           = var.domain
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   // Realm Settings for auto configuration of required clients
-#   realm_settings = local.keycloak_realm_settings
+  // Realm Settings for auto configuration of required clients
+  realm_settings = local.keycloak_realm_settings
 
-#   // Dependency on CNPG PostgreSQL Deployment
-#   depends_on = [module.cnpg, module.observability, module.openbao]
-# }
+  // Dependency on CNPG PostgreSQL Deployment
+  depends_on = [module.cnpg, module.observability, module.openbao]
+}
 
-# # Valkey Deployment for In Memory Storage Solution
-# module "valkey" {
-#   source = "../modules/valkey"
+# Valkey Deployment for In Memory Storage Solution
+module "valkey" {
+  source = "../modules/valkey"
 
-#   // Cluster Secret Store Details
-#   cluster_secret_store_name = module.openbao.cluster_secret_store_name
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
-#   // Certificates Details
-#   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-#   cloudflare_token    = var.cloudflare_token
-#   cloudflare_email    = var.cloudflare_email
-#   domain              = var.domain
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
 
-#   // Granting required namespaces access to the Valkey
-#   access_namespaces = "cloud"
+  // Granting required namespaces access to the Valkey
+  access_namespaces = "cloud"
 
-#   // Observability details
-#   observability_namespace = module.observability.observability_namespace
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
 
-#   depends_on = [module.observability, module.openbao]
-# }
+  depends_on = [module.observability, module.openbao]
+}
