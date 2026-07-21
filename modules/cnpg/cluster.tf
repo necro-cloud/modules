@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "cluster" {
         "labels" = var.enable_pitr_backups ? {
           "garage-access" = true
         } : {}
-        "annotations" = var.enable_observability ?  {
+        "annotations" = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "9187"
           "prometheus.io/path"   = "/metrics"
@@ -128,6 +128,6 @@ resource "kubernetes_manifest" "cluster" {
     kubernetes_manifest.barman_object_store,
     kubernetes_manifest.keycloak_database_credentials_sync,
     kubernetes_manifest.client_database_credentials_sync,
-    kubernetes_manifest.garage_configuration_sync   
+    kubernetes_manifest.garage_configuration_sync
   ]
 }

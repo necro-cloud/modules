@@ -174,11 +174,11 @@ variable "cluster_postgresql_version" {
 
 variable "cluster_size" {
   description = "Number of pods to deploy for the PostgreSQL Cluster"
-  type = string
-  default = "small"
+  type        = string
+  default     = "small"
 
   validation {
-    condition = contains(["small", "medium", "large"], var.cluster_size)
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
     error_message = "Valid values for variable size are small, medium and large"
   }
 }

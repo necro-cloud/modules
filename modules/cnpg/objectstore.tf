@@ -50,5 +50,5 @@ resource "kubernetes_manifest" "barman_object_store" {
   depends_on = [
     kubernetes_manifest.garage_certificate_authority_sync,
     kubernetes_manifest.garage_configuration_sync
-  ]  
+  ]
 }

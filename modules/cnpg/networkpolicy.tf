@@ -88,7 +88,7 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       }
     }
 
-    
+
     # Rule 4: Allow OpenTelemetry Collector to scrape CNPG metrics
     dynamic "ingress" {
       for_each = var.enable_observability ? [true] : []
@@ -102,7 +102,7 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
 
           pod_selector {
             match_labels = {
-              "app.kubernetes.io/instance" = "otel-collector" 
+              "app.kubernetes.io/instance" = "otel-collector"
             }
           }
         }
