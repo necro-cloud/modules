@@ -88,26 +88,29 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
       }
     }
 
-    
+
     # Rule 4: Allow OpenTelemetry Collector to scrape CNPG metrics
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.observability_namespace
+    dynamic "ingress" {
+      for_each = var.enable_observability ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.observability_namespace
+            }
+          }
+
+          pod_selector {
+            match_labels = {
+              "app.kubernetes.io/instance" = "otel-collector"
+            }
           }
         }
 
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/instance" = "otel-collector" 
-          }
+        ports {
+          protocol = "TCP"
+          port     = 9187
         }
-      }
-
-      ports {
-        protocol = "TCP"
-        port     = 9187
       }
     }
 
@@ -137,18 +140,21 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
     }
 
     # Rule 2: Allow egress to Garage S3 Cluster for PITR
-    egress {
-      to {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.garage_namespace
+    dynamic "egress" {
+      for_each = var.enable_pitr_backups ? [true] : []
+      content {
+        to {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.garage_namespace
+            }
           }
         }
-      }
 
-      ports {
-        protocol = "TCP"
-        port     = 3940
+        ports {
+          protocol = "TCP"
+          port     = 3940
+        }
       }
     }
 

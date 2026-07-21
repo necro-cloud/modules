@@ -1,5 +1,6 @@
 // Garage Service for Ingress Usage
 resource "kubernetes_service" "pgadmin4" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "pgadmin4-service"
     namespace = kubernetes_namespace.namespace.metadata[0].name

@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "pgadmin" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "pgadmin"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -30,7 +31,7 @@ resource "kubernetes_deployment" "pgadmin" {
 
           env_from {
             secret_ref {
-              name = kubernetes_manifest.pgadmin_credentials_sync.object.spec.target.name
+              name = kubernetes_manifest.pgadmin_credentials_sync[0].object.spec.target.name
             }
           }
 
@@ -56,9 +57,12 @@ resource "kubernetes_deployment" "pgadmin" {
             mount_path = "/mnt/passwords"
           }
 
-          volume_mount {
-            name       = "client-certificates"
-            mount_path = "/mnt/certs"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "client-certificates"
+              mount_path = "/mnt/certs"
+            }
           }
         }
 
@@ -104,7 +108,7 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "nginx-config"
           config_map {
-            name = kubernetes_config_map.nginx_conf.metadata[0].name
+            name = kubernetes_config_map.nginx_conf[0].metadata[0].name
           }
         }
 
@@ -112,7 +116,7 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "servers-configuration"
           config_map {
-            name = kubernetes_config_map.pgadmin_servers_configuration.metadata[0].name
+            name = kubernetes_config_map.pgadmin_servers_configuration[0].metadata[0].name
           }
         }
 
@@ -120,48 +124,51 @@ resource "kubernetes_deployment" "pgadmin" {
         volume {
           name = "internal-certificate"
           secret {
-            secret_name = kubernetes_manifest.pgadmin_internal_certificate.manifest.spec.secretName
+            secret_name = kubernetes_manifest.pgadmin_internal_certificate[0].manifest.spec.secretName
           }
         }
 
         // PostgreSQL Client Certificates Projected Volume
-        volume {
-          name = "client-certificates"
-          projected {
-            sources {
-              secret {
-                name = kubernetes_manifest.client_keycloak_certificate.manifest.spec.secretName
-
-                items {
-                  key  = "ca.crt"
-                  path = "keycloak/ca.crt"
-                }
-                items {
-                  key  = "tls.crt"
-                  path = "keycloak/tls.crt"
-                }
-                items {
-                  key  = "tls.key"
-                  path = "keycloak/tls.key"
-                }
-              }
-
-              dynamic "secret" {
-                for_each = kubernetes_manifest.client_certificates
-                content {
-                  name = secret.value.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "client-certificates"
+            projected {
+              sources {
+                secret {
+                  name = kubernetes_manifest.client_keycloak_certificate[0].manifest.spec.secretName
 
                   items {
                     key  = "ca.crt"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/ca.crt"
+                    path = "keycloak/ca.crt"
                   }
                   items {
                     key  = "tls.crt"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.crt"
+                    path = "keycloak/tls.crt"
                   }
                   items {
                     key  = "tls.key"
-                    path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.key"
+                    path = "keycloak/tls.key"
+                  }
+                }
+
+                dynamic "secret" {
+                  for_each = kubernetes_manifest.client_certificates
+                  content {
+                    name = secret.value.manifest.spec.secretName
+
+                    items {
+                      key  = "ca.crt"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/ca.crt"
+                    }
+                    items {
+                      key  = "tls.crt"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.crt"
+                    }
+                    items {
+                      key  = "tls.key"
+                      path = "${split("-", secret.value.manifest.spec.secretName)[1]}/tls.key"
+                    }
                   }
                 }
               }

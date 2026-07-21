@@ -50,6 +50,12 @@ variable "cluster_name" {
   nullable    = false
 }
 
+variable "database_certificates_required" {
+  description = "Boolean value to control if database certificates are required for authentication or not"
+  type        = bool
+  nullable    = true
+}
+
 variable "database_server_certificate_authority_name" {
   description = "Server Certificate Authority being used for the database"
   type        = string
@@ -202,10 +208,6 @@ variable "keycloak_environment_variables" {
     {
       name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
       value = "/mnt/certs/tls/tls.key"
-    },
-    {
-      name  = "KC_DB_URL"
-      value = "jdbc:postgresql://postgresql-cluster-rw.postgres.svc/keycloak?ssl=true&sslmode=verify-full&sslrootcert=/mnt/certs/database/certificate-authority/ca.crt&sslcert=/mnt/certs/database/certificate/tls.crt&sslkey=/mnt/der/key.der"
     },
     {
       name  = "KC_DB_POOL_INITIAL_SIZE"

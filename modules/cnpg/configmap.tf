@@ -1,4 +1,5 @@
 resource "kubernetes_config_map" "pgadmin_servers_configuration" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "${var.cluster_name}-servers-configuration"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -16,6 +17,7 @@ resource "kubernetes_config_map" "pgadmin_servers_configuration" {
 }
 
 resource "kubernetes_config_map" "nginx_conf" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "nginx-conf"
     namespace = kubernetes_namespace.namespace.metadata[0].name

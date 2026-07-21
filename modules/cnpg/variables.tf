@@ -174,8 +174,13 @@ variable "cluster_postgresql_version" {
 
 variable "cluster_size" {
   description = "Number of pods to deploy for the PostgreSQL Cluster"
-  type        = number
-  default     = 2
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 variable "backup_bucket_name" {
@@ -238,4 +243,29 @@ variable "kubernetes_api_port" {
   description = "Port for the Kubernetes API"
   type        = number
   nullable    = false
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_pitr_backups" {
+  description = "Enable or disable PITR Backups to the Garage Instance for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
 }

@@ -157,6 +157,12 @@ case "$ACTION" in
     "initialize-apply")
         tofu_execute "tofu init && tofu apply --target=module.helm && tofu apply"
         ;;
+    "validate")
+        tofu validate
+        ;;
+    "fmt")
+        tofu fmt
+        ;;
     "cleanup")
         shred_tfvars
         ;;
@@ -165,7 +171,7 @@ case "$ACTION" in
         rm -rf .terraform*
         ;;
     *)
-        echo "Usage: $0 {initialize|plan|apply|destroy|initialize-apply}"
+        echo "Usage: $0 {initialize|plan|apply|destroy|initialize-apply|validate|fmt|cleanup|full-cleanup}"
         exit 1
         ;;
 esac
