@@ -258,3 +258,9 @@ variable "enable_pitr_backups" {
   type        = bool
   default     = true
 }
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}

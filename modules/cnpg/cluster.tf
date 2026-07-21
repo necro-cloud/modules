@@ -13,14 +13,14 @@ resource "kubernetes_manifest" "cluster" {
     }
     "spec" = {
       "inheritedMetadata" = {
-        "labels" = {
+        "labels" = var.enable_pitr_backups ? {
           "garage-access" = true
-        }
-        "annotations" = {
+        } : {}
+        "annotations" = var.enable_observability ?  {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "9187"
           "prometheus.io/path"   = "/metrics"
-        }
+        } : {}
       }
       "topologySpreadConstraints" = [
         {
