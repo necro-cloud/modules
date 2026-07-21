@@ -252,3 +252,9 @@ variable "enable_ui" {
   type        = bool
   default     = true
 }
+
+variable "enable_pitr_backups" {
+  description = "Enable or disable PITR Backups to the Garage Instance for the PostgreSQL Cluster"
+  type        = bool
+  default     = true
+}

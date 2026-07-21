@@ -96,15 +96,15 @@ resource "kubernetes_manifest" "cluster" {
         "clientCASecret"       = kubernetes_manifest.client_certificate_authority[0].manifest.spec.secretName
         "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate[0].manifest.spec.secretName
       } : null
-      "plugins" = [
+      "plugins" = var.enable_pitr_backups ? [
         {
           "name"          = "barman-cloud.cloudnative-pg.io"
           "isWALArchiver" = true
           "parameters" = {
-            "barmanObjectName" = kubernetes_manifest.barman_object_store.manifest.metadata.name
+            "barmanObjectName" = kubernetes_manifest.barman_object_store[0].manifest.metadata.name
           }
         }
-      ]
+      ] : []
     }
   }
 
