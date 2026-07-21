@@ -48,35 +48,38 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         // Using init container to convert
         // PEM Key to a DER Key for Keycloak
         // to consume
-        init_container {
-          name = "certificate-converter"
-          image = "alpine/openssl:3.5.5"
-          command = ["/bin/sh", "-c"]
+        dynamic "init_container" {
+          for_each = var.database_certificates_required ? [true] : []
+          content {
+            name = "certificate-converter"
+            image = "alpine/openssl:3.5.5"
+            command = ["/bin/sh", "-c"]
 
-          // User 1000 does not
-          // exist in Alpine
-          security_context {
-            run_as_user = 0
+            // User 1000 does not
+            // exist in Alpine
+            security_context {
+              run_as_user = 0
+            }
+
+            // Generate some logs
+            // to indicate signs
+            // of life
+            args = [
+              "echo 'Starting certificate conversion...' && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der && echo 'Conversion successful!'"
+            ]
+
+            // Volume Mounts
+            volume_mount {
+              name       = "database-client-certificate"
+              mount_path = "/mnt/certs/database/certificate"
+              read_only  = true
+            }
+
+            volume_mount {
+              name       = "database-der-key"
+              mount_path = "/mnt/der"
+            }          
           }
-
-          // Generate some logs
-          // to indicate signs
-          // of life
-          args = [
-            "echo 'Starting certificate conversion...' && openssl pkcs8 -topk8 -inform PEM -outform DER -in /mnt/certs/database/certificate/tls.key -out /mnt/der/key.der -nocrypt && chown 1000:0 /mnt/der/key.der && chmod 600 /mnt/der/key.der && echo 'Conversion successful!'"
-          ]
-
-          // Volume Mounts
-          volume_mount {
-            name       = "database-client-certificate"
-            mount_path = "/mnt/certs/database/certificate"
-            read_only  = true
-          }
-
-          volume_mount {
-            name       = "database-der-key"
-            mount_path = "/mnt/der"
-          }          
         }
 
         // Node Affinity rule to run only on worker nodes
@@ -179,6 +182,11 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             }
           }
 
+          env {
+            name = "KC_DB_URL"
+            value = var.database_certificates_required ? local.database_url_tls : local.database_url_non_tls
+          }
+
           // Port Mappings
           dynamic "port" {
             for_each = var.keycloak_ports
@@ -243,20 +251,29 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           // Volume mounts
-          volume_mount {
-            name       = "database-certificate-authority"
-            mount_path = "/mnt/certs/database/certificate-authority"
+          dynamic "volume_mount" {
+            for_each = var.database_certificates_required ? [true] : []
+            content {
+              name       = "database-certificate-authority"
+              mount_path = "/mnt/certs/database/certificate-authority"
+            }
           }
 
-          volume_mount {
-            name       = "database-der-key"
-            mount_path = "/mnt/der"
-            read_only  = true
-          }          
+          dynamic "volume_mount" {
+            for_each = var.database_certificates_required ? [true] : []
+            content {
+              name       = "database-der-key"
+              mount_path = "/mnt/der"
+              read_only  = true
+            }
+          }
 
-          volume_mount {
-            name       = "database-client-certificate"
-            mount_path = "/mnt/certs/database/certificate"
+          dynamic "volume_mount" {
+            for_each = var.database_certificates_required ? [true] : []
+            content {
+              name       = "database-client-certificate"
+              mount_path = "/mnt/certs/database/certificate"
+            }
           }
 
           volume_mount {
@@ -271,22 +288,31 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         }
 
         // Volumes
-        volume {
-          name = "database-certificate-authority"
-          secret {
-            secret_name = kubernetes_manifest.database_server_certificate_authority_sync.object.spec.target.name
+        dynamic "volume" {
+          for_each = var.database_certificates_required ? [true] : []
+          content {
+            name = "database-certificate-authority"
+            secret {
+              secret_name = kubernetes_manifest.database_server_certificate_authority_sync[0].object.spec.target.name
+            }
           }
         }
 
-        volume {
-          name = "database-der-key"
-          empty_dir {}
-        }        
+        dynamic "volume" {
+          for_each = var.database_certificates_required ? [true] : []
+          content {
+            name = "database-der-key"
+            empty_dir {}
+          }
+        }
 
-        volume {
-          name = "database-client-certificate"
-          secret {
-            secret_name = kubernetes_manifest.database_client_certificate_sync.object.spec.target.name
+        dynamic "volume" {
+          for_each = var.database_certificates_required ? [true] : []
+          content {
+            name = "database-client-certificate"
+            secret {
+              secret_name = kubernetes_manifest.database_client_certificate_sync[0].object.spec.target.name
+            }
           }
         }
 
