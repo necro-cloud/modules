@@ -4,9 +4,9 @@ OpenTofu Module to deploy [FerretDB](https://www.ferretdb.com/) (MongoDB) Databa
 
 Required Modules to deploy FerretDB Database:
 1. [Helm](../helm)
-2. [Cluster Issuer](../cluster-issuer)
-3. [Garage](../garage)
-4. [Observability](../observability)
+2. [Cluster Issuer](../cluster-issuer) (Optional if setting `enable_internal_tls_certificates` as `false`)
+3. [Garage](../garage) (Optional if setting `enable_pitr_backups` as `false`)
+4. [Observability](../observability) (Optional if setting `enable_observability` as `false`)
 5. [OpenBao](../openbao)
 
 ## Providers
@@ -73,9 +73,13 @@ Required Modules to deploy FerretDB Database:
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the Ferret Database Cluster to be created | `string` | `"ferret-postgresql-cluster"` | no |
 | <a name="input_cluster_postgresql_version"></a> [cluster\_postgresql\_version](#input\_cluster\_postgresql\_version) | Version of Ferret Database to use and deploy | `number` | `17` | no |
 | <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
-| <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the Ferret Cluster | `number` | `2` | no |
+| <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the PostgreSQL Cluster | `string` | `"small"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying Ferret Database | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
+| <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_pitr_backups"></a> [enable\_pitr\_backups](#input\_enable\_pitr\_backups) | Enable or disable PITR Backups to the Garage Instance for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the FerretDB Cluster | `bool` | `true` | no |
 | <a name="input_garage_certificate_authority"></a> [garage\_certificate\_authority](#input\_garage\_certificate\_authority) | Name of the Certificate Authority associated with the Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_garage_configuration"></a> [garage\_configuration](#input\_garage\_configuration) | Garage Configuration for storing PITR Backups | `string` | n/a | yes |
 | <a name="input_garage_namespace"></a> [garage\_namespace](#input\_garage\_namespace) | Namespace for the Garage Deployment for storing PITR Backups | `string` | n/a | yes |
