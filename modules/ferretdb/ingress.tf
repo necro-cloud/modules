@@ -34,7 +34,7 @@ resource "kubernetes_ingress_v1" "mongo_express_ingress" {
             service {
               name = kubernetes_service.mongo_express[0].metadata[0].name
               port {
-                name = "https"
+                name = "ui"
               }
             }
           }

@@ -158,7 +158,7 @@ resource "kubernetes_deployment" "mongo_express" {
             http_get {
               path = "/status"
               port = 8081
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
             period_seconds = 10
@@ -170,7 +170,7 @@ resource "kubernetes_deployment" "mongo_express" {
             http_get {
               path = "/status"
               port = 8081
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
             period_seconds = 10

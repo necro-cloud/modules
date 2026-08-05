@@ -44,7 +44,7 @@ resource "kubernetes_service" "mongo_express" {
     port {
       port        = 8081
       target_port = 8081
-      name        = "https"
+      name        = "ui"
     }
 
     selector = {
