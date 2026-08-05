@@ -45,6 +45,7 @@ resource "kubernetes_manifest" "garage_certificate_authority_sync" {
 # --------------- POSTGRESQL SERVER CERTIFICATES CONFIGURATION --------------- #
 // Certificate Authority to be used with PostgreSQL Server
 resource "kubernetes_manifest" "server_certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -94,6 +95,7 @@ resource "kubernetes_manifest" "server_certificate_authority" {
 
 // Issuer to be used with PostgreSQL Server
 resource "kubernetes_manifest" "server_issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -107,7 +109,7 @@ resource "kubernetes_manifest" "server_issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -128,6 +130,7 @@ resource "kubernetes_manifest" "server_issuer" {
 
 // Certificate for PostgreSQL Server
 resource "kubernetes_manifest" "server_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -159,7 +162,7 @@ resource "kubernetes_manifest" "server_certificate" {
       }
       "secretName" = var.server_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.server_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.server_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -182,6 +185,7 @@ resource "kubernetes_manifest" "server_certificate" {
 # --------------- POSTGRESQL CLIENT CERTIFICATES CONFIGURATION --------------- #
 // Certificate Authority to be used with PostgreSQL Client
 resource "kubernetes_manifest" "client_certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -231,6 +235,7 @@ resource "kubernetes_manifest" "client_certificate_authority" {
 
 // Issuer to be used with PostgreSQL Client
 resource "kubernetes_manifest" "client_issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -244,7 +249,7 @@ resource "kubernetes_manifest" "client_issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.client_certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -265,6 +270,7 @@ resource "kubernetes_manifest" "client_issuer" {
 
 // Certificate for Streaming Replica
 resource "kubernetes_manifest" "client_streaming_replica_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -286,7 +292,7 @@ resource "kubernetes_manifest" "client_streaming_replica_certificate" {
       "commonName" = "streaming_replica"
       "secretName" = var.client_streaming_replica_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.client_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.client_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -307,6 +313,7 @@ resource "kubernetes_manifest" "client_streaming_replica_certificate" {
 
 // Internal Certificate for MongoExpress
 resource "kubernetes_manifest" "mongo_express_internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -332,7 +339,7 @@ resource "kubernetes_manifest" "mongo_express_internal_certificate" {
       "commonName" = "mongo-express-internal-certificate"
       "secretName" = "mongo-express-internal-certificate"
       "issuerRef" = {
-        "name" = kubernetes_manifest.server_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.server_issuer[0].manifest.metadata.name
       }
     }
   }

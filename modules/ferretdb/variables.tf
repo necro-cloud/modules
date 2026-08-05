@@ -229,3 +229,28 @@ variable "kubernetes_api_port" {
   type        = number
   nullable    = false
 }
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_pitr_backups" {
+  description = "Enable or disable PITR Backups to the Garage Instance for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}

@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "transport" {
       insecureSkipVerify = true
       rootCAs = [
         {
-          secret = kubernetes_manifest.mongo_express_internal_certificate.manifest.spec.secretName
+          secret = var.enable_internal_tls_certificates ? kubernetes_manifest.mongo_express_internal_certificate[0].manifest.spec.secretName : null
         }
       ]
     }
