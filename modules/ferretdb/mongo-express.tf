@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "mongo_express" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name = "mongo-express"
     namespace = kubernetes_namespace.namespace.metadata[0].name

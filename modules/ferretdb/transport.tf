@@ -1,5 +1,6 @@
 // Server Transport Resource for HTTPS Backend Connections
 resource "kubernetes_manifest" "transport" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "ServersTransport"

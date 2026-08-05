@@ -359,6 +359,7 @@ resource "kubernetes_manifest" "mongo_express_internal_certificate" {
 
 // Kubernetes Secret for Cloudflare Tokens
 resource "kubernetes_secret" "cloudflare_token" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "cloudflare-token"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -377,6 +378,7 @@ resource "kubernetes_secret" "cloudflare_token" {
 
 // Cloudflare Issuer for MongoExpress Ingress Service
 resource "kubernetes_manifest" "public_issuer" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -430,6 +432,7 @@ resource "kubernetes_manifest" "public_issuer" {
 
 // Certificate to be used for MongoExpress Ingress
 resource "kubernetes_manifest" "ingress_certificate" {
+  count = var.enable_ui ? 1 : 0
 
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
@@ -458,7 +461,7 @@ resource "kubernetes_manifest" "ingress_certificate" {
       "dnsNames"   = ["${var.host_name}.${var.domain}"]
       "secretName" = var.ingress_certificate_name
       "issuerRef" = {
-        "name"  = kubernetes_manifest.public_issuer.manifest.metadata.name
+        "name"  = kubernetes_manifest.public_issuer[0].manifest.metadata.name
         "kind"  = "Issuer"
         "group" = "cert-manager.io"
       }
