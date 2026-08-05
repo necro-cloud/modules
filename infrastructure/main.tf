@@ -158,6 +158,9 @@ module "ferretdb" {
   // Observability details
   observability_namespace = module.observability.observability_namespace
 
+  // Cluster sizing details
+  cluster_size = "small"
+
   // Required client details to allow access and generate credentials and certificates for
   clients = [
     {
@@ -176,6 +179,12 @@ module "ferretdb" {
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_pitr_backups              = true
+  enable_observability             = true
 
   // Dependency on Garage Deployment  
   depends_on = [module.garage, module.observability, module.openbao]
