@@ -16,11 +16,11 @@ resource "kubernetes_manifest" "cluster" {
         "labels" = {
           "garage-access" = true
         }
-        "annotations" = {
+        "annotations" = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "9187"
           "prometheus.io/path"   = "/metrics"
-        }
+        } : {}
       }
       "postgresUID" = 999
       "postgresGID" = 999

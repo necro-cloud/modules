@@ -26,11 +26,11 @@ resource "kubernetes_deployment" "ferretdb" {
           "part-of" = "ferretdb"
         }
         
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/path"   = "/debug/metrics"
           "prometheus.io/port"   = "8088" 
-        }
+        } : {}
       }
 
       spec {
