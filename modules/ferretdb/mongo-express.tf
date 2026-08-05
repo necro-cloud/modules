@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "mongo_express" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name = "mongo-express"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -118,17 +119,23 @@ resource "kubernetes_deployment" "mongo_express" {
           // SSL Configuration for Mongo Express
           env {
             name = "ME_CONFIG_SITE_SSL_ENABLED"
-            value = "true"
+            value = var.enable_internal_tls_certificates ? "true" : "false"
           }
 
-          env {
-            name = "ME_CONFIG_SITE_SSL_CRT_PATH"
-            value = "/etc/mongoexpress/certs/tls.crt"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name = "ME_CONFIG_SITE_SSL_CRT_PATH"
+              value = "/etc/mongoexpress/certs/tls.crt"
+            }
           }
-          
-          env {
-            name = "ME_CONFIG_SITE_SSL_KEY_PATH"
-            value = "/etc/mongoexpress/certs/tls.key"
+
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name = "ME_CONFIG_SITE_SSL_KEY_PATH"
+              value = "/etc/mongoexpress/certs/tls.key"
+            }
           }
 
           port {
@@ -151,7 +158,7 @@ resource "kubernetes_deployment" "mongo_express" {
             http_get {
               path = "/status"
               port = 8081
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
             period_seconds = 10
@@ -163,7 +170,7 @@ resource "kubernetes_deployment" "mongo_express" {
             http_get {
               path = "/status"
               port = 8081
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
             period_seconds = 10
@@ -171,17 +178,23 @@ resource "kubernetes_deployment" "mongo_express" {
             failure_threshold = 5
           }
 
-          volume_mount {
-            name = "tls-certs"
-            mount_path = "/etc/mongoexpress/certs"
-            read_only = true
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name = "tls-certs"
+              mount_path = "/etc/mongoexpress/certs"
+              read_only = true
+            }
           }
         }
 
-        volume {
-          name = "tls-certs"
-          secret {
-            secret_name = kubernetes_manifest.mongo_express_internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "tls-certs"
+            secret {
+              secret_name = kubernetes_manifest.mongo_express_internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
       }

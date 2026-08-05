@@ -28,6 +28,7 @@ resource "kubernetes_service" "ferret_service" {
 
 // Mongo Express Service for Ingress Usage
 resource "kubernetes_service" "mongo_express" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "mongo-express-service"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -43,7 +44,7 @@ resource "kubernetes_service" "mongo_express" {
     port {
       port        = 8081
       target_port = 8081
-      name        = "https"
+      name        = "ui"
     }
 
     selector = {

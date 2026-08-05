@@ -1,4 +1,5 @@
 resource "kubernetes_manifest" "barman_object_store" {
+  count = var.enable_pitr_backups ? 1 : 0
   manifest = {
     "apiVersion" = "barmancloud.cnpg.io/v1"
     "kind"       = "ObjectStore"
@@ -22,21 +23,21 @@ resource "kubernetes_manifest" "barman_object_store" {
         "destinationPath" = "s3://${var.backup_bucket_name}/"
         "endpointCA" = {
           "key"  = "ca.crt"
-          "name" = kubernetes_manifest.garage_certificate_authority_sync.object.metadata.name
+          "name" = kubernetes_manifest.garage_certificate_authority_sync[0].object.metadata.name
         }
         "endpointURL" = "https://garage-service.${var.garage_namespace}.svc.cluster.local:3940"
         "s3Credentials" = {
           "accessKeyId" = {
             "key"  = "ACCESS_KEY_ID"
-            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
+            "name" = kubernetes_manifest.garage_configuration_sync[0].object.metadata.name
           }
           "secretAccessKey" = {
             "key"  = "SECRET_ACCESS_KEY"
-            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
+            "name" = kubernetes_manifest.garage_configuration_sync[0].object.metadata.name
           }
           "region" = {
             "key"  = "S3_REGION"
-            "name" = kubernetes_manifest.garage_configuration_sync.object.metadata.name
+            "name" = kubernetes_manifest.garage_configuration_sync[0].object.metadata.name
           }
         }
         "wal" = {

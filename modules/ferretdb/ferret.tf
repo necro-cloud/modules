@@ -9,7 +9,7 @@ resource "kubernetes_deployment" "ferretdb" {
   }
 
   spec {
-    replicas = var.cluster_size
+    replicas = local.ferret_size_lookup[var.cluster_size]
     selector {
       match_labels = {
         app = var.app_name
@@ -26,11 +26,11 @@ resource "kubernetes_deployment" "ferretdb" {
           "part-of" = "ferretdb"
         }
         
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/path"   = "/debug/metrics"
           "prometheus.io/port"   = "8088" 
-        }
+        } : {}
       }
 
       spec {
@@ -88,10 +88,13 @@ resource "kubernetes_deployment" "ferretdb" {
           }
 
           // PostgreSQL Certificates
-          volume_mount {
-            name = "postgres-ca"
-            mount_path = "/etc/certs"
-            read_only = true
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name = "postgres-ca"
+              mount_path = "/etc/certs"
+              read_only = true
+            }
           }
 
           env {
@@ -118,7 +121,7 @@ resource "kubernetes_deployment" "ferretdb" {
           }
           env {
             name = "FERRETDB_POSTGRESQL_URL"
-            value = "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres?sslmode=verify-ca&sslrootcert=/etc/certs/ca.crt"
+            value = var.enable_internal_tls_certificates ? "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres?sslmode=verify-ca&sslrootcert=/etc/certs/ca.crt" : "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres"
           }
 
           readiness_probe {
@@ -143,13 +146,16 @@ resource "kubernetes_deployment" "ferretdb" {
           }
         }
 
-        volume {
-          name = "postgres-ca"
-          secret {
-            secret_name = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
-            items {
-              key = "ca.crt"
-              path = "ca.crt"
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "postgres-ca"
+            secret {
+              secret_name = kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName
+              items {
+                key = "ca.crt"
+                path = "ca.crt"
+              }
             }
           }
         }

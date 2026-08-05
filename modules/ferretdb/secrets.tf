@@ -1,5 +1,6 @@
 // Garage Credentials for storing PostgreSQL PITR Backups
 resource "kubernetes_manifest" "garage_configuration_sync" {
+  count = var.enable_pitr_backups ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"

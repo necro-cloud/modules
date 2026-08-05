@@ -16,11 +16,11 @@ resource "kubernetes_manifest" "cluster" {
         "labels" = {
           "garage-access" = true
         }
-        "annotations" = {
+        "annotations" = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "9187"
           "prometheus.io/path"   = "/metrics"
-        }
+        } : {}
       }
       "postgresUID" = 999
       "postgresGID" = 999
@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "cluster" {
       }
       "description"           = "PostgreSQL Cluster for storing relational data"
       "enableSuperuserAccess" = true
-      "instances"             = var.cluster_size
+      "instances"             = local.cnpg_size_lookup[var.cluster_size]
       // Required postgresql configuration for DocumentDB
       "postgresql" = {
         "shared_preload_libraries" = [
@@ -116,21 +116,21 @@ resource "kubernetes_manifest" "cluster" {
         }
         "size" = "5Gi"
       }
-      "certificates" = {
-        "serverTLSSecret"      = kubernetes_manifest.server_certificate.manifest.spec.secretName
-        "serverCASecret"       = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
-        "clientCASecret"       = kubernetes_manifest.client_certificate_authority.manifest.spec.secretName
-        "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate.manifest.spec.secretName
-      }
-      "plugins" = [
+      "certificates" = var.enable_internal_tls_certificates ? {
+        "serverTLSSecret"      = kubernetes_manifest.server_certificate[0].manifest.spec.secretName
+        "serverCASecret"       = kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName
+        "clientCASecret"       = kubernetes_manifest.client_certificate_authority[0].manifest.spec.secretName
+        "replicationTLSSecret" = kubernetes_manifest.client_streaming_replica_certificate[0].manifest.spec.secretName
+      } : null
+      "plugins" = var.enable_pitr_backups ? [
         {
           "name"          = "barman-cloud.cloudnative-pg.io"
           "isWALArchiver" = true
           "parameters" = {
-            "barmanObjectName" = kubernetes_manifest.barman_object_store.manifest.metadata.name
+            "barmanObjectName" = kubernetes_manifest.barman_object_store[0].manifest.metadata.name
           }
         }
-      ]
+      ] : []
     }
   }
 

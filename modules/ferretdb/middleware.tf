@@ -1,5 +1,6 @@
 // Middleware 1: The Rewrite logic
 resource "kubernetes_manifest" "middleware_rewrite" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
@@ -18,6 +19,7 @@ resource "kubernetes_manifest" "middleware_rewrite" {
 
 // Middleware 2: The Buffering logic
 resource "kubernetes_manifest" "middleware_buffering" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
