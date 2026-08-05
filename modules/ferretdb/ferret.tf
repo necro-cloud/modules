@@ -9,7 +9,7 @@ resource "kubernetes_deployment" "ferretdb" {
   }
 
   spec {
-    replicas = var.cluster_size
+    replicas = local.ferret_size_lookup[var.cluster_size]
     selector {
       match_labels = {
         app = var.app_name

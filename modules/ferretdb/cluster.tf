@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "cluster" {
       }
       "description"           = "PostgreSQL Cluster for storing relational data"
       "enableSuperuserAccess" = true
-      "instances"             = var.cluster_size
+      "instances"             = local.cnpg_size_lookup[var.cluster_size]
       // Required postgresql configuration for DocumentDB
       "postgresql" = {
         "shared_preload_libraries" = [

@@ -16,4 +16,14 @@ locals {
     "replication" = false
     "superuser"   = false
   }]
+  cnpg_size_lookup = {
+    small  = 1
+    medium = 2
+    large  = 2
+  }
+  ferret_size_lookup = {
+    small  = 1
+    medium = 1
+    large  = 2
+  }
 }
