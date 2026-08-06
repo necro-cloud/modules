@@ -11,6 +11,9 @@ resource "kubernetes_manifest" "transport" {
       insecureSkipVerify = true
       rootCAs = var.enable_internal_tls_certificates ? [
         {
+          secret = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+        },
+        {
           secret = kubernetes_manifest.ui_internal_certificate[0].manifest.spec.secretName
         }
       ] : []
