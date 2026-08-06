@@ -18,7 +18,7 @@ resource "kubernetes_stateful_set" "statefulset" {
       }
     }
 
-    replicas = var.cluster_nodes
+    replicas = local.size_lookup[var.cluster_size]
 
     service_name = kubernetes_service.garage-headless.metadata[0].name
 
@@ -222,6 +222,11 @@ resource "kubernetes_stateful_set" "statefulset" {
           }
         }
       }
+    }
+
+    # Delete PVCs when pod is removed
+    persistent_volume_claim_retention_policy {
+      when_deleted = "Delete"
     }
 
     volume_claim_template {

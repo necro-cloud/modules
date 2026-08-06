@@ -17,7 +17,7 @@ resource "kubernetes_config_map" "garage_config" {
       db_engine = "lmdb"
       block_size = 1048576
 
-      replication_factor = ${var.cluster_nodes}
+      replication_factor = ${local.size_lookup[var.cluster_size]}
       consistency_mode = "consistent"
       compression_level = 1
 
