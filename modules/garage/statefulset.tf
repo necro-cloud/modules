@@ -126,18 +126,18 @@ resource "kubernetes_stateful_set" "statefulset" {
           liveness_probe {
             http_get {
               path = "/health"
-              port = "admin"
+              port = 3903
             }
-            initial_delay_seconds = 5
+            initial_delay_seconds = 10
             period_seconds        = 30
           }
 
           readiness_probe {
             http_get {
               path = "/health"
-              port = "admin"
+              port = 3903
             }
-            initial_delay_seconds = 5
+            initial_delay_seconds = 10
             period_seconds        = 30
           }
         }

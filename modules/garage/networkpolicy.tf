@@ -56,7 +56,7 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
       ports {
         protocol = "TCP"
-        port     = 3940
+        port     = local.garage_port
       }
     }
 
@@ -71,7 +71,7 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
       ports {
         protocol = "TCP"
-        port     = 3940
+        port     = local.garage_port
       }
     }
 
@@ -88,7 +88,7 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
       ports {
         protocol = "TCP"
-        port     = 3943
+        port     = local.garage_admin_port
       }
     }
     
@@ -128,11 +128,11 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
       }
       ports {
         protocol = "TCP"
-        port     = 3940
+        port     = local.garage_port
       }
       ports {
         protocol = "TCP"
-        port     = 3943
+        port     = local.garage_admin_port
       }
     }
 

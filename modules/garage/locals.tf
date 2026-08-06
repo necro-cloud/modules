@@ -1,6 +1,6 @@
 locals {
   configurator_options = {
-    adminApiUrl         = "https://garage-0.${kubernetes_service.garage-headless.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_admin_port}"
+    adminApiUrl         = "${local.garage_scheme}://garage-0.${kubernetes_service.garage-headless.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_admin_port}"
     k8sClusterName      = var.garage_cluster_name
     k8sClusterNamespace = kubernetes_namespace.namespace.metadata[0].name
     region              = var.garage_region
@@ -16,6 +16,8 @@ locals {
     }
     accessKeys = var.required_access_keys
   }
+  garage_scheme = var.enable_internal_tls_certificates ? "https" : "http"
   garage_port = var.enable_internal_tls_certificates ? 3940 : 3900
   garage_admin_port = var.enable_internal_tls_certificates ? 3943 : 3903
+  ui_port = var.enable_internal_tls_certificates ? 8443 : 8080
 }

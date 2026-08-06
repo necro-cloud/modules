@@ -346,6 +346,7 @@ resource "kubernetes_manifest" "api_ingress_certificate" {
 
 # Certificate to be used for Garage UI Ingress
 resource "kubernetes_manifest" "ui_ingress_certificate" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"

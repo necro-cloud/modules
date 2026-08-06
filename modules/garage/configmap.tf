@@ -206,6 +206,7 @@ resource "kubernetes_config_map" "ui_nginx_conf" {
 
 
 resource "kubernetes_config_map" "garage_ui_config" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "garage-ui-config"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -232,10 +233,10 @@ server:
   write_buffer_size: 4096 
 
 garage:
-  endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_port}" 
+  endpoint: "${local.garage_scheme}://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_port}" 
   region: "${var.garage_region}" 
   
-  admin_endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_admin_port}""
+  admin_endpoint: "${local.garage_scheme}://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_admin_port}"
   admin_token: "" 
 
 auth:

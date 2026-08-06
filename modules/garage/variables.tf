@@ -150,7 +150,7 @@ variable "image" {
 variable "tag" {
   description = "Docker tag to be used for deployment of Garage Storage Solution"
   type        = string
-  default     = "v2.1.0"
+  default     = "v2.0.0"
 }
 
 variable "proxy_repository" {

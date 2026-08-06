@@ -1,5 +1,6 @@
 # UI Component for the Garage Storage Solution
 resource "kubernetes_deployment" "garage_ui" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "garage-ui"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -111,6 +112,12 @@ resource "kubernetes_deployment" "garage_ui" {
             }
           }
 
+          # HTTP Mapping for the UI service
+          port {
+            container_port = 8080
+            name           = "http"
+          }
+
           # Health checks to turn green
           # when the UI service is up
           liveness_probe {
@@ -209,7 +216,7 @@ resource "kubernetes_deployment" "garage_ui" {
         volume {
           name = "config"
           config_map {
-            name = kubernetes_config_map.garage_ui_config.metadata[0].name
+            name = kubernetes_config_map.garage_ui_config[0].metadata[0].name
           }
         }
 
