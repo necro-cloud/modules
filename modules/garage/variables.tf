@@ -150,7 +150,7 @@ variable "image" {
 variable "tag" {
   description = "Docker tag to be used for deployment of Garage Storage Solution"
   type        = string
-  default     = "v2.0.0"
+  default     = "v2.1.0"
 }
 
 variable "proxy_repository" {
@@ -264,4 +264,23 @@ variable "kubernetes_api_port" {
   description = "Port for the Kubernetes API"
   type        = number
   nullable    = false
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Garage Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the Garage Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the Garage Cluster"
+  type        = bool
+  default     = true
 }

@@ -7,7 +7,7 @@ output "garage_namespace" {
 
 // Garage Internal Certificate Name Output
 output "garage_internal_certificate_secret" {
-  value       = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+  value       = var.enable_internal_tls_certificates ? kubernetes_manifest.internal_certificate[0].manifest.spec.secretName : ""
   description = "Secret name where the Internal Certificate for Garage is stored in"
   depends_on  = [kubernetes_job.configurator]
 }

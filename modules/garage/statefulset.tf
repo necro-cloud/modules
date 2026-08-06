@@ -142,51 +142,54 @@ resource "kubernetes_stateful_set" "statefulset" {
           }
         }
 
-        container {
-          name  = "proxy"
-          image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
+        dynamic "container" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name  = "proxy"
+            image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
 
-          port {
-            container_port = 3940
-            name           = "proxy-api"
-          }
-
-          port {
-            container_port = 3942
-            name           = "proxy-web"
-          }
-
-          port {
-            container_port = 3943
-            name           = "proxy-admin"
-          }
-
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/mnt/crt"
-          }
-
-          volume_mount {
-            name       = "nginx-config"
-            mount_path = "/etc/nginx"
-          }
-
-          liveness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:3943/health"]
+            port {
+              container_port = 3940
+              name           = "proxy-api"
             }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
-          }
-
-          readiness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:3943/health"]
+            port {
+              container_port = 3942
+              name           = "proxy-web"
             }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
+            port {
+              container_port = 3943
+              name           = "proxy-admin"
+            }
+
+            volume_mount {
+              name       = "certificates"
+              mount_path = "/mnt/crt"
+            }
+
+            volume_mount {
+              name       = "nginx-config"
+              mount_path = "/etc/nginx"
+            }
+
+            liveness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:3943/health"]
+              }
+
+              initial_delay_seconds = 5
+              period_seconds        = 30
+            }
+
+            readiness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:3943/health"]
+              }
+
+              initial_delay_seconds = 5
+              period_seconds        = 30
+            }
           }
         }
 
@@ -198,18 +201,24 @@ resource "kubernetes_stateful_set" "statefulset" {
           }
         }
 
-        volume {
-          name = "nginx-config"
-          config_map {
-            name         = kubernetes_config_map.nginx_config.metadata[0].name
-            default_mode = "0420"
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "nginx-config"
+            config_map {
+              name         = kubernetes_config_map.nginx_config[0].metadata[0].name
+              default_mode = "0420"
+            }
           }
         }
 
-        volume {
-          name = "certificates"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.object.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "certificates"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].object.spec.secretName
+            }
           }
         }
       }

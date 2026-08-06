@@ -80,9 +80,12 @@ resource "kubernetes_deployment" "garage_ui" {
           }
 
           # Set SSL_CERT_DIR so the Go application looks in /certs for CA bundle
-          env {
-            name  = "SSL_CERT_DIR"
-            value = "/certs"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "SSL_CERT_DIR"
+              value = "/certs"
+            }
           }
 
           # Admin credentials for the UI solution
@@ -100,9 +103,12 @@ resource "kubernetes_deployment" "garage_ui" {
           }
 
           # Mount the CA Cert to a directory that Go/OpenSSL will trust
-          volume_mount {
-            name       = "ca-certs"
-            mount_path = "/certs"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "ca-certs"
+              mount_path = "/certs"
+            }
           }
 
           # Health checks to turn green
@@ -128,41 +134,44 @@ resource "kubernetes_deployment" "garage_ui" {
           }
         }
 
-        container {
-          name  = "proxy"
-          image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
+        dynamic "container" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name  = "proxy"
+            image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
 
-          # HTTPS Mapping for the UI service
-          port {
-            container_port = 8443
-            name           = "https"
-          }
-
-          # Mounting the SSL certs for HTTPS duties
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/mnt/crt"
-          }
-
-          # NGINX Configuration for HTTPS duties
-          volume_mount {
-            name       = "nginx-config"
-            mount_path = "/etc/nginx"
-          }
-
-          # Liveness and readiness probes to check if the container is up
-          liveness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
+            # HTTPS Mapping for the UI service
+            port {
+              container_port = 8443
+              name           = "https"
             }
-            period_seconds        = 30
-          }
 
-          readiness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
+            # Mounting the SSL certs for HTTPS duties
+            volume_mount {
+              name       = "certificates"
+              mount_path = "/mnt/crt"
             }
-            period_seconds        = 30
+
+            # NGINX Configuration for HTTPS duties
+            volume_mount {
+              name       = "nginx-config"
+              mount_path = "/etc/nginx"
+            }
+
+            # Liveness and readiness probes to check if the container is up
+            liveness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
+              }
+              period_seconds        = 30
+            }
+
+            readiness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
+              }
+              period_seconds        = 30
+            }
           }
         }
         
@@ -175,18 +184,24 @@ resource "kubernetes_deployment" "garage_ui" {
         }
         
         # Mount the CA certificate from the Garage cluster's internal secret to trust HTTPS
-        volume {
-          name = "ca-certs"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.object.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "ca-certs"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].object.spec.secretName
+            }
           }
         }
 
         # Mount the certificates required to perform TLS connections
-        volume {
-          name = "certificates"
-          secret {
-            secret_name = kubernetes_manifest.ui_internal_certificate.object.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "certificates"
+            secret {
+              secret_name = kubernetes_manifest.ui_internal_certificate[0].object.spec.secretName
+            }
           }
         }
 
@@ -199,10 +214,13 @@ resource "kubernetes_deployment" "garage_ui" {
         }
 
         # Mount the confiuration for NGINX to perform internal TLS duties
-        volume {
-          name = "nginx-config"
-          config_map {
-            name = kubernetes_config_map.ui_nginx_conf.metadata[0].name
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "nginx-config"
+            config_map {
+              name = kubernetes_config_map.ui_nginx_conf.metadata[0].name
+            }
           }
         }
       }
@@ -212,6 +230,5 @@ resource "kubernetes_deployment" "garage_ui" {
   depends_on = [
     kubernetes_service.garage-headless, 
     kubernetes_config_map.garage_ui_config,
-    kubernetes_manifest.internal_certificate
   ]
 }

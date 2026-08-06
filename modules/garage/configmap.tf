@@ -44,6 +44,7 @@ resource "kubernetes_config_map" "garage_config" {
 
 // Garage Storage NGINX Reverse Proxy Settings
 resource "kubernetes_config_map" "nginx_config" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   metadata {
     name      = "nginx-config"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -148,6 +149,7 @@ resource "kubernetes_config_map" "configurator-options" {
 
 # NGINX Configuration for SSL-ing requests to the container
 resource "kubernetes_config_map" "ui_nginx_conf" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   metadata {
     name      = "garage-ui-nginx-conf"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -230,10 +232,10 @@ server:
   write_buffer_size: 4096 
 
 garage:
-  endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:3940" 
+  endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_port}" 
   region: "${var.garage_region}" 
   
-  admin_endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:3943" 
+  admin_endpoint: "https://${kubernetes_service.garage-service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:${local.garage_admin_port}""
   admin_token: "" 
 
 auth:

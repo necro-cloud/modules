@@ -45,14 +45,14 @@ resource "kubernetes_service" "garage-service" {
     type = "ClusterIP"
 
     port {
-      port        = 3940
-      target_port = 3940
+      port        = local.garage_port
+      target_port = local.garage_port
       name        = "proxy-api"
     }
 
     port {
-      port        = 3943
-      target_port = 3943
+      port        = local.garage_admin_port
+      target_port = local.garage_admin_port
       name        = "admin-api"
     }
 
