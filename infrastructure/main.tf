@@ -67,6 +67,9 @@ module "garage" {
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
+  // Cluster sizing details
+  cluster_size = "small"
+
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
   cloudflare_token    = var.cloudflare_token
@@ -87,6 +90,11 @@ module "garage" {
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
 
   depends_on = [module.observability, module.openbao]
 }
