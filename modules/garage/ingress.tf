@@ -13,8 +13,8 @@ resource "kubernetes_ingress_v1" "api_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
       "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
-      "traefik.ingress.kubernetes.io/router.tls" = "true"
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"               = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
   }
 
@@ -41,7 +41,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
       }
     }
   }
-  
+
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,
@@ -65,8 +65,8 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
       "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
-      "traefik.ingress.kubernetes.io/router.tls" = "true"
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"               = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
   }
 
@@ -93,7 +93,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       }
     }
   }
-  
+
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,

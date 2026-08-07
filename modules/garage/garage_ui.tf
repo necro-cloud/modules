@@ -17,9 +17,9 @@ resource "kubernetes_deployment" "garage_ui" {
     // Network policy will also be applied here
     selector {
       match_labels = {
-        app       = var.app_name
-        component = "pod"
-        "part-of" = "garage-ui"
+        app                = var.app_name
+        component          = "pod"
+        "part-of"          = "garage-ui"
         "garage-ui-access" = true
       }
     }
@@ -27,9 +27,9 @@ resource "kubernetes_deployment" "garage_ui" {
     template {
       metadata {
         labels = {
-          app       = var.app_name
-          component = "pod"
-          "part-of" = "garage-ui"
+          app                = var.app_name
+          component          = "pod"
+          "part-of"          = "garage-ui"
           "garage-ui-access" = true
         }
       }
@@ -57,25 +57,25 @@ resource "kubernetes_deployment" "garage_ui" {
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = {
-              app       = var.app_name
-              component = "pod"
-              "part-of" = "garage-ui"
+              app                = var.app_name
+              component          = "pod"
+              "part-of"          = "garage-ui"
               "garage-ui-access" = true
             }
           }
         }
-        
+
         container {
           name  = "garage-ui"
           image = "${var.ui_repository}/${var.ui_image}:${var.ui_tag}"
-          
+
           # Environment Variables
           env {
-            name  = "GARAGE_UI_GARAGE_ADMIN_TOKEN"
+            name = "GARAGE_UI_GARAGE_ADMIN_TOKEN"
             value_from {
               secret_key_ref {
                 name = kubernetes_manifest.admin_password_sync.object.spec.target.name
-                key = "GARAGE_ADMIN_TOKEN"
+                key  = "GARAGE_ADMIN_TOKEN"
               }
             }
           }
@@ -100,7 +100,7 @@ resource "kubernetes_deployment" "garage_ui" {
           volume_mount {
             name       = "config"
             mount_path = "/app/config.yaml"
-            sub_path = "config.yaml"
+            sub_path   = "config.yaml"
           }
 
           # Mount the CA Cert to a directory that Go/OpenSSL will trust
@@ -125,17 +125,17 @@ resource "kubernetes_deployment" "garage_ui" {
               path = "/health"
               port = 8080
             }
-            period_seconds = 10
+            period_seconds    = 10
             success_threshold = 1
             failure_threshold = 5
           }
-          
+
           readiness_probe {
             http_get {
               path = "/health"
               port = 8080
             }
-            period_seconds = 10
+            period_seconds    = 10
             success_threshold = 1
             failure_threshold = 5
           }
@@ -170,18 +170,18 @@ resource "kubernetes_deployment" "garage_ui" {
               exec {
                 command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
               }
-              period_seconds        = 30
+              period_seconds = 30
             }
 
             readiness_probe {
               exec {
                 command = ["curl", "--cacert", "/mnt/crt/ca.crt", "https://localhost:8443/health"]
               }
-              period_seconds        = 30
+              period_seconds = 30
             }
           }
         }
-        
+
         # Use non root credentials to run the containers
         security_context {
           fs_group        = 1000
@@ -189,7 +189,7 @@ resource "kubernetes_deployment" "garage_ui" {
           run_as_non_root = true
           run_as_user     = 1000
         }
-        
+
         # Mount the CA certificate from the Garage cluster's internal secret to trust HTTPS
         dynamic "volume" {
           for_each = var.enable_internal_tls_certificates ? [true] : []
@@ -235,7 +235,7 @@ resource "kubernetes_deployment" "garage_ui" {
   }
 
   depends_on = [
-    kubernetes_service.garage-headless, 
+    kubernetes_service.garage-headless,
     kubernetes_config_map.garage_ui_config,
   ]
 }
