@@ -127,7 +127,7 @@ resource "kubernetes_manifest" "cluster" {
           "name"          = "barman-cloud.cloudnative-pg.io"
           "isWALArchiver" = true
           "parameters" = {
-            "barmanObjectName" = kubernetes_manifest.barman_object_store[0].manifest.metadata.name
+            "barmanObjectName" = var.garage_certificate_authority != "" ? kubernetes_manifest.barman_object_store[0].manifest.metadata.name : kubernetes_manifest.barman_object_store_without_tls[0].manifest.metadata.name
           }
         }
       ] : []

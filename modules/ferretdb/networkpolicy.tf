@@ -152,7 +152,7 @@ resource "kubernetes_network_policy" "cnpg_network_policy" {
 
         ports {
           protocol = "TCP"
-          port     = 3940
+          port     = var.garage_certificate_authority != "" ? 3940 : 3900
         }
       }
     }
