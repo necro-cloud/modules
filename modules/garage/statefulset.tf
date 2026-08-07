@@ -31,11 +31,11 @@ resource "kubernetes_stateful_set" "statefulset" {
         }
 
         // Scrape for metrics
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "3903"
           "prometheus.io/path"   = "/metrics"
-        }
+        } : {}
       }
 
       spec {

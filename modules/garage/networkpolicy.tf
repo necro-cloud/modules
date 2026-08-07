@@ -91,48 +91,54 @@ resource "kubernetes_network_policy" "garage_network_access_policy" {
         port     = local.garage_admin_port
       }
     }
-    
+
     # Rule 5: Allow OpenTelemetry Collector to scrape Garage metrics
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.observability_namespace
+    dynamic "ingress" {
+      for_each = var.enable_observability ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.observability_namespace
+            }
+          }
+
+          pod_selector {
+            match_labels = {
+              "app.kubernetes.io/instance" = "otel-collector"
+            }
           }
         }
 
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/instance" = "otel-collector" 
-          }
+        ports {
+          protocol = "TCP"
+          port     = 3903
         }
-      }
-
-      ports {
-        protocol = "TCP"
-        port     = 3903
       }
     }
 
     # Rule 6: Allow ingress from Garage UI pods
-    ingress {
-      from {
-        pod_selector {
-          match_labels = {
-            app       = var.app_name
-            component = "pod"
-            "part-of" = "garage-ui"
-            "garage-ui-access" = true
+    dynamic "ingress" {
+      for_each = var.enable_ui ? [true] : []
+      content {
+        from {
+          pod_selector {
+            match_labels = {
+              app                = var.app_name
+              component          = "pod"
+              "part-of"          = "garage-ui"
+              "garage-ui-access" = true
+            }
           }
         }
-      }
-      ports {
-        protocol = "TCP"
-        port     = local.garage_port
-      }
-      ports {
-        protocol = "TCP"
-        port     = local.garage_admin_port
+        ports {
+          protocol = "TCP"
+          port     = local.garage_port
+        }
+        ports {
+          protocol = "TCP"
+          port     = local.garage_admin_port
+        }
       }
     }
 
