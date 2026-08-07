@@ -22,8 +22,8 @@ resource "kubernetes_manifest" "cluster" {
           "prometheus.io/path"   = "/metrics"
         } : {}
       }
-      "postgresUID" = 999
-      "postgresGID" = 999
+      "postgresUID"           = 999
+      "postgresGID"           = 999
       "enableSuperuserAccess" = true
       "topologySpreadConstraints" = [
         {
@@ -54,7 +54,7 @@ resource "kubernetes_manifest" "cluster" {
           "pg_documentdb",
         ]
         "parameters" = {
-          "search_path" = "\"$user\", public, documentdb_api, documentdb_core"
+          "search_path"        = "\"$user\", public, documentdb_api, documentdb_core"
           "cron.database_name" = "postgres"
         }
         "pg_hba" = [
@@ -127,7 +127,7 @@ resource "kubernetes_manifest" "cluster" {
           "name"          = "barman-cloud.cloudnative-pg.io"
           "isWALArchiver" = true
           "parameters" = {
-            "barmanObjectName" = kubernetes_manifest.barman_object_store[0].manifest.metadata.name
+            "barmanObjectName" = var.garage_certificate_authority != "" ? kubernetes_manifest.barman_object_store[0].manifest.metadata.name : kubernetes_manifest.barman_object_store_without_tls[0].manifest.metadata.name
           }
         }
       ] : []

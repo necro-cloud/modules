@@ -45,14 +45,14 @@ resource "kubernetes_service" "garage-service" {
     type = "ClusterIP"
 
     port {
-      port        = 3940
-      target_port = 3940
+      port        = local.garage_port
+      target_port = local.garage_port
       name        = "proxy-api"
     }
 
     port {
-      port        = 3943
-      target_port = 3943
+      port        = local.garage_admin_port
+      target_port = local.garage_admin_port
       name        = "admin-api"
     }
 
@@ -66,6 +66,7 @@ resource "kubernetes_service" "garage-service" {
 
 // Garage UI Service for Ingress Usage
 resource "kubernetes_service" "garage-ui-service" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "garage-ui-service"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -74,7 +75,7 @@ resource "kubernetes_service" "garage-ui-service" {
       component = "service"
     }
     annotations = {
-      "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+      "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
     }
   }
 
@@ -82,9 +83,9 @@ resource "kubernetes_service" "garage-ui-service" {
     type = "ClusterIP"
 
     port {
-      port        = 8443
-      target_port = 8443
-      name        = "https"
+      port        = local.ui_port
+      target_port = local.ui_port
+      name        = "ui"
     }
 
     selector = {

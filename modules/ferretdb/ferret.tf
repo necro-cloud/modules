@@ -1,9 +1,9 @@
 resource "kubernetes_deployment" "ferretdb" {
   metadata {
-    name = "ferret"
+    name      = "ferret"
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
-      app = var.app_name
+      app       = var.app_name
       component = "deployment"
     }
   }
@@ -12,7 +12,7 @@ resource "kubernetes_deployment" "ferretdb" {
     replicas = local.ferret_size_lookup[var.cluster_size]
     selector {
       match_labels = {
-        app = var.app_name
+        app       = var.app_name
         component = "pod"
       }
     }
@@ -20,16 +20,16 @@ resource "kubernetes_deployment" "ferretdb" {
     template {
       metadata {
         labels = {
-          app = var.app_name
-          component = "pod"
+          app             = var.app_name
+          component       = "pod"
           "ferret-access" = "true"
-          "part-of" = "ferretdb"
+          "part-of"       = "ferretdb"
         }
-        
+
         annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/path"   = "/debug/metrics"
-          "prometheus.io/port"   = "8088" 
+          "prometheus.io/port"   = "8088"
         } : {}
       }
 
@@ -63,26 +63,26 @@ resource "kubernetes_deployment" "ferretdb" {
         }
 
         container {
-          name = "ferret"
+          name  = "ferret"
           image = "${var.repository}/${var.image}:${var.tag}"
 
           port {
             container_port = 27017
-            name = "mongo"
+            name           = "mongo"
           }
-          
+
           port {
             container_port = 8088
-            name = "debug"
+            name           = "debug"
           }
 
           resources {
             requests = {
-              cpu = "250m"
+              cpu    = "250m"
               memory = "256Mi"
             }
             limits = {
-              cpu = "500m"
+              cpu    = "500m"
               memory = "500Mi"
             }
           }
@@ -91,9 +91,9 @@ resource "kubernetes_deployment" "ferretdb" {
           dynamic "volume_mount" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
             content {
-              name = "postgres-ca"
+              name       = "postgres-ca"
               mount_path = "/etc/certs"
-              read_only = true
+              read_only  = true
             }
           }
 
@@ -102,7 +102,7 @@ resource "kubernetes_deployment" "ferretdb" {
             value_from {
               secret_key_ref {
                 name = "${var.cluster_name}-superuser"
-                key = "user"
+                key  = "user"
               }
             }
           }
@@ -111,16 +111,16 @@ resource "kubernetes_deployment" "ferretdb" {
             value_from {
               secret_key_ref {
                 name = "${var.cluster_name}-superuser"
-                key = "password"
+                key  = "password"
               }
             }
           }
           env {
-            name = "DB_HOST"
+            name  = "DB_HOST"
             value = "ferret-postgresql-cluster-rw"
           }
           env {
-            name = "FERRETDB_POSTGRESQL_URL"
+            name  = "FERRETDB_POSTGRESQL_URL"
             value = var.enable_internal_tls_certificates ? "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres?sslmode=verify-ca&sslrootcert=/etc/certs/ca.crt" : "postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):5432/postgres"
           }
 
@@ -129,9 +129,9 @@ resource "kubernetes_deployment" "ferretdb" {
               port = 27017
             }
             initial_delay_seconds = 10
-            period_seconds = 10
-            success_threshold = 3
-            failure_threshold = 5
+            period_seconds        = 10
+            success_threshold     = 3
+            failure_threshold     = 5
           }
 
           liveness_probe {
@@ -140,9 +140,9 @@ resource "kubernetes_deployment" "ferretdb" {
               port = 8088
             }
             initial_delay_seconds = 10
-            period_seconds = 10
-            success_threshold = 1
-            failure_threshold = 5
+            period_seconds        = 10
+            success_threshold     = 1
+            failure_threshold     = 5
           }
         }
 
@@ -153,7 +153,7 @@ resource "kubernetes_deployment" "ferretdb" {
             secret {
               secret_name = kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName
               items {
-                key = "ca.crt"
+                key  = "ca.crt"
                 path = "ca.crt"
               }
             }
@@ -163,5 +163,5 @@ resource "kubernetes_deployment" "ferretdb" {
     }
   }
 
-  depends_on = [ kubernetes_manifest.cluster ]
+  depends_on = [kubernetes_manifest.cluster]
 }

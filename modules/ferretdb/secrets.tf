@@ -128,7 +128,7 @@ resource "kubernetes_manifest" "push_ferret_database_credentials" {
 
 // Database credentials configuration for all clients
 resource "kubernetes_manifest" "client_database_credentials_sync" {
-  count   = length(var.clients)
+  count = length(var.clients)
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -162,7 +162,7 @@ resource "kubernetes_manifest" "client_database_credentials_sync" {
 }
 
 resource "kubernetes_manifest" "push_client_database_credentials" {
-  count   = length(var.clients)
+  count = length(var.clients)
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"

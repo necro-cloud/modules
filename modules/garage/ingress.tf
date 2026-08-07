@@ -13,8 +13,8 @@ resource "kubernetes_ingress_v1" "api_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
       "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
-      "traefik.ingress.kubernetes.io/router.tls" = "true"
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"               = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
   }
 
@@ -41,7 +41,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
       }
     }
   }
-  
+
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,
@@ -51,6 +51,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
 
 // Kubernetes Ingress for UI Access
 resource "kubernetes_ingress_v1" "ui_ingress" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "ui-ingress"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -64,8 +65,8 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
       "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
-      "traefik.ingress.kubernetes.io/router.tls" = "true"
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"               = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
   }
 
@@ -73,7 +74,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
     ingress_class_name = "traefik"
     tls {
       hosts       = ["${var.host_name}.${var.domain}"]
-      secret_name = kubernetes_manifest.ui_ingress_certificate.manifest.spec.secretName
+      secret_name = kubernetes_manifest.ui_ingress_certificate[0].manifest.spec.secretName
     }
     rule {
       host = "${var.host_name}.${var.domain}"
@@ -82,9 +83,9 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
           path = "/"
           backend {
             service {
-              name = kubernetes_service.garage-ui-service.metadata[0].name
+              name = kubernetes_service.garage-ui-service[0].metadata[0].name
               port {
-                name = "https"
+                name = "ui"
               }
             }
           }
@@ -92,7 +93,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       }
     }
   }
-  
+
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,

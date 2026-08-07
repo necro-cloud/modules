@@ -1,6 +1,6 @@
 // Fetch Garage Certificate Authority for PITR Backups
 resource "kubernetes_manifest" "garage_certificate_authority_sync" {
-  count = var.enable_pitr_backups ? 1 : 0
+  count = var.enable_pitr_backups ? var.garage_certificate_authority != "" ? 1 : 0 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "garage_certificate_authority_sync" {
       target = {
         name = var.garage_certificate_authority
         template = {
-          type = "kubernetes.io/tls"
+          type          = "kubernetes.io/tls"
           engineVersion = "v2"
         }
       }
@@ -67,7 +67,7 @@ resource "kubernetes_manifest" "server_certificate_authority" {
       }
       "commonName" = var.server_certificate_authority_name
       "secretName" = var.server_certificate_authority_name
-      "duration" = "70128h"
+      "duration"   = "70128h"
       "privateKey" = {
         "algorithm" = "ECDSA"
         "size"      = 256

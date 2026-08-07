@@ -47,9 +47,12 @@ resource "kubernetes_job" "configurator" {
             }
           }
 
-          env {
-            name  = "NODE_EXTRA_CA_CERTS"
-            value = "/mnt/crts/ca.crt"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "NODE_EXTRA_CA_CERTS"
+              value = "/mnt/crts/ca.crt"
+            }
           }
 
           env {
@@ -57,9 +60,12 @@ resource "kubernetes_job" "configurator" {
             value = "cluster"
           }
 
-          volume_mount {
-            name       = "garage-ca"
-            mount_path = "/mnt/crts/"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "garage-ca"
+              mount_path = "/mnt/crts/"
+            }
           }
 
           volume_mount {
@@ -68,10 +74,13 @@ resource "kubernetes_job" "configurator" {
           }
         }
 
-        volume {
-          name = "garage-ca"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.metadata.name
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "garage-ca"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.metadata.name
+            }
           }
         }
 

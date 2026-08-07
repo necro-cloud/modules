@@ -103,7 +103,7 @@ resource "kubernetes_manifest" "admin_password_sync" {
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
-      refreshInterval = "0" 
+      refreshInterval = "0"
       target = {
         name = "garage-admin-password"
         template = {
@@ -191,7 +191,7 @@ resource "kubernetes_manifest" "ui_admin_password_sync" {
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
-      refreshInterval = "0" 
+      refreshInterval = "0"
       target = {
         name = "garage-ui-admin-password"
         template = {

@@ -137,8 +137,8 @@ variable "domain" {
 variable "clients" {
   description = "Object List of clients who need databases and users to be configured for"
   type = list(object({
-    namespace          = string
-    user               = string
+    namespace = string
+    user      = string
   }))
   default = []
 }

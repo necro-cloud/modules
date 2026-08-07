@@ -1,7 +1,7 @@
 resource "kubernetes_deployment" "mongo_express" {
   count = var.enable_ui ? 1 : 0
   metadata {
-    name = "mongo-express"
+    name      = "mongo-express"
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
 
@@ -10,9 +10,9 @@ resource "kubernetes_deployment" "mongo_express" {
     selector {
       match_labels = {
         "ferret-mongo-access" = true
-        app       = var.app_name
-        component = "pod"
-        used-for  = "mongo-express"
+        app                   = var.app_name
+        component             = "pod"
+        used-for              = "mongo-express"
       }
     }
 
@@ -20,9 +20,9 @@ resource "kubernetes_deployment" "mongo_express" {
       metadata {
         labels = {
           "ferret-mongo-access" = true
-          app       = var.app_name
-          component = "pod"
-          used-for  = "mongo-express"
+          app                   = var.app_name
+          component             = "pod"
+          used-for              = "mongo-express"
         }
       }
 
@@ -56,7 +56,7 @@ resource "kubernetes_deployment" "mongo_express" {
         }
 
         container {
-          name = "mongo-express"
+          name  = "mongo-express"
           image = "${var.mongo_express_repository}/${var.mongo_express_image}:${var.mongo_express_tag}"
 
           // FerretDB Connection Settings
@@ -69,7 +69,7 @@ resource "kubernetes_deployment" "mongo_express" {
               }
             }
           }
-          
+
           env {
             name = "DB_PASSWORD"
             value_from {
@@ -79,20 +79,20 @@ resource "kubernetes_deployment" "mongo_express" {
               }
             }
           }
-          
+
           env {
-            name = "ME_CONFIG_MONGODB_URL"
+            name  = "ME_CONFIG_MONGODB_URL"
             value = "mongodb://$(DB_USERNAME):$(DB_PASSWORD)@${kubernetes_service.ferret_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local:27017/ferret?authMechanism=SCRAM-SHA-256"
           }
 
           env {
-            name = "ME_CONFIG_MONGODB_ENABLE_ADMIN"
+            name  = "ME_CONFIG_MONGODB_ENABLE_ADMIN"
             value = "true"
           }
 
           // UI Authentication for Mongo Express
           env {
-            name = "ME_CONFIG_BASICAUTH_ENABLED"
+            name  = "ME_CONFIG_BASICAUTH_ENABLED"
             value = "true"
           }
 
@@ -101,31 +101,31 @@ resource "kubernetes_deployment" "mongo_express" {
             value_from {
               secret_key_ref {
                 name = kubernetes_manifest.mongo_express_credentials_sync.object.spec.target.name
-                key = "username"
+                key  = "username"
               }
             }
           }
-          
+
           env {
             name = "ME_CONFIG_BASICAUTH_PASSWORD"
             value_from {
               secret_key_ref {
                 name = kubernetes_manifest.mongo_express_credentials_sync.object.spec.target.name
-                key = "password"
+                key  = "password"
               }
             }
           }
 
           // SSL Configuration for Mongo Express
           env {
-            name = "ME_CONFIG_SITE_SSL_ENABLED"
+            name  = "ME_CONFIG_SITE_SSL_ENABLED"
             value = var.enable_internal_tls_certificates ? "true" : "false"
           }
 
           dynamic "env" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
             content {
-              name = "ME_CONFIG_SITE_SSL_CRT_PATH"
+              name  = "ME_CONFIG_SITE_SSL_CRT_PATH"
               value = "/etc/mongoexpress/certs/tls.crt"
             }
           }
@@ -133,57 +133,57 @@ resource "kubernetes_deployment" "mongo_express" {
           dynamic "env" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
             content {
-              name = "ME_CONFIG_SITE_SSL_KEY_PATH"
+              name  = "ME_CONFIG_SITE_SSL_KEY_PATH"
               value = "/etc/mongoexpress/certs/tls.key"
             }
           }
 
           port {
             container_port = 8081
-            name = "mongoexpress"
+            name           = "mongoexpress"
           }
 
           resources {
             requests = {
-              cpu = "250m"
+              cpu    = "250m"
               memory = "256Mi"
             }
             limits = {
-              cpu = "500m"
+              cpu    = "500m"
               memory = "500Mi"
             }
           }
-          
+
           liveness_probe {
             http_get {
-              path = "/status"
-              port = 8081
+              path   = "/status"
+              port   = 8081
               scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
-            period_seconds = 10
-            success_threshold = 1
-            failure_threshold = 5
+            period_seconds        = 10
+            success_threshold     = 1
+            failure_threshold     = 5
           }
-          
+
           readiness_probe {
             http_get {
-              path = "/status"
-              port = 8081
+              path   = "/status"
+              port   = 8081
               scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             initial_delay_seconds = 10
-            period_seconds = 10
-            success_threshold = 1
-            failure_threshold = 5
+            period_seconds        = 10
+            success_threshold     = 1
+            failure_threshold     = 5
           }
 
           dynamic "volume_mount" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
             content {
-              name = "tls-certs"
+              name       = "tls-certs"
               mount_path = "/etc/mongoexpress/certs"
-              read_only = true
+              read_only  = true
             }
           }
         }
@@ -201,5 +201,5 @@ resource "kubernetes_deployment" "mongo_express" {
     }
   }
 
-  depends_on = [ kubernetes_deployment.ferretdb ]
+  depends_on = [kubernetes_deployment.ferretdb]
 }

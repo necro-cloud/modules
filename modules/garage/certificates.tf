@@ -1,5 +1,6 @@
 // Certificate Authority to be used with Garage Cluster
 resource "kubernetes_manifest" "certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -49,6 +50,7 @@ resource "kubernetes_manifest" "certificate_authority" {
 
 // Issuer for the Garage Cluster
 resource "kubernetes_manifest" "issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -62,7 +64,7 @@ resource "kubernetes_manifest" "issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -83,6 +85,7 @@ resource "kubernetes_manifest" "issuer" {
 
 // Internal Certificate for Garage Cluster
 resource "kubernetes_manifest" "internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -112,7 +115,7 @@ resource "kubernetes_manifest" "internal_certificate" {
       "commonName" = var.internal_certificate_name
       "secretName" = var.internal_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.issuer[0].manifest.metadata.name
       }
     }
   }
@@ -131,6 +134,7 @@ resource "kubernetes_manifest" "internal_certificate" {
 }
 
 resource "kubernetes_manifest" "push_internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
@@ -147,14 +151,14 @@ resource "kubernetes_manifest" "push_internal_certificate" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.internal_certificate.object.spec.secretName
+          name = kubernetes_manifest.internal_certificate[0].object.spec.secretName
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate.object.spec.secretName}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate[0].object.spec.secretName}"
             }
           }
         }
@@ -174,6 +178,7 @@ resource "kubernetes_manifest" "push_internal_certificate" {
 }
 
 resource "kubernetes_manifest" "ui_internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -200,7 +205,7 @@ resource "kubernetes_manifest" "ui_internal_certificate" {
       "commonName" = var.ui_internal_certificate_name
       "secretName" = var.ui_internal_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.issuer[0].manifest.metadata.name
       }
     }
   }
@@ -341,6 +346,7 @@ resource "kubernetes_manifest" "api_ingress_certificate" {
 
 # Certificate to be used for Garage UI Ingress
 resource "kubernetes_manifest" "ui_ingress_certificate" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
