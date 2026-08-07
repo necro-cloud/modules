@@ -34,7 +34,7 @@ resource "kubernetes_pod_disruption_budget_v1" "ferret_pdb" {
     min_available = 1
     selector {
       match_labels = {
-        app = var.app_name
+        app       = var.app_name
         component = "pod"
         "part-of" = "ferretdb"
       }

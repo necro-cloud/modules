@@ -207,7 +207,7 @@ resource "kubernetes_network_policy" "ferret_network_policy" {
   spec {
     pod_selector {
       match_labels = {
-        app = var.app_name
+        app       = var.app_name
         component = "pod"
         "part-of" = "ferretdb"
       }
@@ -239,7 +239,7 @@ resource "kubernetes_network_policy" "ferret_network_policy" {
         port     = 27017
       }
     }
-    
+
     # Rule 2: Allow OpenTelemetry Collector to scrape FerretDB metrics
     dynamic "ingress" {
       for_each = var.enable_observability ? [true] : []

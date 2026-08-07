@@ -76,7 +76,7 @@ resource "kubernetes_manifest" "barman_object_store_without_tls" {
           ]
         }
         "destinationPath" = "s3://${var.backup_bucket_name}/"
-        "endpointURL" = "http://garage-service.${var.garage_namespace}.svc.cluster.local:3900"
+        "endpointURL"     = "http://garage-service.${var.garage_namespace}.svc.cluster.local:3900"
         "s3Credentials" = {
           "accessKeyId" = {
             "key"  = "ACCESS_KEY_ID"
