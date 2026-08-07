@@ -1,6 +1,6 @@
 // Fetch Garage Certificate Authority for PITR Backups
 resource "kubernetes_manifest" "garage_certificate_authority_sync" {
-  count = var.enable_pitr_backups ? 1 : 0
+  count = var.enable_pitr_backups ? var.garage_certificate_authority != "" ? 1 : 0 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
