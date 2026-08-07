@@ -226,7 +226,7 @@ resource "kubernetes_deployment" "garage_ui" {
           content {
             name = "nginx-config"
             config_map {
-              name = kubernetes_config_map.ui_nginx_conf.metadata[0].name
+              name = kubernetes_config_map.ui_nginx_conf[0].metadata[0].name
             }
           }
         }

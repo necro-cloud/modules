@@ -79,7 +79,7 @@ resource "kubernetes_job" "configurator" {
           content {
             name = "garage-ca"
             secret {
-              secret_name = kubernetes_manifest.internal_certificate.manifest.metadata.name
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.metadata.name
             }
           }
         }
