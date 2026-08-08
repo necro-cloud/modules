@@ -34,12 +34,12 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           "pg-access" = true
         }
 
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/path"   = "/metrics"
           "prometheus.io/port"   = "9000" 
           "prometheus.io/scheme" = "https"
-        }
+        } : {}
       }
 
       // Pod Spec
