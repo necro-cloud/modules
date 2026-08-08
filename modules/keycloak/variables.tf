@@ -167,10 +167,15 @@ variable "realm_settings" {
 }
 
 # --------------- CLUSTER VARIABLES --------------- #
-variable "replicas" {
-  description = "Number of replicas to run for Keycloak cluster"
-  type = number
-  default = 1
+variable "cluster_size" {
+  description = "Number of pods to deploy for the Garage Cluster"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 variable "repository" {
@@ -200,14 +205,6 @@ variable "keycloak_environment_variables" {
     {
       name  = "KC_HTTPS_PORT"
       value = "8443"
-    },
-    {
-      name  = "KC_HTTPS_CERTIFICATE_FILE"
-      value = "/mnt/certs/tls/tls.crt"
-    },
-    {
-      name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
-      value = "/mnt/certs/tls/tls.key"
     },
     {
       name  = "KC_DB_POOL_INITIAL_SIZE"
@@ -272,4 +269,17 @@ variable "keycloak_ports" {
   ]
 
   description = "Keycloak Ports Configuration"
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the Keycloak Cluster"
+  type        = bool
+  default     = true
 }

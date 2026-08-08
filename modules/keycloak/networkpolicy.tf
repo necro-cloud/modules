@@ -27,7 +27,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
 
       ports {
         protocol = "TCP"
-        port     = 8443
+        port     = local.port
       }
     }
 
@@ -59,24 +59,27 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
     }
     
     # Rule 3: Allow OpenTelemetry Collector to scrape Keycloak metrics
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.observability_namespace
+    dynamic "ingress" {
+      for_each = var.enable_observability ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.observability_namespace
+            }
+          }
+
+          pod_selector {
+            match_labels = {
+              "app.kubernetes.io/instance" = "otel-collector" 
+            }
           }
         }
 
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/instance" = "otel-collector" 
-          }
+        ports {
+          protocol = "TCP"
+          port     = 9000
         }
-      }
-
-      ports {
-        protocol = "TCP"
-        port     = 9000
       }
     }
 
