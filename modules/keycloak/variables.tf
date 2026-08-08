@@ -202,14 +202,6 @@ variable "keycloak_environment_variables" {
       value = "8443"
     },
     {
-      name  = "KC_HTTPS_CERTIFICATE_FILE"
-      value = "/mnt/certs/tls/tls.crt"
-    },
-    {
-      name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
-      value = "/mnt/certs/tls/tls.key"
-    },
-    {
       name  = "KC_DB_POOL_INITIAL_SIZE"
       value = "1"
     },
@@ -272,4 +264,23 @@ variable "keycloak_ports" {
   ]
 
   description = "Keycloak Ports Configuration"
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Garage Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the Garage Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the Garage Cluster"
+  type        = bool
+  default     = true
 }

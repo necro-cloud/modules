@@ -187,6 +187,22 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             value = var.database_certificates_required ? local.database_url_tls : local.database_url_non_tls
           }
 
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "KC_HTTPS_CERTIFICATE_FILE"
+              value = "/mnt/certs/tls/tls.crt"
+            }
+          }
+
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
+              value = "/mnt/certs/tls/tls.key"
+            }
+          }
+
           // Port Mappings
           dynamic "port" {
             for_each = var.keycloak_ports
@@ -276,9 +292,12 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             }
           }
 
-          volume_mount {
-            name       = kubernetes_manifest.internal_certificate.manifest.spec.secretName
-            mount_path = "/mnt/certs/tls"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+              mount_path = "/mnt/certs/tls"
+            }
           }
 
           volume_mount {
@@ -316,10 +335,13 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
         }
 
-        volume {
-          name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+            }
           }
         }
 
