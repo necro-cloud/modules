@@ -33,7 +33,7 @@ resource "kubernetes_ingress_v1" "ingress" {
             service {
               name = kubernetes_service.keycloak_service.metadata[0].name
               port {
-                number = 8443
+                number = local.port
               }
             }
           }

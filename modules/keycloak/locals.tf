@@ -6,4 +6,5 @@ locals {
     medium = 2
     large  = 3
   }
+  port = var.enable_internal_tls_certificates ? 8443 : 8080
 }
