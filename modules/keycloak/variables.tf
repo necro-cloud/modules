@@ -273,19 +273,13 @@ variable "keycloak_ports" {
 
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
-  description = "Enable or disable deployment of Internal TLS Certificates for the Garage Cluster"
-  type        = bool
-  default     = true
-}
-
-variable "enable_ui" {
-  description = "Enable or disable deployment of PGAdmin for the Garage Cluster"
+  description = "Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster"
   type        = bool
   default     = true
 }
 
 variable "enable_observability" {
-  description = "Enable or disable observability reporting for the Garage Cluster"
+  description = "Enable or disable observability reporting for the Keycloak Cluster"
   type        = bool
   default     = true
 }

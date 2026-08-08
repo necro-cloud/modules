@@ -119,7 +119,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           // Environment Variables
           env {
             name  = "KC_HOSTNAME"
-            value = "${var.host_name}.${var.domain}"
+            value = "https://${var.host_name}.${var.domain}"
           }
 
           dynamic "env" {
@@ -196,6 +196,14 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? []: [true]
+            content {
+              name  = "KC_HTTP_ENABLED"
+              value = "true"
+            }
+          }
+
+          dynamic "env" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
             content {
               name  = "KC_HTTPS_CERTIFICATE_KEY_FILE"
@@ -219,7 +227,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             http_get {
               path   = "/health/started"
               port   = "management"
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             period_seconds        = 10
             success_threshold     = 1
@@ -232,7 +240,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             http_get {
               path   = "/health/ready"
               port   = "management"
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             period_seconds        = 10
             success_threshold     = 1
@@ -245,7 +253,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             http_get {
               path   = "/health/live"
               port   = "management"
-              scheme = "HTTPS"
+              scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
             }
             period_seconds        = 10
             success_threshold     = 1
@@ -338,9 +346,9 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         dynamic "volume" {
           for_each = var.enable_internal_tls_certificates ? [true] : []
           content {
-            name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+            name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
             secret {
-              secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
             }
           }
         }
