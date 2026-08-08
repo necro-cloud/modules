@@ -205,6 +205,9 @@ module "keycloak" {
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
+  // Cluster sizing details
+  cluster_size = "small"
+
   // PostgreSQL Database Details for database details
   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
   postgres_namespace                         = module.cnpg.namespace
@@ -224,6 +227,10 @@ module "keycloak" {
 
   // Realm Settings for auto configuration of required clients
   realm_settings = local.keycloak_realm_settings
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_observability             = true
 
   // Dependency on CNPG PostgreSQL Deployment
   depends_on = [module.cnpg, module.observability, module.openbao]
