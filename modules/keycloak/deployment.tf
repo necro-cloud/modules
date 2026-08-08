@@ -9,7 +9,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     }
   }
   spec {
-    replicas     = var.replicas
+    replicas     = local.size_lookup[var.cluster_size]
     service_name = ""
 
     // Stateful Set Pod Selector

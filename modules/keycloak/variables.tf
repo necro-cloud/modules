@@ -167,10 +167,15 @@ variable "realm_settings" {
 }
 
 # --------------- CLUSTER VARIABLES --------------- #
-variable "replicas" {
-  description = "Number of replicas to run for Keycloak cluster"
-  type = number
-  default = 1
+variable "cluster_size" {
+  description = "Number of pods to deploy for the Garage Cluster"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 variable "repository" {
