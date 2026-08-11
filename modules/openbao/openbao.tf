@@ -22,12 +22,12 @@ resource "helm_release" "openbao" {
       server = {
 
         // Allow OpenTelemetry Collector to scrape for metrics
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "8200"
           "prometheus.io/path"   = "/v1/sys/metrics"
           "prometheus.io/scheme" = "https"
-        }
+        } : {}
 
         // Resource Requests and Limits
         resources = {
