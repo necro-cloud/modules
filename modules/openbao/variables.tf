@@ -32,8 +32,8 @@ variable "observability_namespace" {
 
 variable "access_namespaces" {
   description = "Namespaces requiring accesses to the OpenBao Cluster in a comma seperated list"
-  type = string
-  nullable = false
+  type        = string
+  nullable    = false
 }
 
 # -------------- OPENBAO DEPLOYMENT VARIABLES -------------- #
@@ -41,10 +41,10 @@ variable "openbao_configuration" {
   description = "Dictionary filled with OpenBao Configuration Details"
   type        = map(string)
   default = {
-    "name"             = "openbao"
-    "repository"       = "https://openbao.github.io/openbao-helm"
-    "chart"            = "openbao"
-    "version"          = "0.25.6"
+    "name"       = "openbao"
+    "repository" = "https://openbao.github.io/openbao-helm"
+    "chart"      = "openbao"
+    "version"    = "0.25.6"
   }
 }
 

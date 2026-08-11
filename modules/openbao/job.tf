@@ -23,7 +23,7 @@ resource "kubernetes_job" "configurator" {
         // Service Account to be used for the configurator job
         service_account_name = kubernetes_service_account.configurator.metadata[0].name
         restart_policy       = "OnFailure"
-        
+
         container {
           name    = "configurator"
           image   = "${var.configurator_repository}/${var.configurator_image}:${var.configurator_tag}"
@@ -50,7 +50,7 @@ resource "kubernetes_job" "configurator" {
         volume {
           name = "scripts"
           config_map {
-            name = kubernetes_config_map.configurator_script.metadata[0].name
+            name         = kubernetes_config_map.configurator_script.metadata[0].name
             default_mode = "0755"
           }
         }
@@ -68,10 +68,10 @@ resource "kubernetes_job" "configurator" {
       }
     }
   }
-  
+
   # Ensure OpenBao is fully up before running
   depends_on = [helm_release.openbao, kubernetes_manifest.internal_certificate]
-  
+
   timeouts {
     create = "10m"
     update = "10m"

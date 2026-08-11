@@ -189,7 +189,7 @@ resource "kubernetes_manifest" "push_internal_certificate" {
   // Waiting till the store is created
   depends_on = [
     kubernetes_manifest.cluster_store,
-  ]  
+  ]
 }
 
 // Kubernetes Secret for Cloudflare Tokens

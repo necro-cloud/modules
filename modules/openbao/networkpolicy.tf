@@ -82,7 +82,7 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
         protocol = "TCP"
         port     = 8200
       }
-    }    
+    }
 
     # Rule 4: Allow Traefik Ingress Controller to reach the active leader
     dynamic "ingress" {

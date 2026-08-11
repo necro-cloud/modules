@@ -1,21 +1,21 @@
 // OpenBao Deployment Configuration
 resource "helm_release" "openbao" {
-  name = var.openbao_configuration.name
+  name       = var.openbao_configuration.name
   repository = var.openbao_configuration.repository
-  chart = var.openbao_configuration.chart
-  version = var.openbao_configuration.version
+  chart      = var.openbao_configuration.chart
+  version    = var.openbao_configuration.version
 
   // Deploy it in the same namespace
-  namespace = kubernetes_namespace.namespace.metadata[0].name
+  namespace        = kubernetes_namespace.namespace.metadata[0].name
   create_namespace = false
 
-  wait = true
+  wait    = true
   timeout = 600
 
   values = [
     yamlencode({
       global = {
-        enabled = true
+        enabled    = true
         tlsDisable = !var.enable_internal_tls_certificates
       }
 
@@ -75,12 +75,12 @@ resource "helm_release" "openbao" {
           }
         ]
 
-       // Environment variable for unsealing the cluster
+        // Environment variable for unsealing the cluster
         extraSecretEnvironmentVars = [
           {
-            envName = "OPENBAO_STATIC_UNSEAL_KEY"
+            envName    = "OPENBAO_STATIC_UNSEAL_KEY"
             secretName = kubernetes_manifest.static_unseal_key_sync.object.spec.target.name
-            secretKey = "OPENBAO_STATIC_UNSEAL_KEY"
+            secretKey  = "OPENBAO_STATIC_UNSEAL_KEY"
           }
         ]
 
@@ -94,12 +94,12 @@ resource "helm_release" "openbao" {
 
         // High availability configuration
         ha = {
-          enabled = true
+          enabled  = true
           replicas = local.size_lookup[var.cluster_size]
 
           // Raft Storage Configuration
           raft = {
-            enabled = true
+            enabled   = true
             setNodeId = true
 
             // Config loaded as a configuration file
@@ -109,9 +109,9 @@ resource "helm_release" "openbao" {
 
         // Data Storage Configuration
         dataStorage = {
-          enabled = true
-          size = "5Gi"
-          mountPath = "/openbao/data"
+          enabled      = true
+          size         = "5Gi"
+          mountPath    = "/openbao/data"
           storageClass = "local-path"
         }
 
@@ -132,7 +132,7 @@ resource "helm_release" "openbao" {
 
         // UI Service
         ui = {
-          enabled = true
+          enabled     = true
           serviceType = "ClusterIP"
         }
       }

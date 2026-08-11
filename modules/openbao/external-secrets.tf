@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "cluster_store" {
           server  = "https://openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc:8200"
           path    = "secret"
           version = "v2"
-          
+
           // Use TLS to sync secrets to and from the cluster
           caProvider = {
             type      = "Secret"
@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "cluster_store" {
               mountPath = "kubernetes"
 
               // OpenBao Role to use to authenticate
-              role      = "eso-role"
+              role = "eso-role"
               serviceAccountRef = {
 
                 // Default External Secrets Service Account
@@ -78,7 +78,7 @@ resource "kubernetes_manifest" "cluster_store_no_tls" {
               mountPath = "kubernetes"
 
               // OpenBao Role to use to authenticate
-              role      = "eso-role"
+              role = "eso-role"
               serviceAccountRef = {
 
                 // Default External Secrets Service Account
