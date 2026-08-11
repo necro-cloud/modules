@@ -49,11 +49,15 @@ variable "openbao_configuration" {
 }
 
 variable "cluster_size" {
-  description = "Number of pods to be deployed for High Availability for OpenBao Secrets Management Solution"
-  type = number
-  default = 3
-}
+  description = "Number of pods to deploy for the OpenBao Cluster"
+  type        = string
+  default     = "small"
 
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
+}
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
@@ -157,4 +161,23 @@ variable "kubernetes_api_port" {
   description = "Port for the Kubernetes API"
   type        = number
   nullable    = false
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of PGAdmin for the FerretDB Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the FerretDB Cluster"
+  type        = bool
+  default     = true
 }

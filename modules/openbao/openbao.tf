@@ -16,7 +16,7 @@ resource "helm_release" "openbao" {
     yamlencode({
       global = {
         enabled = true
-        tlsDisable = false
+        tlsDisable = !var.enable_internal_tls_certificates
       }
 
       server = {
@@ -85,17 +85,17 @@ resource "helm_release" "openbao" {
         ]
 
         // TLS Certificates Mounting
-        extraVolumes = [
+        extraVolumes = var.enable_internal_tls_certificates ? [
           {
             type = "secret"
-            name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+            name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
           }
-        ]
+        ] : []
 
         // High availability configuration
         ha = {
           enabled = true
-          replicas = var.cluster_size
+          replicas = local.size_lookup[var.cluster_size]
 
           // Raft Storage Configuration
           raft = {
@@ -103,10 +103,7 @@ resource "helm_release" "openbao" {
             setNodeId = true
 
             // Config loaded as a configuration file
-            config = templatefile("${path.module}/config/openbao.hcl", {
-              namespace = kubernetes_namespace.namespace.metadata[0].name,
-              cert_secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
-            })
+            config = local.openbao_configuration
           }
         }
 

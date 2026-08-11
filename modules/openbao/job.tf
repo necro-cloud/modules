@@ -36,10 +36,13 @@ resource "kubernetes_job" "configurator" {
           }
 
           // Load the TLS certificates used by the cluster as a volume
-          volume_mount {
-            name       = "tls"
-            mount_path = "/openbao/userconfig/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
-            read_only  = true
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "tls"
+              mount_path = "/openbao/userconfig/${kubernetes_manifest.internal_certificate[0].manifest.spec.secretName}"
+              read_only  = true
+            }
           }
         }
 
@@ -53,10 +56,13 @@ resource "kubernetes_job" "configurator" {
         }
 
         // Volume for the TLS certificates used by the cluster
-        volume {
-          name = "tls"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "tls"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
       }

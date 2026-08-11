@@ -9,11 +9,11 @@ resource "kubernetes_manifest" "transport" {
     }
     spec = {
       insecureSkipVerify = true
-      rootCAs = [
+      rootCAs = var.enable_internal_tls_certificates ? [
         {
-          secret = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+          secret = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
         }
-      ]
+      ] : []
     }
   }
 }

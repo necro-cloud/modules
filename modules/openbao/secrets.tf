@@ -57,7 +57,7 @@ resource "kubernetes_manifest" "push_static_unseal_key" {
       refreshInterval = "1h"
       deletionPolicy  = "None"
       secretStoreRefs = [{
-        name = kubernetes_manifest.cluster_store.manifest.metadata.name
+        name = local.cluster_secret_store_name
         kind = "ClusterSecretStore"
       }]
       selector = {

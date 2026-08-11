@@ -1,5 +1,6 @@
 // Certificate Authority to be used with OpenBao Cluster
 resource "kubernetes_manifest" "certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -49,6 +50,7 @@ resource "kubernetes_manifest" "certificate_authority" {
 
 // Issuer for the OpenBao Cluster
 resource "kubernetes_manifest" "issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -62,7 +64,7 @@ resource "kubernetes_manifest" "issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -83,6 +85,7 @@ resource "kubernetes_manifest" "issuer" {
 
 // Internal Certificate for OpenBao Cluster
 resource "kubernetes_manifest" "internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -117,7 +120,7 @@ resource "kubernetes_manifest" "internal_certificate" {
       "commonName" = var.internal_certificate_name
       "secretName" = var.internal_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.issuer[0].manifest.metadata.name
       }
     }
   }
@@ -137,6 +140,7 @@ resource "kubernetes_manifest" "internal_certificate" {
 
 // Push the certificates to OpenBao
 resource "kubernetes_manifest" "push_internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
@@ -148,20 +152,20 @@ resource "kubernetes_manifest" "push_internal_certificate" {
       refreshInterval = "1h"
       secretStoreRefs = [
         {
-          name = kubernetes_manifest.cluster_store.manifest.metadata.name
+          name = local.cluster_secret_store_name
           kind = "ClusterSecretStore"
         }
       ]
       selector = {
         secret = {
-          name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+          name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.internal_certificate[0].manifest.spec.secretName}"
             }
           }
         }
