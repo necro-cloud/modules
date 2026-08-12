@@ -14,7 +14,7 @@ storage "raft" {
   path = "/openbao/data"
   retry_join {
     auto_join = "provider=k8s namespace=${namespace} label_selector=\"app.kubernetes.io/instance=openbao,component=server\""
-    auto_join_scheme = "https"
+    auto_join_scheme = "http"
   }
 }
 
