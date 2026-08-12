@@ -1,33 +1,33 @@
 // OpenBao Deployment Configuration
 resource "helm_release" "openbao" {
-  name = var.openbao_configuration.name
+  name       = var.openbao_configuration.name
   repository = var.openbao_configuration.repository
-  chart = var.openbao_configuration.chart
-  version = var.openbao_configuration.version
+  chart      = var.openbao_configuration.chart
+  version    = var.openbao_configuration.version
 
   // Deploy it in the same namespace
-  namespace = kubernetes_namespace.namespace.metadata[0].name
+  namespace        = kubernetes_namespace.namespace.metadata[0].name
   create_namespace = false
 
-  wait = true
+  wait    = true
   timeout = 600
 
   values = [
     yamlencode({
       global = {
-        enabled = true
-        tlsDisable = false
+        enabled    = true
+        tlsDisable = !var.enable_internal_tls_certificates
       }
 
       server = {
 
         // Allow OpenTelemetry Collector to scrape for metrics
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "8200"
           "prometheus.io/path"   = "/v1/sys/metrics"
           "prometheus.io/scheme" = "https"
-        }
+        } : {}
 
         // Resource Requests and Limits
         resources = {
@@ -75,46 +75,43 @@ resource "helm_release" "openbao" {
           }
         ]
 
-       // Environment variable for unsealing the cluster
+        // Environment variable for unsealing the cluster
         extraSecretEnvironmentVars = [
           {
-            envName = "OPENBAO_STATIC_UNSEAL_KEY"
+            envName    = "OPENBAO_STATIC_UNSEAL_KEY"
             secretName = kubernetes_manifest.static_unseal_key_sync.object.spec.target.name
-            secretKey = "OPENBAO_STATIC_UNSEAL_KEY"
+            secretKey  = "OPENBAO_STATIC_UNSEAL_KEY"
           }
         ]
 
         // TLS Certificates Mounting
-        extraVolumes = [
+        extraVolumes = var.enable_internal_tls_certificates ? [
           {
             type = "secret"
-            name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+            name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
           }
-        ]
+        ] : []
 
         // High availability configuration
         ha = {
-          enabled = true
-          replicas = var.cluster_size
+          enabled  = true
+          replicas = local.size_lookup[var.cluster_size]
 
           // Raft Storage Configuration
           raft = {
-            enabled = true
+            enabled   = true
             setNodeId = true
 
             // Config loaded as a configuration file
-            config = templatefile("${path.module}/config/openbao.hcl", {
-              namespace = kubernetes_namespace.namespace.metadata[0].name,
-              cert_secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
-            })
+            config = local.openbao_configuration
           }
         }
 
         // Data Storage Configuration
         dataStorage = {
-          enabled = true
-          size = "5Gi"
-          mountPath = "/openbao/data"
+          enabled      = true
+          size         = "5Gi"
+          mountPath    = "/openbao/data"
           storageClass = "local-path"
         }
 
@@ -135,7 +132,7 @@ resource "helm_release" "openbao" {
 
         // UI Service
         ui = {
-          enabled = true
+          enabled     = true
           serviceType = "ClusterIP"
         }
       }

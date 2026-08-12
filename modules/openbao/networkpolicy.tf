@@ -82,40 +82,46 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
         protocol = "TCP"
         port     = 8200
       }
-    }    
+    }
 
     # Rule 4: Allow Traefik Ingress Controller to reach the active leader
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = "traefik"
+    dynamic "ingress" {
+      for_each = var.enable_ui ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = "traefik"
+            }
           }
         }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 8200
+        ports {
+          protocol = "TCP"
+          port     = 8200
+        }
       }
     }
 
     # Rule 5: Allow OpenTelemetry Collector to scrape metrics from the API port
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.observability_namespace
+    dynamic "ingress" {
+      for_each = var.enable_observability ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.observability_namespace
+            }
+          }
+          pod_selector {
+            match_labels = {
+              "app.kubernetes.io/instance" = "otel-collector"
+            }
           }
         }
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/instance" = "otel-collector"
-          }
+        ports {
+          protocol = "TCP"
+          port     = 8200
         }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 8200
       }
     }
 

@@ -4,8 +4,8 @@ OpenTofu Module to deploy [OpenBao](https://openbao.org/) Secrets Management Sol
 
 Required Modules to deploy OpenBao Secrets Management Solution:
 1. [Helm](../helm)
-2. [Cluster Issuer](../cluster-issuer)
-3. [Observability](../observability)
+2. [Cluster Issuer](../cluster-issuer) (Optional if setting `enable_internal_tls_certificates` as `false`)
+3. [Observability](../observability) (Optional if setting `enable_observability` as `false`)
 
 ## Providers
 
@@ -24,6 +24,7 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | [kubernetes_job.configurator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/job) | resource |
 | [kubernetes_manifest.certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.cluster_store](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.cluster_store_no_tls](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ingress_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -54,12 +55,15 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-cloudflare-issuer"` | no |
 | <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with OpenBao Secrets Management Solution | `string` | n/a | yes |
 | <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
-| <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to be deployed for High Availability for OpenBao Secrets Management Solution | `number` | `3` | no |
+| <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the OpenBao Cluster | `string` | `"small"` | no |
 | <a name="input_configurator_image"></a> [configurator\_image](#input\_configurator\_image) | Docker image to be used for deployment of OpenBao Configurator | `string` | `"openbao"` | no |
 | <a name="input_configurator_repository"></a> [configurator\_repository](#input\_configurator\_repository) | Repository to be used for deployment of OpenBao Configurator | `string` | `"quay.io/openbao"` | no |
 | <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of OpenBao Configurator | `string` | `"2.5.1"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying OpenBao Secrets Management Solution | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
+| <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the FerretDB Cluster | `bool` | `true` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"secrets"` | no |
 | <a name="input_ingress_certificate_name"></a> [ingress\_certificate\_name](#input\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-ingress-certificate"` | no |
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-internal-certificate"` | no |

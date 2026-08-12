@@ -46,6 +46,9 @@ module "openbao" {
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
 
+  // Cluster sizing details
+  cluster_size = "small"
+
   // Observability details
   observability_namespace = module.observability.observability_namespace
 
@@ -56,6 +59,11 @@ module "openbao" {
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
   kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
   kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
 
   depends_on = [module.cluster-issuer]
 }

@@ -23,7 +23,7 @@ resource "kubernetes_job" "configurator" {
         // Service Account to be used for the configurator job
         service_account_name = kubernetes_service_account.configurator.metadata[0].name
         restart_policy       = "OnFailure"
-        
+
         container {
           name    = "configurator"
           image   = "${var.configurator_repository}/${var.configurator_image}:${var.configurator_tag}"
@@ -36,10 +36,13 @@ resource "kubernetes_job" "configurator" {
           }
 
           // Load the TLS certificates used by the cluster as a volume
-          volume_mount {
-            name       = "tls"
-            mount_path = "/openbao/userconfig/${kubernetes_manifest.internal_certificate.manifest.spec.secretName}"
-            read_only  = true
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "tls"
+              mount_path = "/openbao/userconfig/${kubernetes_manifest.internal_certificate[0].manifest.spec.secretName}"
+              read_only  = true
+            }
           }
         }
 
@@ -47,25 +50,28 @@ resource "kubernetes_job" "configurator" {
         volume {
           name = "scripts"
           config_map {
-            name = kubernetes_config_map.configurator_script.metadata[0].name
+            name         = kubernetes_config_map.configurator_script.metadata[0].name
             default_mode = "0755"
           }
         }
 
         // Volume for the TLS certificates used by the cluster
-        volume {
-          name = "tls"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "tls"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
       }
     }
   }
-  
+
   # Ensure OpenBao is fully up before running
   depends_on = [helm_release.openbao, kubernetes_manifest.internal_certificate]
-  
+
   timeouts {
     create = "10m"
     update = "10m"
