@@ -251,6 +251,9 @@ module "valkey" {
   // Cluster Secret Store Details
   cluster_secret_store_name = module.openbao.cluster_secret_store_name
 
+  // Cluster sizing details
+  cluster_size = "small"
+
   // Certificates Details
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
   cloudflare_token    = var.cloudflare_token
@@ -262,6 +265,11 @@ module "valkey" {
 
   // Observability details
   observability_namespace = module.observability.observability_namespace
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
 
   depends_on = [module.observability, module.openbao]
 }
