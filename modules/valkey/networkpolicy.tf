@@ -59,42 +59,48 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
     }
 
     # Rule 3: Allow OpenTelemetry Collector to scrape Valkey metrics
-    ingress {
-      from {
-        namespace_selector {
-          match_labels = {
-            "kubernetes.io/metadata.name" = var.observability_namespace
+    dynamic "ingress" {
+      for_each = var.enable_observability ? [true] : []
+      content {
+        from {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = var.observability_namespace
+            }
+          }
+
+          pod_selector {
+            match_labels = {
+              "app.kubernetes.io/instance" = "otel-collector" 
+            }
           }
         }
 
-        pod_selector {
-          match_labels = {
-            "app.kubernetes.io/instance" = "otel-collector" 
-          }
+        ports {
+          protocol = "TCP"
+          port     = 9121
         }
-      }
-
-      ports {
-        protocol = "TCP"
-        port     = 9121
       }
     }
 
     # Rule 4: Allow ingress from Redis Commander pods
-    ingress {
-      from {
-        pod_selector {
-          match_labels = {
-            app       = var.app_name
-            component = "pod"
-            "part-of" = "valkey-ui"
-            "valkey-ui-access" = true
+    dynamic "ingress" {
+      for_each = var.enable_ui ? [true] : []
+      content {
+        from {
+          pod_selector {
+            match_labels = {
+              app       = var.app_name
+              component = "pod"
+              "part-of" = "valkey-ui"
+              "valkey-ui-access" = true
+            }
           }
         }
-      }
-      ports {
-        protocol = "TCP"
-        port     = 6379
+        ports {
+          protocol = "TCP"
+          port     = 6379
+        }
       }
     }
 
