@@ -159,7 +159,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
         dynamic "container" {
           for_each = var.enable_observability ? [true] : []
           content {
-            name = "metrics"
+            name  = "metrics"
             image = "${var.metrics_repository}/${var.metrics_image}:${var.metrics_tag}"
 
             port {
@@ -170,7 +170,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             // Valkey Connection String
             env {
               name  = "REDIS_ADDR"
-              value = "rediss://localhost:6379" 
+              value = "rediss://localhost:6379"
             }
 
             // Password Authentication for the cluster
@@ -225,7 +225,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
                 read_only  = true
               }
             }
-          
+
             // Tiny resource footprint for metrics
             resources {
               requests = {

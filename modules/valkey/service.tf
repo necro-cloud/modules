@@ -100,9 +100,9 @@ resource "kubernetes_service" "ui_service" {
     }
 
     selector = {
-      app       = var.app_name
-      component = "pod"
-      "part-of" = "valkey-ui"
+      app                = var.app_name
+      component          = "pod"
+      "part-of"          = "valkey-ui"
       "valkey-ui-access" = true
     }
   }

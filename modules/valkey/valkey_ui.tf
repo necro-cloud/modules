@@ -17,9 +17,9 @@ resource "kubernetes_deployment" "valkey_ui" {
     // Network policy will also be applied here
     selector {
       match_labels = {
-        app       = var.app_name
-        component = "pod"
-        "part-of" = "valkey-ui"
+        app                = var.app_name
+        component          = "pod"
+        "part-of"          = "valkey-ui"
         "valkey-ui-access" = true
       }
     }
@@ -27,9 +27,9 @@ resource "kubernetes_deployment" "valkey_ui" {
     template {
       metadata {
         labels = {
-          app       = var.app_name
-          component = "pod"
-          "part-of" = "valkey-ui"
+          app                = var.app_name
+          component          = "pod"
+          "part-of"          = "valkey-ui"
           "valkey-ui-access" = true
         }
       }
@@ -57,18 +57,18 @@ resource "kubernetes_deployment" "valkey_ui" {
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = {
-              app       = var.app_name
-              component = "pod"
-              "part-of" = "valkey-ui"
+              app                = var.app_name
+              component          = "pod"
+              "part-of"          = "valkey-ui"
               "valkey-ui-access" = true
             }
           }
         }
-        
+
         container {
           name  = "valkey-ui"
           image = "${var.ui_repository}/${var.ui_image}:${var.ui_tag}"
-          
+
           # HTTP Mapping for the UI service
           port {
             container_port = 8081
@@ -77,11 +77,11 @@ resource "kubernetes_deployment" "valkey_ui" {
 
           # Password to authenticate against Valkey
           env {
-            name  = "REDIS_PASSWORD"
+            name = "REDIS_PASSWORD"
             value_from {
               secret_key_ref {
                 name = kubernetes_manifest.valkey_credentials_sync.object.spec.target.name
-                key = "VALKEY_PASSWORD"
+                key  = "VALKEY_PASSWORD"
               }
             }
           }
@@ -99,7 +99,7 @@ resource "kubernetes_deployment" "valkey_ui" {
               name = kubernetes_manifest.ui_credentials_sync[0].object.spec.target.name
             }
           }
-          
+
           # Mounting the SSL certs for communicating with Valkey in TLS
           dynamic "volume_mount" {
             for_each = var.enable_internal_tls_certificates ? [true] : []
@@ -116,17 +116,17 @@ resource "kubernetes_deployment" "valkey_ui" {
               path = "/favicon.png"
               port = 8081
             }
-            period_seconds = 10
+            period_seconds    = 10
             success_threshold = 1
             failure_threshold = 5
           }
-          
+
           readiness_probe {
             http_get {
               path = "/favicon.png"
               port = 8081
             }
-            period_seconds = 10
+            period_seconds    = 10
             success_threshold = 1
             failure_threshold = 5
           }
@@ -137,7 +137,7 @@ resource "kubernetes_deployment" "valkey_ui" {
             run_as_non_root = true
             run_as_user     = 10000
           }
-          
+
         }
 
         dynamic "container" {
@@ -169,14 +169,14 @@ resource "kubernetes_deployment" "valkey_ui" {
               exec {
                 command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
               }
-              period_seconds        = 30
+              period_seconds = 30
             }
 
             readiness_probe {
               exec {
                 command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
               }
-              period_seconds        = 30
+              period_seconds = 30
             }
 
             # Use non root credentials to run the containers
@@ -187,8 +187,8 @@ resource "kubernetes_deployment" "valkey_ui" {
             }
           }
         }
-        
-        
+
+
         # Mount the certificates for Valkey to communicate TLS with
         dynamic "volume" {
           for_each = var.enable_internal_tls_certificates ? [true] : []

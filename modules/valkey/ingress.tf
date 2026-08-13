@@ -8,7 +8,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       app       = var.app_name
       component = "ingress"
     }
-    
+
     // Attaching all middlewares and server transports
     annotations = {
       "traefik.ingress.kubernetes.io/router.middlewares" = join(",", [
@@ -16,8 +16,8 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering[0].manifest.metadata.name}@kubernetescrd"
       ])
       "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport[0].manifest.metadata.name}@kubernetescrd"
-      "traefik.ingress.kubernetes.io/router.tls" = "true"
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"               = "true"
+      "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
   }
 
@@ -31,7 +31,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
       host = "${var.host_name}.${var.domain}"
       http {
         path {
-          path = "/"
+          path      = "/"
           path_type = "Prefix"
           backend {
             service {
@@ -46,10 +46,10 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
     }
   }
 
- depends_on = [
+  depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,
     kubernetes_manifest.transport,
     kubernetes_manifest.ingress_certificate
-  ]  
+  ]
 }

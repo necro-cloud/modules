@@ -71,7 +71,7 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
 
           pod_selector {
             match_labels = {
-              "app.kubernetes.io/instance" = "otel-collector" 
+              "app.kubernetes.io/instance" = "otel-collector"
             }
           }
         }
@@ -90,9 +90,9 @@ resource "kubernetes_network_policy" "valkey_network_access_policy" {
         from {
           pod_selector {
             match_labels = {
-              app       = var.app_name
-              component = "pod"
-              "part-of" = "valkey-ui"
+              app                = var.app_name
+              component          = "pod"
+              "part-of"          = "valkey-ui"
               "valkey-ui-access" = true
             }
           }
