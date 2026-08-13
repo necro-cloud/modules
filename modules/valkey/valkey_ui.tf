@@ -1,5 +1,6 @@
 # UI Component for Valkey
 resource "kubernetes_deployment" "valkey_ui" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "valkey-ui"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -82,14 +83,14 @@ resource "kubernetes_deployment" "valkey_ui" {
           # Full Configuration for the UI Solution
           env_from {
             secret_ref {
-              name = kubernetes_secret.redis_commander_configuration.metadata[0].name
+              name = kubernetes_secret.redis_commander_configuration[0].metadata[0].name
             }
           }
 
           # Credentials configuration for Redis Commander          
           env_from {
             secret_ref {
-              name = kubernetes_manifest.ui_credentials_sync.object.spec.target.name
+              name = kubernetes_manifest.ui_credentials_sync[0].object.spec.target.name
             }
           }
           

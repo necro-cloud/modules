@@ -143,7 +143,7 @@ resource "kubernetes_manifest" "internal_certificate" {
 
 // Internal Certificate for Redis Commannder
 resource "kubernetes_manifest" "ui_internal_certificate" {
-  count = var.enable_internal_tls_certificates ? 1 : 0
+  count = var.enable_internal_tls_certificates && var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -158,9 +158,9 @@ resource "kubernetes_manifest" "ui_internal_certificate" {
     "spec" = {
       "dnsNames" = [
         # For the UI Service
-        "${kubernetes_service.ui_service.metadata[0].name}",
-        "${kubernetes_service.ui_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
-        "${kubernetes_service.ui_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
+        "${kubernetes_service.ui_service[0].metadata[0].name}",
+        "${kubernetes_service.ui_service[0].metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}",
+        "${kubernetes_service.ui_service[0].metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local",
 
         "127.0.0.1",
         "localhost",
@@ -238,6 +238,7 @@ resource "kubernetes_manifest" "push_internal_certificate" {
 
 // Kubernetes Secret for Cloudflare Tokens
 resource "kubernetes_secret" "cloudflare_token" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "cloudflare-token"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -256,6 +257,7 @@ resource "kubernetes_secret" "cloudflare_token" {
 
 // Cloudflare Issuer for Redis Commander Ingress Service
 resource "kubernetes_manifest" "public_issuer" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -309,7 +311,7 @@ resource "kubernetes_manifest" "public_issuer" {
 
 // Certificate to be used for Redis Commander Ingress
 resource "kubernetes_manifest" "ingress_certificate" {
-
+  count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -337,7 +339,7 @@ resource "kubernetes_manifest" "ingress_certificate" {
       "dnsNames"   = ["${var.host_name}.${var.domain}"]
       "secretName" = var.ingress_certificate_name
       "issuerRef" = {
-        "name"  = kubernetes_manifest.public_issuer.manifest.metadata.name
+        "name"  = kubernetes_manifest.public_issuer[0].manifest.metadata.name
         "kind"  = "Issuer"
         "group" = "cert-manager.io"
       }
