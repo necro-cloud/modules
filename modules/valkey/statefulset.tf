@@ -11,7 +11,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
   spec {
     service_name = kubernetes_service.headless_service.metadata[0].name
-    replicas     = var.replicas
+    replicas     = local.size_lookup[var.cluster_size]
 
     selector {
       match_labels = {

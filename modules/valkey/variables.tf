@@ -136,10 +136,15 @@ variable "tag" {
   default     = "9.0"
 }
 
-variable "replicas" {
-  description = "Number of replicas to run for Valkey Cluster"
-  type        = number
-  default     = 3
+variable "cluster_size" {
+  description = "Number of pods to deploy for the Valkey Cluster"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 # --------------- VALKEY METRICS VARIABLES --------------- #
