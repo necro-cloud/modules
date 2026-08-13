@@ -79,6 +79,7 @@ resource "kubernetes_service" "replica_service" {
 
 // Service for Exposing Redis Commander
 resource "kubernetes_service" "ui_service" {
+  count = var.enable_ui ? 1 : 0
   metadata {
     name      = "valkey-ui-service"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -93,15 +94,15 @@ resource "kubernetes_service" "ui_service" {
 
   spec {
     port {
-      port        = 8443
-      target_port = 8443
-      name        = "https"
+      port        = var.enable_internal_tls_certificates ? 8443 : 8081
+      target_port = var.enable_internal_tls_certificates ? 8443 : 8081
+      name        = "ui"
     }
 
     selector = {
-      app       = var.app_name
-      component = "pod"
-      "part-of" = "valkey-ui"
+      app                = var.app_name
+      component          = "pod"
+      "part-of"          = "valkey-ui"
       "valkey-ui-access" = true
     }
   }

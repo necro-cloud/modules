@@ -11,7 +11,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
   spec {
     service_name = kubernetes_service.headless_service.metadata[0].name
-    replicas     = var.replicas
+    replicas     = local.size_lookup[var.cluster_size]
 
     selector {
       match_labels = {
@@ -27,11 +27,11 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           app       = var.app_name
           "part-of" = "valkey-cluster"
         }
-        annotations = {
+        annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "9121"
           "prometheus.io/scheme" = "http"
-        }
+        } : {}
       }
 
       spec {
@@ -110,7 +110,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           // Probes for checking on pods
           readiness_probe {
             exec {
-              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+              command = var.enable_internal_tls_certificates ? ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"] : ["sh", "-c", "valkey-cli --pass $VALKEY_PASSWORD PING | grep PONG"]
             }
 
             initial_delay_seconds = 20
@@ -121,7 +121,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
           liveness_probe {
             exec {
-              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+              command = var.enable_internal_tls_certificates ? ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"] : ["sh", "-c", "valkey-cli --pass $VALKEY_PASSWORD PING | grep PONG"]
             }
 
             initial_delay_seconds = 20
@@ -141,9 +141,12 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             mount_path = "/etc/valkey/conf"
           }
 
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/etc/valkey/tls"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "certificates"
+              mount_path = "/etc/valkey/tls"
+            }
           }
 
           volume_mount {
@@ -153,76 +156,93 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
         }
 
         // Valkey Exporter for exposing Prometheus Metrics
-        container {
-          name = "metrics"
-          image = "${var.metrics_repository}/${var.metrics_image}:${var.metrics_tag}"
+        dynamic "container" {
+          for_each = var.enable_observability ? [true] : []
+          content {
+            name  = "metrics"
+            image = "${var.metrics_repository}/${var.metrics_image}:${var.metrics_tag}"
 
-          port {
-            name           = "metrics"
-            container_port = 9121
-          }
+            port {
+              name           = "metrics"
+              container_port = 9121
+            }
 
-          // Valkey Connection String
-          env {
-            name  = "REDIS_ADDR"
-            value = "rediss://localhost:6379" 
-          }
+            // Valkey Connection String
+            env {
+              name  = "REDIS_ADDR"
+              value = "rediss://localhost:6379"
+            }
 
-          // Password Authentication for the cluster
-          env {
-            name = "REDIS_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_manifest.valkey_credentials_sync.object.spec.target.name
-                key  = "VALKEY_PASSWORD"
+            // Password Authentication for the cluster
+            env {
+              name = "REDIS_PASSWORD"
+              value_from {
+                secret_key_ref {
+                  name = kubernetes_manifest.valkey_credentials_sync.object.spec.target.name
+                  key  = "VALKEY_PASSWORD"
+                }
+              }
+            }
+
+            // Using certificates for proper TLS connection to the cluster
+            dynamic "env" {
+              for_each = var.enable_internal_tls_certificates ? [true] : []
+              content {
+                name  = "REDIS_EXPORTER_TLS_CA_CERT_FILE"
+                value = "/etc/valkey/tls/ca.crt"
+              }
+            }
+            dynamic "env" {
+              for_each = var.enable_internal_tls_certificates ? [true] : []
+              content {
+                name  = "REDIS_EXPORTER_TLS_CLIENT_CERT_FILE"
+                value = "/etc/valkey/tls/tls.crt"
+              }
+            }
+            dynamic "env" {
+              for_each = var.enable_internal_tls_certificates ? [true] : []
+              content {
+                name  = "REDIS_EXPORTER_TLS_CLIENT_KEY_FILE"
+                value = "/etc/valkey/tls/tls.key"
+              }
+            }
+
+            // Optionally skip verifying the hostname on the cert since we are using localhost
+            dynamic "env" {
+              for_each = var.enable_internal_tls_certificates ? [true] : []
+              content {
+                name  = "REDIS_EXPORTER_SKIP_TLS_VERIFICATION"
+                value = "true"
+              }
+            }
+
+            // Mounting the exact same certificate volume used by the Valkey container
+            dynamic "volume_mount" {
+              for_each = var.enable_internal_tls_certificates ? [true] : []
+              content {
+                name       = "certificates"
+                mount_path = "/etc/valkey/tls"
+                read_only  = true
+              }
+            }
+
+            // Tiny resource footprint for metrics
+            resources {
+              requests = {
+                cpu    = "10m"
+                memory = "32Mi"
+              }
+              limits = {
+                cpu    = "100m"
+                memory = "64Mi"
               }
             }
           }
-
-          // Using certificates for proper TLS connection to the cluster
-          env {
-            name  = "REDIS_EXPORTER_TLS_CA_CERT_FILE"
-            value = "/etc/valkey/tls/ca.crt"
-          }
-          env {
-            name  = "REDIS_EXPORTER_TLS_CLIENT_CERT_FILE"
-            value = "/etc/valkey/tls/tls.crt"
-          }
-          env {
-            name  = "REDIS_EXPORTER_TLS_CLIENT_KEY_FILE"
-            value = "/etc/valkey/tls/tls.key"
-          }
-
-          // Optionally skip verifying the hostname on the cert since we are using localhost
-          env {
-            name  = "REDIS_EXPORTER_SKIP_TLS_VERIFICATION"
-            value = "true"
-          }
-
-          // Mounting the exact same certificate volume used by the Valkey container
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/etc/valkey/tls"
-            read_only  = true
-          }
-          
-          // Tiny resource footprint for metrics
-          resources {
-            requests = {
-              cpu    = "10m"
-              memory = "32Mi"
-            }
-            limits = {
-              cpu    = "100m"
-              memory = "64Mi"
-            }
-          }                    
         }
-
         volume {
           name = "template-configuration"
           config_map {
-            name = kubernetes_config_map.valkey_conf.metadata[0].name
+            name = var.enable_internal_tls_certificates ? kubernetes_config_map.valkey_conf[0].metadata[0].name : kubernetes_config_map.valkey_conf_no_tls[0].metadata[0].name
           }
         }
 
@@ -231,10 +251,13 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           empty_dir {}
         }
 
-        volume {
-          name = "certificates"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "certificates"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
       }

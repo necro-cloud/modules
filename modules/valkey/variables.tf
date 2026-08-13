@@ -136,10 +136,15 @@ variable "tag" {
   default     = "9.0"
 }
 
-variable "replicas" {
-  description = "Number of replicas to run for Valkey Cluster"
-  type        = number
-  default     = 3
+variable "cluster_size" {
+  description = "Number of pods to deploy for the Valkey Cluster"
+  type        = string
+  default     = "small"
+
+  validation {
+    condition     = contains(["small", "medium", "large"], var.cluster_size)
+    error_message = "Valid values for variable size are small, medium and large"
+  }
 }
 
 # --------------- VALKEY METRICS VARIABLES --------------- #
@@ -196,4 +201,23 @@ variable "proxy_tag" {
   description = "Docker tag to be used for deployment of Garage NGINX Proxy for TLS"
   type        = string
   default     = "1.29.0"
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Valkey Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of Redis Commander for the UI Component"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the Valkey Cluster"
+  type        = bool
+  default     = true
 }

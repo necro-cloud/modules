@@ -84,6 +84,7 @@ resource "kubernetes_manifest" "push_valkey_credentials" {
 
 // Credentials configuration for Redis Commander
 resource "kubernetes_manifest" "ui_credentials_sync" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -116,11 +117,12 @@ resource "kubernetes_manifest" "ui_credentials_sync" {
 }
 
 resource "kubernetes_manifest" "push_ui_credentials" {
+  count = var.enable_ui ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-${kubernetes_manifest.ui_credentials_sync.object.spec.target.name}"
+      name      = "push-${kubernetes_manifest.ui_credentials_sync[0].object.spec.target.name}"
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
@@ -132,14 +134,14 @@ resource "kubernetes_manifest" "push_ui_credentials" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.ui_credentials_sync.object.spec.target.name
+          name = kubernetes_manifest.ui_credentials_sync[0].object.spec.target.name
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.ui_credentials_sync.object.spec.target.name}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.ui_credentials_sync[0].object.spec.target.name}"
             }
           }
         }
@@ -150,8 +152,9 @@ resource "kubernetes_manifest" "push_ui_credentials" {
 }
 
 resource "kubernetes_secret" "redis_commander_configuration" {
+  count = var.enable_ui ? 1 : 0
   metadata {
-    name = "redis-commander-configuration"
+    name      = "redis-commander-configuration"
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
@@ -159,7 +162,7 @@ resource "kubernetes_secret" "redis_commander_configuration" {
     }
   }
 
-  data = {
+  data = var.enable_internal_tls_certificates ? {
     "REDIS_HOST"             = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
     "REDIS_PORT"             = 6379
     "REDIS_TLS"              = true
@@ -167,5 +170,9 @@ resource "kubernetes_secret" "redis_commander_configuration" {
     "REDIS_TLS_CERT_FILE"    = "/mnt/certs/tls.crt"
     "REDIS_TLS_KEY_FILE"     = "/mnt/certs/tls.key"
     "REDIS_TLS_SERVER_NAME"  = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+    } : {
+    "REDIS_HOST" = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+    "REDIS_PORT" = 6379
+    "REDIS_TLS"  = false
   }
 }
