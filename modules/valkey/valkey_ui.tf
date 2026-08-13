@@ -69,6 +69,12 @@ resource "kubernetes_deployment" "valkey_ui" {
           name  = "valkey-ui"
           image = "${var.ui_repository}/${var.ui_image}:${var.ui_tag}"
           
+          # HTTP Mapping for the UI service
+          port {
+            container_port = 8081
+            name           = "http"
+          }
+
           # Password to authenticate against Valkey
           env {
             name  = "REDIS_PASSWORD"

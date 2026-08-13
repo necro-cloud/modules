@@ -73,7 +73,7 @@ resource "kubernetes_config_map" "valkey_conf_no_tls" {
   
 # NGINX Configuration for SSL-ing requests to the container
 resource "kubernetes_config_map" "ui_nginx_conf" {
-  count = var.enable_internal_tls_certificates ? 0 : 1
+  count = var.enable_internal_tls_certificates && var.enable_ui ? 1 : 0
   metadata {
     name      = "valkey-ui-nginx-conf"
     namespace = kubernetes_namespace.namespace.metadata[0].name
