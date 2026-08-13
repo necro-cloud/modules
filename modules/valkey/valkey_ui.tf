@@ -94,9 +94,12 @@ resource "kubernetes_deployment" "valkey_ui" {
           }
           
           # Mounting the SSL certs for communicating with Valkey in TLS
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/mnt/certs"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "certificates"
+              mount_path = "/mnt/certs"
+            }
           }
 
           # Health checks to turn green
@@ -130,74 +133,85 @@ resource "kubernetes_deployment" "valkey_ui" {
           
         }
 
-        container {
-          name  = "proxy"
-          image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
+        dynamic "container" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name  = "proxy"
+            image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
 
-          # HTTPS Mapping for the UI service
-          port {
-            container_port = 8443
-            name           = "https"
-          }
-
-          # Mounting the SSL certs for HTTPS duties
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/mnt/ssl"
-          }
-
-          # NGINX Configuration for HTTPS duties
-          volume_mount {
-            name       = "nginx-config"
-            mount_path = "/etc/nginx"
-          }
-
-          # Liveness and readiness probes to check if the container is up
-          liveness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
+            # HTTPS Mapping for the UI service
+            port {
+              container_port = 8443
+              name           = "https"
             }
-            period_seconds        = 30
-          }
 
-          readiness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
+            # Mounting the SSL certs for HTTPS duties
+            volume_mount {
+              name       = "certificates"
+              mount_path = "/mnt/ssl"
             }
-            period_seconds        = 30
-          }
 
-          # Use non root credentials to run the containers
-          security_context {
-            run_as_group    = 1000
-            run_as_non_root = true
-            run_as_user     = 1000
+            # NGINX Configuration for HTTPS duties
+            volume_mount {
+              name       = "nginx-config"
+              mount_path = "/etc/nginx"
+            }
+
+            # Liveness and readiness probes to check if the container is up
+            liveness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
+              }
+              period_seconds        = 30
+            }
+
+            readiness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:8443/favicon.png"]
+              }
+              period_seconds        = 30
+            }
+
+            # Use non root credentials to run the containers
+            security_context {
+              run_as_group    = 1000
+              run_as_non_root = true
+              run_as_user     = 1000
+            }
           }
-          
         }
         
         
         # Mount the certificates for Valkey to communicate TLS with
-        volume {
-          name = "ca-certs"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.object.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "ca-certs"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].object.spec.secretName
+            }
           }
         }
 
         # Mount the certificates required to perform TLS connections
-        volume {
-          name = "certificates"
-          secret {
-            secret_name = kubernetes_manifest.ui_internal_certificate.object.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "certificates"
+            secret {
+              secret_name = kubernetes_manifest.ui_internal_certificate[0].object.spec.secretName
+            }
           }
         }
 
         # Mount the confiuration for NGINX to perform internal TLS duties
-        volume {
-          name = "nginx-config"
-          config_map {
-            name = kubernetes_config_map.ui_nginx_conf.metadata[0].name
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "nginx-config"
+            config_map {
+              name = kubernetes_config_map.ui_nginx_conf[0].metadata[0].name
+            }
           }
         }
       }

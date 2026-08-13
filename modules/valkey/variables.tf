@@ -197,3 +197,22 @@ variable "proxy_tag" {
   type        = string
   default     = "1.29.0"
 }
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Valkey Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ui" {
+  description = "Enable or disable deployment of Redis Commander for the UI Component"
+  type        = bool
+  default     = true
+}
+
+variable "enable_observability" {
+  description = "Enable or disable observability reporting for the Valkey Cluster"
+  type        = bool
+  default     = true
+}

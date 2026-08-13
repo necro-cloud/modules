@@ -5,7 +5,7 @@ output "valkey_namespace" {
 
 output "valkey_certificates_name" {
   description = "Name of the Internal Certificate to be associated with Valkey Cache Solution"
-  value = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+  value = var.enable_internal_tls_certificates ? kubernetes_manifest.internal_certificate[0].manifest.spec.secretName : ""
 }
 
 output "valkey_credentials_name" {

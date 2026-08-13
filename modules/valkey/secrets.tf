@@ -159,7 +159,7 @@ resource "kubernetes_secret" "redis_commander_configuration" {
     }
   }
 
-  data = {
+  data = var.enable_internal_tls_certificates ? {
     "REDIS_HOST"             = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
     "REDIS_PORT"             = 6379
     "REDIS_TLS"              = true
@@ -167,5 +167,9 @@ resource "kubernetes_secret" "redis_commander_configuration" {
     "REDIS_TLS_CERT_FILE"    = "/mnt/certs/tls.crt"
     "REDIS_TLS_KEY_FILE"     = "/mnt/certs/tls.key"
     "REDIS_TLS_SERVER_NAME"  = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+  } : {
+    "REDIS_HOST"             = "${kubernetes_service.primary_service.metadata[0].name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+    "REDIS_PORT"             = 6379
+    "REDIS_TLS"              = false
   }
 }

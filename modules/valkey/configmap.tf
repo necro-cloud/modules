@@ -1,5 +1,6 @@
 // Valkey Cluster Configuration for ports, memory, persistence and security
 resource "kubernetes_config_map" "valkey_conf" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   metadata {
     name      = "valkey-configuration"
     namespace = kubernetes_namespace.namespace.metadata[0].name
@@ -35,10 +36,46 @@ resource "kubernetes_config_map" "valkey_conf" {
   }
 }
 
+// Valkey Cluster Configuration for ports, memory, persistence and security
+resource "kubernetes_config_map" "valkey_conf_no_tls" {
+  count = var.enable_internal_tls_certificates ? 0 : 1
+  metadata {
+    name      = "valkey-configuration"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+    labels = {
+      app       = var.app_name
+      component = "configmap"
+    }
+  }
+  data = {
+    "valkey.conf" = <<EOF
+      # Ports to be exposed
+      port 6379
+      tls-port 0
+      protected-mode no
+
+      # Memory Management
+      maxmemory 800mb
+      maxmemory-policy allkeys-lru
+
+      # Persistence for the Valkey node
+      appendonly yes 
+      dir /data
+
+      # Password to be used for Replication
+      primaryauth VALKEY_PASSWORD
+
+      # TLS Configuration
+      tls-replication no
+    EOF
+  }
+}
+  
 # NGINX Configuration for SSL-ing requests to the container
 resource "kubernetes_config_map" "ui_nginx_conf" {
+  count = var.enable_internal_tls_certificates ? 0 : 1
   metadata {
-    name      = "garage-ui-nginx-conf"
+    name      = "valkey-ui-nginx-conf"
     namespace = kubernetes_namespace.namespace.metadata[0].name
   }
   data = {

@@ -110,7 +110,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           // Probes for checking on pods
           readiness_probe {
             exec {
-              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+              command = var.enable_internal_tls_certificates ? ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"] : ["sh", "-c", "valkey-cli --pass $VALKEY_PASSWORD PING | grep PONG"]
             }
 
             initial_delay_seconds = 20
@@ -121,7 +121,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
 
           liveness_probe {
             exec {
-              command = ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"]
+              command = var.enable_internal_tls_certificates ? ["sh", "-c", "valkey-cli --tls --cacert /etc/valkey/tls/ca.crt --cert /etc/valkey/tls/tls.crt --key /etc/valkey/tls/tls.key --pass $VALKEY_PASSWORD PING | grep PONG"] : ["sh", "-c", "valkey-cli --pass $VALKEY_PASSWORD PING | grep PONG"]
             }
 
             initial_delay_seconds = 20
@@ -141,9 +141,12 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             mount_path = "/etc/valkey/conf"
           }
 
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/etc/valkey/tls"
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "certificates"
+              mount_path = "/etc/valkey/tls"
+            }
           }
 
           volume_mount {
@@ -180,30 +183,45 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           }
 
           // Using certificates for proper TLS connection to the cluster
-          env {
-            name  = "REDIS_EXPORTER_TLS_CA_CERT_FILE"
-            value = "/etc/valkey/tls/ca.crt"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "REDIS_EXPORTER_TLS_CA_CERT_FILE"
+              value = "/etc/valkey/tls/ca.crt"
+            }
           }
-          env {
-            name  = "REDIS_EXPORTER_TLS_CLIENT_CERT_FILE"
-            value = "/etc/valkey/tls/tls.crt"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "REDIS_EXPORTER_TLS_CLIENT_CERT_FILE"
+              value = "/etc/valkey/tls/tls.crt"
+            }
           }
-          env {
-            name  = "REDIS_EXPORTER_TLS_CLIENT_KEY_FILE"
-            value = "/etc/valkey/tls/tls.key"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "REDIS_EXPORTER_TLS_CLIENT_KEY_FILE"
+              value = "/etc/valkey/tls/tls.key"
+            }
           }
 
           // Optionally skip verifying the hostname on the cert since we are using localhost
-          env {
-            name  = "REDIS_EXPORTER_SKIP_TLS_VERIFICATION"
-            value = "true"
+          dynamic "env" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name  = "REDIS_EXPORTER_SKIP_TLS_VERIFICATION"
+              value = "true"
+            }
           }
 
           // Mounting the exact same certificate volume used by the Valkey container
-          volume_mount {
-            name       = "certificates"
-            mount_path = "/etc/valkey/tls"
-            read_only  = true
+          dynamic "volume_mount" {
+            for_each = var.enable_internal_tls_certificates ? [true] : []
+            content {
+              name       = "certificates"
+              mount_path = "/etc/valkey/tls"
+              read_only  = true
+            }
           }
           
           // Tiny resource footprint for metrics
@@ -222,7 +240,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
         volume {
           name = "template-configuration"
           config_map {
-            name = kubernetes_config_map.valkey_conf.metadata[0].name
+            name = var.enable_internal_tls_certificates ? kubernetes_config_map.valkey_conf[0].metadata[0].name : kubernetes_config_map.valkey_conf_no_tls[0].metadata[0].name
           }
         }
 
@@ -231,10 +249,13 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
           empty_dir {}
         }
 
-        volume {
-          name = "certificates"
-          secret {
-            secret_name = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "certificates"
+            secret {
+              secret_name = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
       }
