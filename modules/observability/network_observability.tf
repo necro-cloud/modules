@@ -26,7 +26,7 @@ resource "kubernetes_deployment" "goldmane_otel_adapter" {
           name    = "scraper"
           image   = "alpine:latest"
           command = ["/bin/sh", "-c"]
-          
+
           args = [
             <<-EOF
             # Install jq and curl

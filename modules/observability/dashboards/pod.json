@@ -772,7 +772,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 13,
         "w": 24,
         "x": 0,
         "y": 17
@@ -822,7 +822,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 30
       },
       "id": 46,
       "panels": [],
@@ -895,7 +895,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 31
       },
       "id": 20,
       "options": {
@@ -943,7 +943,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 45
       },
       "id": 47,
       "panels": [],
@@ -1013,10 +1013,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 13,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 46
       },
       "id": 25,
       "options": {
@@ -1064,7 +1064,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 47
+        "y": 59
       },
       "id": 48,
       "panels": [],
@@ -1137,7 +1137,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 60
       },
       "id": 28,
       "options": {
@@ -1185,7 +1185,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 74
       },
       "id": 49,
       "panels": [],
@@ -1205,7 +1205,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 75
       },
       "id": 50,
       "options": {
@@ -1238,7 +1238,7 @@
     }
   ],
   "preload": false,
-  "refresh": "1m",
+  "refresh": "5s",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
@@ -1358,12 +1358,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Kubernetes Pod Level Monitoring",
   "uid": "jTXhrPV4k1",
-  "version": 8
+  "version": 1
 }

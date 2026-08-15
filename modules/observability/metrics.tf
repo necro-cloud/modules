@@ -1,20 +1,20 @@
 resource "helm_release" "metrics" {
-  name = "victoria-metrics"
+  name       = "victoria-metrics"
   repository = "https://victoriametrics.github.io/helm-charts/"
-  chart = "victoria-metrics-single"
-  version = "0.30.0"
+  chart      = "victoria-metrics-single"
+  version    = "0.30.0"
 
   namespace = kubernetes_namespace.namespace.metadata[0].name
 
   values = [
     yamlencode({
       server = {
-        
+
         extraArgs = {
           "maxLabelValueLen" = "8192"
-        }        
+        }
 
-        replicaCount = 1
+        replicaCount    = 1
         retentionPeriod = "7d"
 
         resources = {
@@ -29,18 +29,18 @@ resource "helm_release" "metrics" {
         }
 
         persistentVolume = {
-          enabled      = true
-          accessModes  = ["ReadWriteOnce"]
-          size         = "10Gi"
+          enabled          = true
+          accessModes      = ["ReadWriteOnce"]
+          size             = "10Gi"
           storageClassName = "local-path"
         }
 
         podLabels = {
-          app = var.app_name
+          app       = var.app_name
           component = "pod"
         }
-          
-        affinity =  {
+
+        affinity = {
           nodeAffinity = {
             requiredDuringSchedulingIgnoredDuringExecution = {
               nodeSelectorTerms = [

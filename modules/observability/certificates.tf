@@ -1,5 +1,6 @@
 // Certificate Authority to be used with Observability Platform
 resource "kubernetes_manifest" "certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -49,6 +50,7 @@ resource "kubernetes_manifest" "certificate_authority" {
 
 // Issuer for the Observability Platform
 resource "kubernetes_manifest" "issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -62,7 +64,7 @@ resource "kubernetes_manifest" "issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -83,6 +85,7 @@ resource "kubernetes_manifest" "issuer" {
 
 // Internal Certificate for Observability Platform
 resource "kubernetes_manifest" "internal_certificate" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -112,7 +115,7 @@ resource "kubernetes_manifest" "internal_certificate" {
       "commonName" = var.internal_certificate_name
       "secretName" = var.internal_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.issuer[0].manifest.metadata.name
       }
     }
   }
