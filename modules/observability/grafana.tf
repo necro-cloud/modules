@@ -68,43 +68,45 @@ resource "helm_release" "grafana" {
       }
 
       // Mount Certificates and Attach them to the Grafana Instance
-      extraSecretMounts = [
+      extraSecretMounts = var.enable_internal_tls_certificates ? [
         {
-          name        = kubernetes_manifest.internal_certificate.manifest.spec.secretName
-          secretName  = kubernetes_manifest.internal_certificate.manifest.spec.secretName
+          name        = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
+          secretName  = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
           defaultMode = "0400"
           mountPath   = "/etc/grafana/ssl"
           readOnly    = true
         }
-      ]
+      ] : []
 
 
       "grafana.ini" = {
-        server = {
+        server = var.enable_internal_tls_certificates ? {
           protocol  = "https"
           cert_file = "/etc/grafana/ssl/tls.crt"
           cert_key  = "/etc/grafana/ssl/tls.key"
+        } : {
+          protocol = "http"
         }
       }
 
       // Health checks to use HTTPS instead of HTTP
       readinessProbe = {
         httpGet = {
-          scheme = "HTTPS"
+          scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
         }
       }
       livenessProbe = {
         httpGet = {
-          scheme = "HTTPS"
+          scheme = var.enable_internal_tls_certificates ? "HTTPS" : "HTTP"
         }
       }
 
       // Service Configuration for HTTPS
       service = {
-        port       = 8443
+        port       = var.enable_internal_tls_certificates ? 8443 : 8080
         targetPort = 3000
         annotations = {
-          "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+          "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
         }
       }
 

@@ -33,6 +33,9 @@ module "observability" {
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
 
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+
   depends_on = [module.cluster-issuer]
 }
 
