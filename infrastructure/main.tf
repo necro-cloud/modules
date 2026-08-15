@@ -220,7 +220,7 @@ module "keycloak" {
   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
   postgres_namespace                         = module.cnpg.namespace
   cluster_name                               = module.cnpg.cluster_name
-  database_certificates_required             = true
+  database_certificates_required             = !(module.cnpg.server-certificate-authority == "")
   database_server_certificate_authority_name = module.cnpg.server-certificate-authority
   database_client_certificate_name           = "postgresql-keycloak-client-certificate"
   database_credentials                       = "credentials-keycloak"
