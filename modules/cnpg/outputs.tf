@@ -6,7 +6,7 @@ output "namespace" {
 
 output "server-certificate-authority" {
   description = "Certificate Authority being used with PostgreSQL Database"
-  value       = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
+  value       = var.enable_internal_tls_certificates ? kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName : ""
   depends_on  = [kubernetes_manifest.databases, kubernetes_manifest.keycloak_database]
 }
 

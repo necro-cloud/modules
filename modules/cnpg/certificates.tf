@@ -46,6 +46,7 @@ resource "kubernetes_manifest" "garage_certificate_authority_sync" {
 # --------------- POSTGRESQL SERVER CERTIFICATES CONFIGURATION --------------- #
 // Certificate Authority to be used with PostgreSQL Server
 resource "kubernetes_manifest" "server_certificate_authority" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -112,14 +113,14 @@ resource "kubernetes_manifest" "push_server_certificate_authority" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.server_certificate_authority.object.spec.secretName
+          name = kubernetes_manifest.server_certificate_authority[0].object.spec.secretName
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.server_certificate_authority.object.spec.secretName}"
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/certificates/${kubernetes_manifest.server_certificate_authority[0].object.spec.secretName}"
             }
           }
         }
@@ -140,6 +141,7 @@ resource "kubernetes_manifest" "push_server_certificate_authority" {
 
 // Issuer to be used with PostgreSQL Server
 resource "kubernetes_manifest" "server_issuer" {
+  count = var.enable_internal_tls_certificates ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
@@ -153,7 +155,7 @@ resource "kubernetes_manifest" "server_issuer" {
     }
     "spec" = {
       "ca" = {
-        "secretName" = kubernetes_manifest.server_certificate_authority.manifest.spec.secretName
+        "secretName" = kubernetes_manifest.server_certificate_authority[0].manifest.spec.secretName
       }
     }
   }
@@ -206,7 +208,7 @@ resource "kubernetes_manifest" "server_certificate" {
       }
       "secretName" = var.server_certificate_name
       "issuerRef" = {
-        "name" = kubernetes_manifest.server_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.server_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -547,7 +549,7 @@ resource "kubernetes_manifest" "push_client_certificates" {
 
 // Internal Certificate for PGAdmin
 resource "kubernetes_manifest" "pgadmin_internal_certificate" {
-  count = var.enable_ui ? 1 : 0
+  count = var.enable_internal_tls_certificates && var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Certificate"
@@ -573,7 +575,7 @@ resource "kubernetes_manifest" "pgadmin_internal_certificate" {
       "commonName" = "pgadmin-internal-certificate"
       "secretName" = "pgadmin-internal-certificate"
       "issuerRef" = {
-        "name" = kubernetes_manifest.server_issuer.manifest.metadata.name
+        "name" = kubernetes_manifest.server_issuer[0].manifest.metadata.name
       }
     }
   }
@@ -666,7 +668,6 @@ resource "kubernetes_manifest" "public_issuer" {
 
 // Certificate to be used for PGAdmin Ingress
 resource "kubernetes_manifest" "ingress_certificate" {
-
   count = var.enable_ui ? 1 : 0
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
