@@ -97,3 +97,10 @@ variable "domain" {
   type        = string
   nullable    = false
 }
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "enable_internal_tls_certificates" {
+  description = "Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster"
+  type        = bool
+  default     = true
+}

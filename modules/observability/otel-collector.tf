@@ -9,7 +9,7 @@ resource "helm_release" "otel_collector" {
   values = [
     yamlencode({
       fullnameOverride = "otel-collector"
-      
+
       mode = "daemonset"
       clusterRole = {
         create = true
@@ -26,7 +26,7 @@ resource "helm_release" "otel_collector" {
           }
         ]
       }
-      
+
       // Enable service creation for pushing logs and metrics 
       service = {
         enabled = true
@@ -35,7 +35,7 @@ resource "helm_release" "otel_collector" {
       // Ports for the service to use
       ports = {
         otlp = {
-          enabled = true
+          enabled       = true
           containerPort = 4317
           servicePort   = 4317
           hostPort      = 4317
@@ -63,7 +63,7 @@ resource "helm_release" "otel_collector" {
       presets = {
         // Scrape /var/log/pods
         logsCollection = {
-          enabled = true
+          enabled              = true
           includeCollectorLogs = false
         }
         // Scrape Node CPU/RAM/Disk
@@ -76,8 +76,8 @@ resource "helm_release" "otel_collector" {
         }
         // Decorate data with K8s metadata
         kubernetesAttributes = {
-          enabled = true
-          extractAllPodLabels = true
+          enabled                  = true
+          extractAllPodLabels      = true
           extractAllPodAnnotations = true
         }
       }
@@ -89,11 +89,11 @@ resource "helm_release" "otel_collector" {
           hostmetrics = {
             collection_interval = "10s"
             scrapers = {
-              cpu = {}
-              memory = {}
-              disk = {}
+              cpu     = {}
+              memory  = {}
+              disk    = {}
               network = {}
-              load = {}
+              load    = {}
             }
           }
           // OTLP Endpoints to send stuff to this collector
@@ -108,8 +108,8 @@ resource "helm_release" "otel_collector" {
             config = {
               scrape_configs = [
                 {
-                  job_name = "kubernetes-pods"
-                  honor_labels = true
+                  job_name        = "kubernetes-pods"
+                  honor_labels    = true
                   scrape_interval = "30s"
                   body_size_limit = "50MB"
 
@@ -181,13 +181,13 @@ resource "helm_release" "otel_collector" {
                     insecure_skip_verify = true
                   }
                   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-                  
+
                   kubernetes_sd_configs = [
                     {
                       role = "node"
                     }
                   ]
-                  
+
                   relabel_configs = [
                     // Only scrape the local node this DaemonSet pod is running on
                     {
@@ -213,9 +213,9 @@ resource "helm_release" "otel_collector" {
           batch = {}
           // Strict memory limits for the 512Mi constraint
           memory_limiter = {
-            check_interval         = "5s"
-            limit_mib              = 400
-            spike_limit_mib        = 100
+            check_interval  = "5s"
+            limit_mib       = 400
+            spike_limit_mib = 100
           }
           transform = {
             // If a metric comes in missing its namespace or pod label,
@@ -242,7 +242,7 @@ resource "helm_release" "otel_collector" {
           prometheusremotewrite = {
             endpoint = "http://victoria-metrics-victoria-metrics-single-server:8428/api/v1/write"
           }
-          
+
           // Logs -> VictoriaLogs
           otlphttp = {
             // VictoriaLogs OTLP endpoint
@@ -272,9 +272,9 @@ resource "helm_release" "otel_collector" {
               // Defining debug as exporter for traces
               // to ignore traces and catch errors
               // when apps send traces here
-              receivers = ["otlp"]
+              receivers  = ["otlp"]
               processors = ["memory_limiter", "batch"]
-              exporters = ["debug"] 
+              exporters  = ["debug"]
             }
           }
         }

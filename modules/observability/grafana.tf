@@ -12,8 +12,8 @@ resource "helm_release" "grafana" {
       // Authentication Credentials
       admin = {
         existingSecret = kubernetes_manifest.grafana_credentials_sync.object.spec.target.name
-        userKey = "username"
-        passwordKey = "password"
+        userKey        = "username"
+        passwordKey    = "password"
       }
 
       // Automatically install the VictoriaMetrics Logs plugin for native VictoriaLogs support
@@ -78,11 +78,11 @@ resource "helm_release" "grafana" {
         }
       ]
 
-      
+
       "grafana.ini" = {
         server = {
           protocol  = "https"
-          cert_file = "/etc/grafana/ssl/tls.crt" 
+          cert_file = "/etc/grafana/ssl/tls.crt"
           cert_key  = "/etc/grafana/ssl/tls.key"
         }
       }
@@ -101,14 +101,14 @@ resource "helm_release" "grafana" {
 
       // Service Configuration for HTTPS
       service = {
-        port = 8443
+        port       = 8443
         targetPort = 3000
         annotations = {
           "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
         }
       }
 
-      
+
       // Deploy dashboards to Grafana
       dashboardProviders = {
         "dashboardproviders.yaml" = {
@@ -265,7 +265,7 @@ resource "helm_release" "grafana" {
           }
         }
       }
-                  
+
       affinity = {
         nodeAffinity = {
           requiredDuringSchedulingIgnoredDuringExecution = {
