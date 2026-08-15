@@ -8,6 +8,9 @@ resource "kubernetes_service" "pgadmin4" {
       app       = var.app_name
       component = "service"
     }
+    annotations = {
+      "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
+    }
   }
 
   spec {

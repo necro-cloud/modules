@@ -170,7 +170,7 @@ resource "kubernetes_stateful_set" "valkey_cluster" {
             // Valkey Connection String
             env {
               name  = "REDIS_ADDR"
-              value = "rediss://localhost:6379"
+              value = var.enable_internal_tls_certificates ? "rediss://localhost:6379" : "redis://localhost:6379"
             }
 
             // Password Authentication for the cluster

@@ -37,7 +37,7 @@ resource "kubernetes_service" "garage-service" {
       component = "service"
     }
     annotations = {
-      "traefik.ingress.kubernetes.io/service.serversscheme" = "https"
+      "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
     }
   }
 
