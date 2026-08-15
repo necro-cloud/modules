@@ -1563,6 +1563,7 @@
     }
   ],
   "preload": false,
+  "refresh": "5s",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
@@ -1589,10 +1590,10 @@
       {
         "current": {
           "text": [
-            "openbao-0"
+            "All"
           ],
           "value": [
-            "openbao-0"
+            "$__all"
           ]
         },
         "definition": "label_values(vault_core_unsealed{namespace=\"$namespace\"},pod)",

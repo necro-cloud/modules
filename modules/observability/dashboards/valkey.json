@@ -17,7 +17,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 7,
   "links": [],
   "panels": [
     {
@@ -2068,7 +2068,7 @@
     }
   ],
   "preload": false,
-  "refresh": "1m",
+  "refresh": "5s",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
@@ -2122,8 +2122,8 @@
       },
       {
         "current": {
-          "text": "10.42.135.24:9121",
-          "value": "10.42.135.24:9121"
+          "text": "10.42.192.207:9121",
+          "value": "10.42.192.207:9121"
         },
         "datasource": "$DS_PROMETHEUS",
         "definition": "label_values(redis_up{namespace=\"$namespace\", pod=\"$pod_name\"}, instance)",
@@ -2139,12 +2139,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Valkey In Memory Database Dashboard",
   "uid": "xDLNRKUWz",
-  "version": 4
+  "version": 1
 }
