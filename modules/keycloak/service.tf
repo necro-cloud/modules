@@ -26,6 +26,9 @@ resource "kubernetes_service" "keycloak_service" {
   metadata {
     name      = "keycloak-cluster-service"
     namespace = kubernetes_namespace.namespace.metadata[0].name
+    annotations = {
+      "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
+    }
   }
 
   spec {

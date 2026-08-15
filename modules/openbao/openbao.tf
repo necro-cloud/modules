@@ -121,6 +121,13 @@ resource "helm_release" "openbao" {
           enabled = true
         }
 
+        // Annotations to the Service Object
+        service = {
+          annotations = {
+            "traefik.ingress.kubernetes.io/service.serversscheme" = var.enable_internal_tls_certificates ? "https" : "http"
+          }
+        }
+
         // Enable permissions for
         // Service Discovery
         serviceAccount = {
