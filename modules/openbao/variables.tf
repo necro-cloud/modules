@@ -27,7 +27,13 @@ variable "namespace" {
 variable "observability_namespace" {
   description = "Namespace where all components for observability are deployed"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition = var.enable_observability ? var.observability_namespace == null ? false : true : true
+    error_message = "If Observability is enabled, observability namespace is a required variable to be passed"
+  }
 }
 
 variable "access_namespaces" {
@@ -62,7 +68,13 @@ variable "cluster_size" {
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
+    error_message = "If Internal TLS Certificates is enabled, cluster issuer name is a required variable to be passed"
+  }
 }
 
 variable "certificate_authority_name" {
@@ -86,13 +98,25 @@ variable "internal_certificate_name" {
 variable "cloudflare_token" {
   description = "Token for generating Ingress Certificates to be associated with OpenBao Secrets Management Solution"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition = var.enable_ui ? var.cloudflare_token == null ? false : true : true
+    error_message = "If UI deployment is enabled, cloudflare token is a required variable to be passed"
+  }
 }
 
 variable "cloudflare_email" {
   description = "Email for generating Ingress Certificates to be associated with OpenBao Secrets Management Solution"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition = var.enable_ui ? var.cloudflare_email == null ? false : true : true
+    error_message = "If UI deployment is enabled, cloudflare email is a required variable to be passed"
+  }
 }
 
 variable "cloudflare_issuer_name" {
@@ -122,7 +146,13 @@ variable "host_name" {
 variable "domain" {
   description = "Domain for which Ingress Certificate is to be generated for"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition = var.enable_ui ? var.domain == null ? false : true : true
+    error_message = "If UI deployment is enabled, domain is a required variable to be passed"
+  }
 }
 
 # --------------- OPENBAO CONFIGURATION VARIABLES --------------- #
