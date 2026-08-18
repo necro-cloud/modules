@@ -91,7 +91,7 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 
 ## Examples
 
-1. Basic Deployment of the OpenBao Secrets Platform with internal TLS certificates, observability and UI Deployment turned off
+**1. Basic Deployment of the OpenBao Secrets Platform with internal TLS certificates, observability and UI Deployment turned off**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -133,7 +133,7 @@ module "openbao" {
 }
 ```
 
-2. Deployment of OpenBao Secrets Platform with UI deployment enabled
+**2. Deployment of OpenBao Secrets Platform with UI deployment enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -180,7 +180,7 @@ module "openbao" {
 }
 ```
 
-# 3. Deployment of OpenBao Secrets Platform with Observability Enabled
+**3. Deployment of OpenBao Secrets Platform with Observability Enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -255,7 +255,7 @@ module "openbao" {
 }
 ```
 
-4. Deployment of OpenBao Secrets Platform with Internal TLS Certificates Enabled
+**4. Deployment of OpenBao Secrets Platform with Internal TLS Certificates Enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
