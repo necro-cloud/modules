@@ -224,11 +224,6 @@ resource "kubernetes_stateful_set" "statefulset" {
       }
     }
 
-    # Delete PVCs when pod is removed
-    persistent_volume_claim_retention_policy {
-      when_deleted = "Delete"
-    }
-
     volume_claim_template {
       metadata {
         name = "garage-data"
