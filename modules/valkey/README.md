@@ -1,4 +1,4 @@
-## necronizer's cloud valkey module
+## [OPTIONAL MODULE] necronizer's cloud valkey module
 
 OpenTofu Module to deploy [Valkey](https://valkey.io/) In Memory Database on the Kubernetes Cluster
 
