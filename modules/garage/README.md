@@ -1,4 +1,4 @@
-## necronizer's cloud garage module
+## [OPTIONAL MODULE] necronizer's cloud garage module
 
 OpenTofu Module to deploy [Garage](https://garagehq.deuxfleurs.fr/) Object Storage on the Kubernetes Cluster
 
