@@ -1,4 +1,4 @@
-## necronizer's cloud observability module
+## [OPTIONAL MODULE] necronizer's cloud observability module
 
 OpenTofu Module to deploy components and dashboards related to Observability on the Kubernetes Cluster.
 These components are being deployed as part of the Observability Module:
