@@ -7,6 +7,6 @@ resource "helm_release" "external_secrets" {
   version          = var.external_secrets_configuration.version
   create_namespace = var.external_secrets_configuration.create_namespace
 
-  depends_on = [ helm_release.calico ]
-  timeout = 1800
+  depends_on = [helm_release.calico]
+  timeout    = 1800
 }

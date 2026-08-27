@@ -15,7 +15,7 @@ resource "helm_release" "cert-manager" {
 
       global = {
         nodeSelector = {
-           server = var.server_node_selector
+          server = var.server_node_selector
         }
       },
 
@@ -26,6 +26,6 @@ resource "helm_release" "cert-manager" {
     })
   ]
 
-  depends_on = [ helm_release.calico ]
-  timeout = 1800
+  depends_on = [helm_release.calico]
+  timeout    = 1800
 }

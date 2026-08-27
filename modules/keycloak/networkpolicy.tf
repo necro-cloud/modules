@@ -22,7 +22,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
           match_labels = {
             "kubernetes.io/metadata.name" = "traefik"
           }
-        }        
+        }
       }
 
       ports {
@@ -57,7 +57,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
         port     = 57800
       }
     }
-    
+
     # Rule 3: Allow OpenTelemetry Collector to scrape Keycloak metrics
     dynamic "ingress" {
       for_each = var.enable_observability ? [true] : []
@@ -71,7 +71,7 @@ resource "kubernetes_network_policy" "keycloak_network_access_policy" {
 
           pod_selector {
             match_labels = {
-              "app.kubernetes.io/instance" = "otel-collector" 
+              "app.kubernetes.io/instance" = "otel-collector"
             }
           }
         }

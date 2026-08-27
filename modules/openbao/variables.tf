@@ -31,7 +31,7 @@ variable "observability_namespace" {
   default     = null
 
   validation {
-    condition = var.enable_observability ? var.observability_namespace == null ? false : true : true
+    condition     = var.enable_observability ? var.observability_namespace == null ? false : true : true
     error_message = "If Observability is enabled, observability namespace is a required variable to be passed"
   }
 }
@@ -72,7 +72,7 @@ variable "cluster_issuer_name" {
   default     = null
 
   validation {
-    condition = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
+    condition     = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
     error_message = "If Internal TLS Certificates is enabled, cluster issuer name is a required variable to be passed"
   }
 }
@@ -102,7 +102,7 @@ variable "cloudflare_token" {
   default     = null
 
   validation {
-    condition = var.enable_ui ? var.cloudflare_token == null ? false : true : true
+    condition     = var.enable_ui ? var.cloudflare_token == null ? false : true : true
     error_message = "If UI deployment is enabled, cloudflare token is a required variable to be passed"
   }
 }
@@ -114,7 +114,7 @@ variable "cloudflare_email" {
   default     = null
 
   validation {
-    condition = var.enable_ui ? var.cloudflare_email == null ? false : true : true
+    condition     = var.enable_ui ? var.cloudflare_email == null ? false : true : true
     error_message = "If UI deployment is enabled, cloudflare email is a required variable to be passed"
   }
 }
@@ -150,7 +150,7 @@ variable "domain" {
   default     = null
 
   validation {
-    condition = var.enable_ui ? var.domain == null ? false : true : true
+    condition     = var.enable_ui ? var.domain == null ? false : true : true
     error_message = "If UI deployment is enabled, domain is a required variable to be passed"
   }
 }

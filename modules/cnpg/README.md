@@ -1,4 +1,4 @@
-## necronizer's cloud cloudnative pg module
+## [OPTIONAL MODULE] necronizer's cloud cloudnative pg module
 
 OpenTofu Module to deploy [Cloudnative PG](https://cloudnative-pg.io/) PostgreSQL Database on the Kubernetes Cluster
 
@@ -124,7 +124,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 
 ## Examples
 
-**1. Basic Deployment of the Garage S3 Object Storage Platform with internal TLS certificates, observability, PITR Backups and UI Deployment turned off**
+**1. Basic Deployment of the PostgreSQL SQL Database Platform with internal TLS certificates, observability, PITR Backups and UI Deployment turned off**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules

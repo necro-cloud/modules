@@ -39,7 +39,7 @@ variable "cluster_issuer_name" {
   default     = null
 
   validation {
-    condition = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
+    condition     = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
     error_message = "If Internal TLS Certificates is enabled, cluster issuer name is a required variable to be passed"
   }
 }
