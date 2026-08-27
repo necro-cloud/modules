@@ -66,49 +66,55 @@ resource "kubernetes_deployment" "pgadmin" {
           }
         }
 
-        container {
-          name  = "proxy"
-          image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
+        dynamic "container" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name  = "proxy"
+            image = "${var.proxy_repository}/${var.proxy_image}:${var.proxy_tag}"
 
-          port {
-            container_port = 443
-            name           = "https"
-          }
-
-          volume_mount {
-            name       = "internal-certificate"
-            mount_path = "/mnt/ssl"
-          }
-
-          volume_mount {
-            name       = "nginx-config"
-            mount_path = "/etc/nginx"
-          }
-
-          liveness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
+            port {
+              container_port = 443
+              name           = "https"
             }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
-          }
-
-          readiness_probe {
-            exec {
-              command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
+            volume_mount {
+              name       = "internal-certificate"
+              mount_path = "/mnt/ssl"
             }
 
-            initial_delay_seconds = 5
-            period_seconds        = 30
+            volume_mount {
+              name       = "nginx-config"
+              mount_path = "/etc/nginx"
+            }
+
+            liveness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
+              }
+
+              initial_delay_seconds = 5
+              period_seconds        = 30
+            }
+
+            readiness_probe {
+              exec {
+                command = ["curl", "--cacert", "/mnt/ssl/ca.crt", "https://localhost:443/health"]
+              }
+
+              initial_delay_seconds = 5
+              period_seconds        = 30
+            }
           }
         }
 
         // NGINX Configuration for TLS
-        volume {
-          name = "nginx-config"
-          config_map {
-            name = kubernetes_config_map.nginx_conf[0].metadata[0].name
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "nginx-config"
+            config_map {
+              name = kubernetes_config_map.nginx_conf[0].metadata[0].name
+            }
           }
         }
 
@@ -121,10 +127,13 @@ resource "kubernetes_deployment" "pgadmin" {
         }
 
         // Internal Certificates for TLS
-        volume {
-          name = "internal-certificate"
-          secret {
-            secret_name = kubernetes_manifest.pgadmin_internal_certificate[0].manifest.spec.secretName
+        dynamic "volume" {
+          for_each = var.enable_internal_tls_certificates ? [true] : []
+          content {
+            name = "internal-certificate"
+            secret {
+              secret_name = kubernetes_manifest.pgadmin_internal_certificate[0].manifest.spec.secretName
+            }
           }
         }
 

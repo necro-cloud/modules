@@ -1,4 +1,4 @@
-## necronizer's cloud observability module
+## [OPTIONAL MODULE] necronizer's cloud observability module
 
 OpenTofu Module to deploy components and dashboards related to Observability on the Kubernetes Cluster.
 These components are being deployed as part of the Observability Module:
@@ -8,6 +8,13 @@ These components are being deployed as part of the Observability Module:
 3. [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) for receiving and processing and export telemetry data to the storage databases.
 4. [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) to generate and expose cluster-level metrics.
 5. [Grafana](https://grafana.com/oss/grafana/?plcmt=oss-nav) for the visual layer for observability.
+
+## Table of Contents
+- [Providers](#providers)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples](#examples)
 
 ## Providers
 
@@ -52,7 +59,7 @@ These components are being deployed as part of the Observability Module:
 | <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with Observability Platform | `string` | n/a | yes |
 | <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with Observability Platform | `string` | `"observability-cloudflare-issuer"` | no |
 | <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with Observability Platform | `string` | n/a | yes |
-| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
+| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | `null` | no |
 | <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying the Observability Stack | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
@@ -69,3 +76,144 @@ These components are being deployed as part of the Observability Module:
 | Name | Description |
 |------|-------------|
 | <a name="output_observability_namespace"></a> [observability\_namespace](#output\_observability\_namespace) | Namespace where all components for observability are deployed |
+
+## Examples
+
+**1. Basic Deployment of the Observability Platform with internal TLS certificates turned off**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+
+  depends_on = [module.helm]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm]
+}
+```
+
+**1. Deployment of the Observability Platform with internal TLS certificates turned on**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Setup a Cluster Issuer for all private TLS certificates
+module "cluster-issuer" {
+  source = "../modules/cluster-issuer"
+
+  depends_on = [module.helm]
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+```

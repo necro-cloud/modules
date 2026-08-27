@@ -15,8 +15,8 @@ resource "helm_release" "traefik" {
 
       providers = {
         kubernetesCRD = {
-          enabled = true
-          allowCrossNamespace = true 
+          enabled             = true
+          allowCrossNamespace = true
         }
         kubernetesIngress = {
           enabled      = true
@@ -48,11 +48,11 @@ resource "helm_release" "traefik" {
 
       logs = {
         general = {
-          level  = "DEBUG"
+          level = "DEBUG"
         }
       }
 
-      
+
       additionalArguments = [
         "--serverstransport.insecureSkipVerify=true"
       ]

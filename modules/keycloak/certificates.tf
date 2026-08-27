@@ -21,12 +21,12 @@ resource "kubernetes_manifest" "database_server_certificate_authority_sync" {
       target = {
         name = var.database_server_certificate_authority_name
         template = {
-          type = "kubernetes.io/tls"
+          type          = "kubernetes.io/tls"
           engineVersion = "v2"
         }
       }
       dataFrom = [
-          {
+        {
           extract = {
             key = "${var.postgres_namespace}/certificates/${var.database_server_certificate_authority_name}"
           }
@@ -66,7 +66,7 @@ resource "kubernetes_manifest" "database_client_certificate_sync" {
       target = {
         name = var.database_client_certificate_name
         template = {
-          type = "kubernetes.io/tls"
+          type          = "kubernetes.io/tls"
           engineVersion = "v2"
         }
       }

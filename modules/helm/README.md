@@ -1,4 +1,4 @@
-## necronizer's cloud required helm charts module
+## [MAIN MODULE] necronizer's cloud required helm charts module
 
 OpenTofu Module to deploy the following required helm charts:
 1. [Cert-Manager](https://cert-manager.io/)
@@ -6,6 +6,13 @@ OpenTofu Module to deploy the following required helm charts:
 3. [Traefik](https://traefik.io/)
 4. [Calico CNI](https://www.tigera.io/project-calico/)
 5. [External Secrets](https://external-secrets.io)
+
+## Table of Contents
+- [Providers](#providers)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples](#examples)
 
 ## Providers
 
@@ -39,3 +46,15 @@ OpenTofu Module to deploy the following required helm charts:
 ## Outputs
 
 No outputs.
+
+## Examples
+
+**1. Deployment of all required Helm Charts**
+
+```terraform
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+```

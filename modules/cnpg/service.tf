@@ -17,9 +17,9 @@ resource "kubernetes_service" "pgadmin4" {
     type = "ClusterIP"
 
     port {
-      port        = 443
-      target_port = 443
-      name        = "https"
+      port        = var.enable_internal_tls_certificates ? 443 : 80
+      target_port = var.enable_internal_tls_certificates ? 443 : 80
+      name        = "ui"
     }
 
     selector = {

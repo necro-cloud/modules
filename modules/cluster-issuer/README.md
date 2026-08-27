@@ -1,10 +1,16 @@
-<!-- BEGIN_TF_DOCS -->
-## necronizer's cloud cluster issuer module
+## [OPTIONAL MODULE] necronizer's cloud cluster issuer module
 
 OpenTofu Module to deploy [Cluster Issuer](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.ClusterIssuer) for internal certificates management on the Kubernetes Cluster
 
 Required Modules to deploy Cluster Issuer for internal certificates:
 1. [Helm](../helm)
+
+## Table of Contents
+- [Providers](#providers)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples](#examples)
 
 ## Providers
 
@@ -29,4 +35,22 @@ Required Modules to deploy Cluster Issuer for internal certificates:
 | Name | Description |
 |------|-------------|
 | <a name="output_cluster-issuer-name"></a> [cluster-issuer-name](#output\_cluster-issuer-name) | Name of the Cluster Issuer to be used for further certificate deployments |
-<!-- END_TF_DOCS -->
+
+## Examples
+
+**1. Deployment of the Cluster Issuer for Internal TLS Certificates**
+
+```terraform
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Setup a Cluster Issuer for all private TLS certificates
+module "cluster-issuer" {
+  source = "../modules/cluster-issuer"
+
+  depends_on = [module.helm]
+}
+```

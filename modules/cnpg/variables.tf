@@ -27,13 +27,25 @@ variable "namespace" {
 variable "garage_namespace" {
   description = "Namespace for the Garage Deployment for storing PITR Backups"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_pitr_backups ? var.garage_namespace == null ? false : true : true
+    error_message = "If PITR backups is enabled, garage namespace is a required variable to be passed"
+  }
 }
 
 variable "observability_namespace" {
   description = "Namespace where all components for observability are deployed"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_observability ? var.observability_namespace == null ? false : true : true
+    error_message = "If Observability is enabled, observability namespace is a required variable to be passed"
+  }
 }
 
 # --------------- CLUSTER SECRET STORE VARIABLES --------------- #
@@ -47,13 +59,20 @@ variable "cluster_secret_store_name" {
 variable "garage_certificate_authority" {
   description = "Name of the Certificate Authority associated with the Garage Storage Solution"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
 }
 
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
+    error_message = "If Internal TLS Certificates is enabled, cluster issuer name is a required variable to be passed"
+  }
 }
 
 variable "server_certificate_authority_name" {
@@ -95,13 +114,25 @@ variable "client_streaming_replica_certificate_name" {
 variable "cloudflare_token" {
   description = "Token for generating Ingress Certificates to be associated with PGAdmin"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_ui ? var.cloudflare_token == null ? false : true : true
+    error_message = "If UI deployment is enabled, cloudflare token is a required variable to be passed"
+  }
 }
 
 variable "cloudflare_email" {
   description = "Email for generating Ingress Certificates to be associated with PGAdmin"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_ui ? var.cloudflare_email == null ? false : true : true
+    error_message = "If UI deployment is enabled, cloudflare email is a required variable to be passed"
+  }
 }
 
 variable "cloudflare_issuer_name" {
@@ -131,6 +162,13 @@ variable "host_name" {
 variable "domain" {
   description = "Domain for which Ingress Certificate is to be generated for"
   type        = string
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_ui ? var.domain == null ? false : true : true
+    error_message = "If UI deployment is enabled, domain is a required variable to be passed"
+  }
 }
 
 # --------------- USER CONFIGURATION VARIABLES --------------- #
@@ -157,7 +195,13 @@ variable "clients" {
 variable "garage_configuration" {
   description = "Garage Configuration for storing PITR Backups"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_pitr_backups ? var.garage_configuration == null ? false : true : true
+    error_message = "If PITR backups is enabled, garage configuration is a required variable to be passed"
+  }
 }
 
 variable "cluster_name" {
@@ -186,7 +230,13 @@ variable "cluster_size" {
 variable "backup_bucket_name" {
   description = "Name of the bucket for storing PITR Backups in Garage"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_pitr_backups ? var.backup_bucket_name == null ? false : true : true
+    error_message = "If PITR backups is enabled, backup bucket name is a required variable to be passed"
+  }
 }
 
 # --------------- PGADMIN DEPLOYMENT VARIABLES --------------- #

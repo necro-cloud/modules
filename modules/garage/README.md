@@ -1,4 +1,4 @@
-## necronizer's cloud garage module
+## [OPTIONAL MODULE] necronizer's cloud garage module
 
 OpenTofu Module to deploy [Garage](https://garagehq.deuxfleurs.fr/) Object Storage on the Kubernetes Cluster
 
@@ -6,6 +6,13 @@ Required Modules to deploy Garage Object Storage:
 1. [Cluster Issuer](../cluster-issuer) (Optional if setting `enable_internal_tls_certificates` as `false`)
 2. [Observability](../observability) (Optional if setting `enable_observability` as `false`)
 3. [OpenBao](../openbao)
+
+## Table of Contents
+- [Providers](#providers)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples](#examples)
 
 ## Providers
 
@@ -74,7 +81,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with Garage Storage Solution | `string` | `"garage-cloudflare-issuer"` | no |
 | <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with Garage Storage Solution | `string` | n/a | yes |
-| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
+| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | `null` | no |
 | <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the Garage Cluster | `string` | `"small"` | no |
 | <a name="input_configurator_image"></a> [configurator\_image](#input\_configurator\_image) | Docker image to be used for deployment of Garage Configurator | `string` | `"garage-configurator"` | no |
@@ -96,7 +103,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_kubernetes_api_port"></a> [kubernetes\_api\_port](#input\_kubernetes\_api\_port) | Port for the Kubernetes API | `number` | n/a | yes |
 | <a name="input_kubernetes_api_protocol"></a> [kubernetes\_api\_protocol](#input\_kubernetes\_api\_protocol) | Protocol for the Kubernetes API | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Garage Storage Solution | `string` | `"garage"` | no |
-| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | n/a | yes |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | `null` | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Garage Storage Solution | `string` | `"cloud"` | no |
 | <a name="input_proxy_image"></a> [proxy\_image](#input\_proxy\_image) | Docker image to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"nginx"` | no |
 | <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |
@@ -118,3 +125,386 @@ Required Modules to deploy Garage Object Storage:
 |------|-------------|
 | <a name="output_garage_internal_certificate_secret"></a> [garage\_internal\_certificate\_secret](#output\_garage\_internal\_certificate\_secret) | Secret name where the Internal Certificate for Garage is stored in |
 | <a name="output_garage_namespace"></a> [garage\_namespace](#output\_garage\_namespace) | Namespace where Garage Storage Solution is deployed in |
+
+## Examples
+
+**1. Basic Deployment of the Garage S3 Object Storage Platform with internal TLS certificates, observability and UI Deployment turned off (S3 API will be still available)**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = false
+  enable_observability             = false
+
+  depends_on = [module.helm]
+}
+
+# Garage Deployment for an S3 compatible object storage solution
+module "garage" {
+  source = "../modules/garage"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Granting required namespaces access to the Garage cluster
+  access_namespaces = "postgres,ferret"
+
+  // Configuring required configurations on the Garage Cluster
+  required_buckets     = var.garage_required_buckets
+  required_access_keys = var.garage_required_access_keys
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = false
+  enable_observability             = false
+
+  depends_on = [module.openbao]
+}
+```
+
+**2. Deployment of Garage S3 Object Storage Platform with UI deployment enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = false
+
+  depends_on = [module.helm]
+}
+
+# Garage Deployment for an S3 compatible object storage solution
+module "garage" {
+  source = "../modules/garage"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Granting required namespaces access to the Garage cluster
+  access_namespaces = "postgres,ferret"
+
+  // Configuring required configurations on the Garage Cluster
+  required_buckets     = var.garage_required_buckets
+  required_access_keys = var.garage_required_access_keys
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = false
+
+  depends_on = [module.openbao]
+}
+```
+
+**3. Deployment of Garage S3 Object Storage Platform with Observability Enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+
+  depends_on = [module.helm]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm]
+}
+
+# Garage Deployment for an S3 compatible object storage solution
+module "garage" {
+  source = "../modules/garage"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Granting required namespaces access to the Garage cluster
+  access_namespaces = "postgres,ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Configuring required configurations on the Garage Cluster
+  required_buckets     = var.garage_required_buckets
+  required_access_keys = var.garage_required_access_keys
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.observability, module.openbao]
+}
+```
+
+**4. Deployment of Garage S3 Object Storage Platform with Internal TLS Certificates Enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Setup a Cluster Issuer for all private TLS certificates
+module "cluster-issuer" {
+  source = "../modules/cluster-issuer"
+
+  depends_on = [module.helm]
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# Garage Deployment for an S3 compatible object storage solution
+module "garage" {
+  source = "../modules/garage"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Granting required namespaces access to the Garage cluster
+  access_namespaces = "postgres,ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Configuring required configurations on the Garage Cluster
+  required_buckets     = var.garage_required_buckets
+  required_access_keys = var.garage_required_access_keys
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.observability, module.openbao]
+}
+```

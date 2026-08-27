@@ -13,12 +13,12 @@ The following is required to start using this repository:
 # Usage Instruction
 
 The following modules have been implemented and their usage instructions written in README:
-1. [Helm](modules/helm)
-2. [Cluster Issuer for internal certificates](modules/cluster-issuer)
-3. [Observability](modules/observability)
-4. [OpenBao Secrets Management](modules/openbao)
-5. [Garage Storage](modules/garage)
-6. [Cloudnative PG PostgreSQL Database](modules/cnpg)
-7. [FerretDB (MongoDB) Database](modules/ferretdb)
-8. [Valkey In Memory Database](modules/valkey)
-9. [Keycloak Identity Management](modules/keycloak)
+1. [MAIN MODULE] [Helm](modules/helm)
+2. [OPTIONAL MODULE] [Cluster Issuer for internal certificates](modules/cluster-issuer)
+3. [OPTIONAL MODULE] [Observability](modules/observability)
+4. [MAIN MODULE] [OpenBao Secrets Management](modules/openbao)
+5. [OPTIONAL MODULE] [Garage Storage](modules/garage)
+6. [OPTIONAL MODULE] [Cloudnative PG PostgreSQL Database](modules/cnpg)
+7. [OPTIONAL MODULE] [FerretDB (MongoDB) Database](modules/ferretdb)
+8. [OPTIONAL MODULE] [Valkey In Memory Database](modules/valkey)
+9. [OPTIONAL MODULE] [Keycloak Identity Management](modules/keycloak)

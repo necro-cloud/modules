@@ -33,7 +33,7 @@ resource "helm_release" "calico" {
       value = "Calico"
     },
     {
-      name = "installation.calicoNetwork.mtu"
+      name  = "installation.calicoNetwork.mtu"
       value = "1440"
     },
     {
@@ -43,6 +43,6 @@ resource "helm_release" "calico" {
     }
   ]
 
-  wait = true
+  wait    = true
   timeout = 1800
 }

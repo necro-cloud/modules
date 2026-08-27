@@ -84,7 +84,7 @@ resource "helm_release" "grafana" {
           protocol  = "https"
           cert_file = "/etc/grafana/ssl/tls.crt"
           cert_key  = "/etc/grafana/ssl/tls.key"
-        } : {
+          } : {
           protocol = "http"
         }
       }

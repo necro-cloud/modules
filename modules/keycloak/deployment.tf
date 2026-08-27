@@ -37,7 +37,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         annotations = var.enable_observability ? {
           "prometheus.io/scrape" = "true"
           "prometheus.io/path"   = "/metrics"
-          "prometheus.io/port"   = "9000" 
+          "prometheus.io/port"   = "9000"
           "prometheus.io/scheme" = "https"
         } : {}
       }
@@ -51,8 +51,8 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
         dynamic "init_container" {
           for_each = var.database_certificates_required ? [true] : []
           content {
-            name = "certificate-converter"
-            image = "alpine/openssl:3.5.5"
+            name    = "certificate-converter"
+            image   = "alpine/openssl:3.5.5"
             command = ["/bin/sh", "-c"]
 
             // User 1000 does not
@@ -78,7 +78,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
             volume_mount {
               name       = "database-der-key"
               mount_path = "/mnt/der"
-            }          
+            }
           }
         }
 
@@ -148,17 +148,17 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           env {
-            name = "KC_METRICS_ENABLED"
+            name  = "KC_METRICS_ENABLED"
             value = "true"
           }
 
           env {
-            name = "KC_EVENT_METRICS_USER_ENABLED"
+            name  = "KC_EVENT_METRICS_USER_ENABLED"
             value = "true"
           }
 
           env {
-            name = "KC_EVENT_METRICS_USER_TAGS"
+            name  = "KC_EVENT_METRICS_USER_TAGS"
             value = "realm,idp,clientId"
           }
 
@@ -183,7 +183,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           env {
-            name = "KC_DB_URL"
+            name  = "KC_DB_URL"
             value = var.database_certificates_required ? local.database_url_tls : local.database_url_non_tls
           }
 
@@ -196,7 +196,7 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           dynamic "env" {
-            for_each = var.enable_internal_tls_certificates ? []: [true]
+            for_each = var.enable_internal_tls_certificates ? [] : [true]
             content {
               name  = "KC_HTTP_ENABLED"
               value = "true"
@@ -383,6 +383,6 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
     kubernetes_manifest.database_client_certificate_sync,
     kubernetes_manifest.database_server_certificate_authority_sync,
     kubernetes_manifest.realm_secrets_sync,
-    kubernetes_manifest.keycloak_credentials_sync  
+    kubernetes_manifest.keycloak_credentials_sync
   ]
 }

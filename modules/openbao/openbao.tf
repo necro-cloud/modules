@@ -26,7 +26,7 @@ resource "helm_release" "openbao" {
           "prometheus.io/scrape" = "true"
           "prometheus.io/port"   = "8200"
           "prometheus.io/path"   = "/v1/sys/metrics"
-          "prometheus.io/scheme" = "https"
+          "prometheus.io/scheme" = var.enable_internal_tls_certificates ? "https" : "http"
         } : {}
 
         // Resource Requests and Limits

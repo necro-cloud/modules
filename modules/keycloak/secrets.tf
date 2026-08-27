@@ -20,7 +20,7 @@ resource "kubernetes_manifest" "database_credentials_sync" {
       target = {
         name = var.database_credentials
         template = {
-          type = "Opaque"
+          type          = "Opaque"
           engineVersion = "v2"
         }
       }
