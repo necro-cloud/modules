@@ -9,6 +9,13 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 4. [Observability](../observability) (Optional if setting `enable_observability` as `false`)
 5. [OpenBao](../openbao)
 
+## Table of Contents
+- [Providers](#providers)
+- [Resources](#resources)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples](#examples)
+
 ## Providers
 
 | Name | Version |
@@ -22,7 +29,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | [kubernetes_config_map.nginx_conf](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_config_map.pgadmin_servers_configuration](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_deployment.pgadmin](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
-| [kubernetes_ingress_v1.api_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
+| [kubernetes_ingress_v1.ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
 | [kubernetes_manifest.barman_object_store](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.barman_object_store_without_tls](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.client_certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -67,28 +74,28 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 |------|-------------|------|---------|:--------:|
 | <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying PostgreSQL Database | `string` | `"postgres"` | no |
-| <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the bucket for storing PITR Backups in Garage | `string` | n/a | yes |
+| <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the bucket for storing PITR Backups in Garage | `string` | `null` | no |
 | <a name="input_client_certificate_authority_name"></a> [client\_certificate\_authority\_name](#input\_client\_certificate\_authority\_name) | Name of the Certificate Authority to be used with PostgreSQL Client | `string` | `"postgresql-client-certificate-authority"` | no |
 | <a name="input_client_issuer_name"></a> [client\_issuer\_name](#input\_client\_issuer\_name) | Name of the Issuer to be used with PostgreSQL Client | `string` | `"postgresql-client-issuer"` | no |
 | <a name="input_client_streaming_replica_certificate_name"></a> [client\_streaming\_replica\_certificate\_name](#input\_client\_streaming\_replica\_certificate\_name) | Name of the Certificate to be used with PostgreSQL Streaming Replica Client | `string` | `"postgresql-streaming-replica-client-certificate"` | no |
 | <a name="input_clients"></a> [clients](#input\_clients) | Object List of clients who need databases and users to be configured for | <pre>list(object({<br/>    namespace          = string<br/>    user               = string<br/>    database           = string<br/>    derRequired        = bool<br/>    privateKeyEncoding = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes |
+| <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with PGAdmin | `string` | `null` | no |
 | <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with PGAdmin | `string` | `"cnpg-cloudflare-issuer"` | no |
-| <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with PGAdmin | `string` | n/a | yes |
-| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | n/a | yes |
+| <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with PGAdmin | `string` | `null` | no |
+| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | `null` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the PostgreSQL Database Cluster to be created | `string` | `"postgresql-cluster"` | no |
 | <a name="input_cluster_postgresql_version"></a> [cluster\_postgresql\_version](#input\_cluster\_postgresql\_version) | Version of PostgreSQL Database to use and deploy | `number` | `17` | no |
 | <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the PostgreSQL Cluster | `string` | `"small"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying PostgreSQL Database | `string` | `"India"` | no |
-| <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
+| <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | `null` | no |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_pitr_backups"></a> [enable\_pitr\_backups](#input\_enable\_pitr\_backups) | Enable or disable PITR Backups to the Garage Instance for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the PostgreSQL Cluster | `bool` | `true` | no |
-| <a name="input_garage_certificate_authority"></a> [garage\_certificate\_authority](#input\_garage\_certificate\_authority) | Name of the Certificate Authority associated with the Garage Storage Solution | `string` | n/a | yes |
-| <a name="input_garage_configuration"></a> [garage\_configuration](#input\_garage\_configuration) | Garage Configuration for storing PITR Backups | `string` | n/a | yes |
-| <a name="input_garage_namespace"></a> [garage\_namespace](#input\_garage\_namespace) | Namespace for the Garage Deployment for storing PITR Backups | `string` | n/a | yes |
+| <a name="input_garage_certificate_authority"></a> [garage\_certificate\_authority](#input\_garage\_certificate\_authority) | Name of the Certificate Authority associated with the Garage Storage Solution | `string` | `null` | no |
+| <a name="input_garage_configuration"></a> [garage\_configuration](#input\_garage\_configuration) | Garage Configuration for storing PITR Backups | `string` | `null` | no |
+| <a name="input_garage_namespace"></a> [garage\_namespace](#input\_garage\_namespace) | Namespace for the Garage Deployment for storing PITR Backups | `string` | `null` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"sql"` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of PGAdmin | `string` | `"pgadmin4"` | no |
 | <a name="input_ingress_certificate_name"></a> [ingress\_certificate\_name](#input\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with PGAdmin | `string` | `"pgadmin-ingress-certificate"` | no |
@@ -96,7 +103,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="input_kubernetes_api_port"></a> [kubernetes\_api\_port](#input\_kubernetes\_api\_port) | Port for the Kubernetes API | `number` | n/a | yes |
 | <a name="input_kubernetes_api_protocol"></a> [kubernetes\_api\_protocol](#input\_kubernetes\_api\_protocol) | Protocol for the Kubernetes API | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying PostgreSQL Database | `string` | `"postgres"` | no |
-| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | n/a | yes |
+| <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | `null` | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying PostgreSQL Database | `string` | `"cloud"` | no |
 | <a name="input_proxy_image"></a> [proxy\_image](#input\_proxy\_image) | Docker image to be used for deployment of PGAdmin NGINX Proxy for TLS | `string` | `"nginx"` | no |
 | <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of PGAdmin NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |
@@ -114,3 +121,572 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the CNPG PostgreSQL Cluster |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | Namespace where the PostgreSQL Database is deployed in |
 | <a name="output_server-certificate-authority"></a> [server-certificate-authority](#output\_server-certificate-authority) | Certificate Authority being used with PostgreSQL Database |
+
+## Examples
+
+**1. Basic Deployment of the Garage S3 Object Storage Platform with internal TLS certificates, observability, PITR Backups and UI Deployment turned off**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = false
+  enable_observability             = false
+
+  depends_on = [module.helm]
+}
+
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "../modules/cnpg"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = false
+  enable_pitr_backups              = false
+  enable_observability             = false
+
+  // Dependency on Garage Deployment  
+  depends_on = [ module.helm, module.openbao ]
+}
+```
+
+**2. Deployment of PostgreSQL SQL Database Platform with UI deployment enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = false
+
+  depends_on = [module.helm]
+}
+
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "../modules/cnpg"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
+
+  // Certificate details for internal and ingress(pgadmin) certificates
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_pitr_backups              = false
+  enable_observability             = false
+
+  // Dependency on Garage Deployment
+  depends_on = [ module.helm, module.openbao ]
+}
+```
+
+**3. Deployment of PostgreSQL SQL Database Platform with Observability enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+
+  depends_on = [module.helm]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm]
+}
+
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "../modules/cnpg"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
+
+  // Certificate details for internal and ingress(pgadmin) certificates
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = false
+  enable_ui                        = true
+  enable_pitr_backups              = false
+  enable_observability             = true
+
+  // Dependency on Garage Deployment
+  depends_on = [ module.helm, module.openbao, module.observability ]
+}
+```
+
+**4. Deployment of PostgreSQL SQL Database Platform with Internal TLS Certificates enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Setup a Cluster Issuer for all private TLS certificates
+module "cluster-issuer" {
+  source = "../modules/cluster-issuer"
+
+  depends_on = [module.helm]
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "../modules/cnpg"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
+
+  // Certificate details for internal and ingress(pgadmin) certificates
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_pitr_backups              = false
+  enable_observability             = true
+
+  // Dependency on Garage Deployment  
+  depends_on = [ module.helm, module.openbao, module.observability, module.cluster-issuer ]
+}
+```
+
+**5. Deployment of PostgreSQL SQL Database Platform with PITR Backups enabled**
+
+```terraform
+# Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
+data "kubernetes_endpoints_v1" "kubernetes_api_endpoint" {
+  metadata {
+    name      = "kubernetes"
+    namespace = "default"
+
+  }
+}
+
+# Deploy all required helm charts for deploying the infrastructure
+module "helm" {
+  source               = "../modules/helm"
+  server_node_selector = "cloud"
+}
+
+# Setup a Cluster Issuer for all private TLS certificates
+module "cluster-issuer" {
+  source = "../modules/cluster-issuer"
+
+  depends_on = [module.helm]
+}
+
+# Complete Observability Stack Deployment
+module "observability" {
+  source = "../modules/observability"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# OpenBao Secrets Management Solution deployment
+module "openbao" {
+  source = "../modules/openbao"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Granting required namespaces access to the OpenBao cluster
+  access_namespaces = "external-secrets,cloud"
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.helm, module.cluster-issuer]
+}
+
+# Garage Deployment for an S3 compatible object storage solution
+module "garage" {
+  source = "../modules/garage"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+
+  // Granting required namespaces access to the Garage cluster
+  access_namespaces = "postgres,ferret"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Configuring required configurations on the Garage Cluster
+  required_buckets     = var.garage_required_buckets
+  required_access_keys = var.garage_required_access_keys
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+
+  depends_on = [module.observability, module.openbao]
+}
+
+# Cloudnative PG Deployment for PostgreSQL Database Solution
+module "cnpg" {
+  source = "../modules/cnpg"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Garage Cluster Details for configuration of PITR Backups
+  garage_certificate_authority = module.garage.garage_internal_certificate_secret
+  garage_namespace             = module.garage.garage_namespace
+  garage_configuration         = "walbackups"
+  backup_bucket_name           = "postgresql"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Required client details to allow access and generate credentials and certificates for
+  clients = [
+    {
+      namespace          = "cloud"
+      user               = "cloud"
+      database           = "cloud"
+      derRequired        = false
+      privateKeyEncoding = "PKCS1"
+    }
+  ]
+
+  // Certificate details for internal and ingress(pgadmin) certificates
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+
+  // Whitelisting Kubernetes API Endpoints in the Network Policy
+  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
+  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
+  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_pitr_backups              = true
+  enable_observability             = true
+
+  // Dependency on Garage Deployment  
+  depends_on = [ module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage ]
+}
+```

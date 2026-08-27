@@ -1,8 +1,8 @@
 // Kubernetes Ingress for PGAdmin Access
-resource "kubernetes_ingress_v1" "api_ingress" {
+resource "kubernetes_ingress_v1" "ingress" {
   count = var.enable_ui ? 1 : 0
   metadata {
-    name      = "api-ingress"
+    name      = "ui-ingress"
     namespace = kubernetes_namespace.namespace.metadata[0].name
     labels = {
       app       = var.app_name
@@ -34,7 +34,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
             service {
               name = kubernetes_service.pgadmin4[0].metadata[0].name
               port {
-                name = "https"
+                name = "ui"
               }
             }
           }
