@@ -36,7 +36,7 @@ module "observability" {
   // Enabling and disabling features
   enable_internal_tls_certificates = true
 
-  depends_on = [module.cluster-issuer]
+  depends_on = [module.helm, module.cluster-issuer]
 }
 
 # OpenBao Secrets Management Solution deployment
@@ -68,7 +68,7 @@ module "openbao" {
   enable_ui                        = true
   enable_observability             = true
 
-  depends_on = [module.cluster-issuer]
+  depends_on = [module.helm, module.cluster-issuer]
 }
 
 # Garage Deployment for an S3 compatible object storage solution
@@ -157,8 +157,8 @@ module "cnpg" {
   enable_pitr_backups              = true
   enable_observability             = true
 
-  // Dependency on Garage Deployment  
-  depends_on = [module.garage, module.observability, module.openbao]
+  // Dependency on Garage Deployment
+  depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]
 }
 
 # FerretDB Deployment for MongoDB Database Solution
@@ -205,8 +205,8 @@ module "ferretdb" {
   enable_pitr_backups              = true
   enable_observability             = true
 
-  // Dependency on Garage Deployment  
-  depends_on = [module.garage, module.observability, module.openbao]
+  // Dependency on Garage Deployment
+  depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]
 }
 
 # Keycloak Cluster Deployment for Identity Solution
@@ -223,7 +223,7 @@ module "keycloak" {
   cluster_issuer_name                        = module.cluster-issuer.cluster-issuer-name
   postgres_namespace                         = module.cnpg.namespace
   cluster_name                               = module.cnpg.cluster_name
-  database_certificates_required             = !(module.cnpg.server-certificate-authority == "")
+  database_certificates_required             = true
   database_server_certificate_authority_name = module.cnpg.server-certificate-authority
   database_client_certificate_name           = "postgresql-keycloak-client-certificate"
   database_credentials                       = "credentials-keycloak"

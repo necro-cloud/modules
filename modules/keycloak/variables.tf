@@ -33,7 +33,13 @@ variable "postgres_namespace" {
 variable "observability_namespace" {
   description = "Namespace where all components for observability are deployed"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_observability ? var.observability_namespace == null ? false : true : true
+    error_message = "If Observability is enabled, observability namespace is a required variable to be passed"
+  }
 }
 
 # --------------- CLUSTER SECRET STORE VARIABLES --------------- #
@@ -59,20 +65,28 @@ variable "database_certificates_required" {
 variable "database_server_certificate_authority_name" {
   description = "Server Certificate Authority being used for the database"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
 }
 
 variable "database_client_certificate_name" {
   description = "Client Certificate to be used for Keycloak User"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
 }
 
 # --------------- CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
   description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
   type        = string
-  nullable    = false
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.enable_internal_tls_certificates ? var.cluster_issuer_name == null ? false : true : true
+    error_message = "If Internal TLS Certificates is enabled, cluster issuer name is a required variable to be passed"
+  }
 }
 
 variable "certificate_authority_name" {

@@ -105,7 +105,7 @@ Required Modules to deploy Valkey In Memory Database:
 
 ## Examples
 
-**1. Basic Deployment of the Valkey In-Memory Database Administration with internal TLS certificates, observability and UI Deployment turned off**
+**1. Basic Deployment of the Valkey In-Memory Database with internal TLS certificates, observability and UI Deployment turned off**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -168,7 +168,7 @@ module "valkey" {
 }
 ```
 
-**2. Deployment of Valkey In-Memory Database Administration with UI deployment enabled**
+**2. Deployment of Valkey In-Memory Database with UI deployment enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -241,7 +241,7 @@ module "valkey" {
 }
 ```
 
-**3. Deployment of Valkey In-Memory Database Administration with Observability Enabled**
+**3. Deployment of Valkey In-Memory Database with Observability Enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
@@ -338,7 +338,7 @@ module "valkey" {
 }
 ```
 
-**4. Deployment of Valkey In-Memory Database Administration with Internal TLS Certificates Enabled**
+**4. Deployment of Valkey In-Memory Database with Internal TLS Certificates Enabled**
 
 ```terraform
 # Fetch the Kubernetes API Endpoint to be used for whitelisting by other modules
