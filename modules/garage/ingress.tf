@@ -12,7 +12,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_rewrite.manifest.metadata.name}@kubernetescrd",
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
-      "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
+      "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.api_transport.manifest.metadata.name}@kubernetescrd"
       "traefik.ingress.kubernetes.io/router.tls"               = "true"
       "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
@@ -45,7 +45,7 @@ resource "kubernetes_ingress_v1" "api_ingress" {
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,
-    kubernetes_manifest.transport,
+    kubernetes_manifest.api_transport,
   ]
 }
 
@@ -64,7 +64,7 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_rewrite.manifest.metadata.name}@kubernetescrd",
         "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.middleware_buffering.manifest.metadata.name}@kubernetescrd"
       ])
-      "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.transport.manifest.metadata.name}@kubernetescrd"
+      "traefik.ingress.kubernetes.io/service.serverstransport" = "${kubernetes_namespace.namespace.metadata[0].name}-${kubernetes_manifest.ui_transport.manifest.metadata.name}@kubernetescrd"
       "traefik.ingress.kubernetes.io/router.tls"               = "true"
       "traefik.ingress.kubernetes.io/router.entrypoints"       = "websecure"
     }
@@ -97,6 +97,6 @@ resource "kubernetes_ingress_v1" "ui_ingress" {
   depends_on = [
     kubernetes_manifest.middleware_rewrite,
     kubernetes_manifest.middleware_buffering,
-    kubernetes_manifest.transport,
+    kubernetes_manifest.ui_transport,
   ]
 }
