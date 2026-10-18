@@ -167,7 +167,7 @@ variable "image" {
 variable "tag" {
   description = "Docker tag to be used for deployment of Garage Storage Solution"
   type        = string
-  default     = "v2.0.0"
+  default     = "v2.4.1"
 }
 
 variable "proxy_repository" {
@@ -203,7 +203,7 @@ variable "ui_image" {
 variable "ui_tag" {
   description = "Docker tag to be used for deployment of Garage UI"
   type        = string
-  default     = "v0.2.0"
+  default     = "v0.14.0"
 }
 
 # --------------- REPLICATION VARIABLES --------------- #
@@ -229,7 +229,7 @@ variable "configurator_image" {
 variable "configurator_tag" {
   description = "Docker tag to be used for deployment of Garage Configurator"
   type        = string
-  default     = "0.8.10"
+  default     = "0.GDO-1.11"
 }
 
 variable "garage_region" {
