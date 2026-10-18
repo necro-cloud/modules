@@ -38,6 +38,7 @@ Required Modules to deploy Garage Object Storage:
 | [kubernetes_manifest.admin_password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.admin_password_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.api_ingress_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.api_transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.garage_rpc_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.garage_rpc_secret_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -51,11 +52,11 @@ Required Modules to deploy Garage Object Storage:
 | [kubernetes_manifest.push_garage_rpc_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_ui_admin_password](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
-| [kubernetes_manifest.transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_admin_password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_admin_password_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_ingress_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.ui_transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace.namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_network_policy.garage_network_access_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_pod_disruption_budget_v1.garage_pdb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/pod_disruption_budget_v1) | resource |
@@ -86,7 +87,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the Garage Cluster | `string` | `"small"` | no |
 | <a name="input_configurator_image"></a> [configurator\_image](#input\_configurator\_image) | Docker image to be used for deployment of Garage Configurator | `string` | `"garage-configurator"` | no |
 | <a name="input_configurator_repository"></a> [configurator\_repository](#input\_configurator\_repository) | Repository to be used for deployment of Garage Configurator | `string` | `"quay.io/necronizerslab"` | no |
-| <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of Garage Configurator | `string` | `"0.8.10"` | no |
+| <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of Garage Configurator | `string` | `"0.GDO-1.11"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying Garage Storage Solution | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the Garage Cluster | `bool` | `true` | no |
@@ -112,12 +113,12 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_required_access_keys"></a> [required\_access\_keys](#input\_required\_access\_keys) | Access Keys required to be configured within the Garage Cluster | <pre>list(object({<br/>    name         = string<br/>    createBucket = bool<br/>    permissions = list(object({<br/>      bucket = string<br/>      owner  = bool<br/>      read   = bool<br/>      write  = bool<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_required_buckets"></a> [required\_buckets](#input\_required\_buckets) | Buckets to deploy in the Garage Cluster | `list(string)` | n/a | yes |
 | <a name="input_required_storage"></a> [required\_storage](#input\_required\_storage) | Size of the disks to configure Garage Storage with | `number` | `5` | no |
-| <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Garage Storage Solution | `string` | `"v2.0.0"` | no |
+| <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Garage Storage Solution | `string` | `"v2.4.1"` | no |
 | <a name="input_ui_image"></a> [ui\_image](#input\_ui\_image) | Docker image to be used for deployment of Garage UI | `string` | `"garage-ui"` | no |
 | <a name="input_ui_ingress_certificate_name"></a> [ui\_ingress\_certificate\_name](#input\_ui\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Garage UI | `string` | `"garage-ui-ingress-certificate"` | no |
 | <a name="input_ui_internal_certificate_name"></a> [ui\_internal\_certificate\_name](#input\_ui\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with the UI component of Garage Storage Solution | `string` | `"garage-ui-internal-certificate"` | no |
 | <a name="input_ui_repository"></a> [ui\_repository](#input\_ui\_repository) | Repository to be used for deployment of Garage UI | `string` | `"docker.io/noooste"` | no |
-| <a name="input_ui_tag"></a> [ui\_tag](#input\_ui\_tag) | Docker tag to be used for deployment of Garage UI | `string` | `"v0.2.0"` | no |
+| <a name="input_ui_tag"></a> [ui\_tag](#input\_ui\_tag) | Docker tag to be used for deployment of Garage UI | `string` | `"v0.14.0"` | no |
 
 ## Outputs
 
