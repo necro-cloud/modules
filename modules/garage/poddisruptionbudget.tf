@@ -9,7 +9,7 @@ resource "kubernetes_pod_disruption_budget_v1" "garage_pdb" {
   }
 
   spec {
-    min_available = 2
+    min_available = local.size_lookup[var.cluster_size] - 1
     selector {
       match_labels = {
         app       = var.app_name
