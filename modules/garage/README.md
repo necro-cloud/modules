@@ -113,6 +113,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_required_access_keys"></a> [required\_access\_keys](#input\_required\_access\_keys) | Access Keys required to be configured within the Garage Cluster | <pre>list(object({<br/>    name         = string<br/>    createBucket = bool<br/>    permissions = list(object({<br/>      bucket = string<br/>      owner  = bool<br/>      read   = bool<br/>      write  = bool<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_required_buckets"></a> [required\_buckets](#input\_required\_buckets) | Buckets to deploy in the Garage Cluster | `list(string)` | n/a | yes |
 | <a name="input_required_storage"></a> [required\_storage](#input\_required\_storage) | Size of the disks to configure Garage Storage with | `number` | `5` | no |
+| <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage class to be used for the deployment of Garage Storage Solution | `string` | `"local-path"` | no |
 | <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Garage Storage Solution | `string` | `"v2.4.1"` | no |
 | <a name="input_ui_image"></a> [ui\_image](#input\_ui\_image) | Docker image to be used for deployment of Garage UI | `string` | `"garage-ui"` | no |
 | <a name="input_ui_ingress_certificate_name"></a> [ui\_ingress\_certificate\_name](#input\_ui\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Garage UI | `string` | `"garage-ui-ingress-certificate"` | no |
