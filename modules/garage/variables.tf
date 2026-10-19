@@ -146,6 +146,12 @@ variable "cluster_size" {
   }
 }
 
+variable "storage_class" {
+  description = "Storage class to be used for the deployment of Garage Storage Solution"
+  type        = string
+  default     = "local-path"
+}
+
 variable "required_storage" {
   description = "Size of the disks to configure Garage Storage with"
   type        = number

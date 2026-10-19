@@ -227,7 +227,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         name = "garage-data"
       }
       spec {
-        storage_class_name = "local-path"
+        storage_class_name = var.storage_class
         access_modes       = ["ReadWriteOnce"]
         resources {
           requests = {
@@ -242,7 +242,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         name = "garage-meta"
       }
       spec {
-        storage_class_name = "local-path"
+        storage_class_name = var.storage_class
         access_modes       = ["ReadWriteOnce"]
         resources {
           requests = {
