@@ -75,28 +75,28 @@ Required Modules to deploy Garage Object Storage:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_namespaces"></a> [access\_namespaces](#input\_access\_namespaces) | Namespaces that require internal access to Garage | `string` | `"postgres"` | no |
-| <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
+| <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used for generating certificates for the Garage Storage Solution, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_api_ingress_certificate_name"></a> [api\_ingress\_certificate\_name](#input\_api\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Garage API | `string` | `"garage-api-ingress-certificate"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying Garage Storage Solution | `string` | `"garage"` | no |
 | <a name="input_certificate_authority_name"></a> [certificate\_authority\_name](#input\_certificate\_authority\_name) | Name of the Certificate Authority to be associated with Garage Storage Solution | `string` | `"garage-certificate-authority"` | no |
 | <a name="input_cloudflare_email"></a> [cloudflare\_email](#input\_cloudflare\_email) | Email for generating Ingress Certificates to be associated with Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_cloudflare_issuer_name"></a> [cloudflare\_issuer\_name](#input\_cloudflare\_issuer\_name) | Name of the Cloudflare Issuer to be associated with Garage Storage Solution | `string` | `"garage-cloudflare-issuer"` | no |
 | <a name="input_cloudflare_token"></a> [cloudflare\_token](#input\_cloudflare\_token) | Token for generating Ingress Certificates to be associated with Garage Storage Solution | `string` | n/a | yes |
-| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates | `string` | `null` | no |
-| <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao | `string` | n/a | yes |
+| <a name="input_cluster_issuer_name"></a> [cluster\_issuer\_name](#input\_cluster\_issuer\_name) | Name for the Cluster Issuer to be used to generate internal self signed certificates for the Garage Storage Solution | `string` | `null` | no |
+| <a name="input_cluster_secret_store_name"></a> [cluster\_secret\_store\_name](#input\_cluster\_secret\_store\_name) | Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao for the Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Number of pods to deploy for the Garage Cluster | `string` | `"small"` | no |
 | <a name="input_configurator_image"></a> [configurator\_image](#input\_configurator\_image) | Docker image to be used for deployment of Garage Configurator | `string` | `"garage-configurator"` | no |
 | <a name="input_configurator_repository"></a> [configurator\_repository](#input\_configurator\_repository) | Repository to be used for deployment of Garage Configurator | `string` | `"quay.io/necronizerslab"` | no |
 | <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of Garage Configurator | `string` | `"0.GDO-1.11"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying Garage Storage Solution | `string` | `"India"` | no |
-| <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
+| <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for the Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the Garage Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the Garage Cluster | `bool` | `true` | no |
-| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the Garage Cluster | `bool` | `true` | no |
+| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of UI component for the Garage Storage Solution | `bool` | `true` | no |
 | <a name="input_garage_cluster_name"></a> [garage\_cluster\_name](#input\_garage\_cluster\_name) | Name of the Garage Cluster | `string` | `"garage"` | no |
 | <a name="input_garage_node_tags"></a> [garage\_node\_tags](#input\_garage\_node\_tags) | Node Tags to use to configure Garage nodes with | `list(string)` | <pre>[<br/>  "garage",<br/>  "node"<br/>]</pre> | no |
 | <a name="input_garage_region"></a> [garage\_region](#input\_garage\_region) | Region to be used for the Garage Storage | `string` | `"garage"` | no |
-| <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"storage"` | no |
+| <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for the Garage Storage Solution | `string` | `"storage"` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of Garage Storage Solution | `string` | `"amd64_garage"` | no |
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with Garage Storage Solution | `string` | `"garage-internal-certificate"` | no |
 | <a name="input_issuer_name"></a> [issuer\_name](#input\_issuer\_name) | Name of the Issuer to be associated with Garage Storage Solution | `string` | `"garage-certificate-issuer"` | no |
