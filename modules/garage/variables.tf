@@ -38,14 +38,14 @@ variable "observability_namespace" {
 
 # --------------- CLUSTER SECRET STORE VARIABLES --------------- #
 variable "cluster_secret_store_name" {
-  description = "Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao"
+  description = "Name of the cluster secret store to be used for pulling and pushing secrets to OpenBao for the Garage Storage Solution"
   type        = string
   nullable    = false
 }
 
 # --------------- GARAGE CERTIFICATE VARIABLES --------------- #
 variable "cluster_issuer_name" {
-  description = "Name for the Cluster Issuer to be used to generate internal self signed certificates"
+  description = "Name for the Cluster Issuer to be used to generate internal self signed certificates for the Garage Storage Solution"
   type        = string
   nullable    = true
   default     = null
@@ -99,7 +99,7 @@ variable "cloudflare_issuer_name" {
 }
 
 variable "acme_server" {
-  description = "URL for the ACME Server to be used, defaults to production URL for LetsEncrypt"
+  description = "URL for the ACME Server to be used for generating certificates for the Garage Storage Solution, defaults to production URL for LetsEncrypt"
   type        = string
   default     = "https://acme-v02.api.letsencrypt.org/directory"
 }
@@ -117,13 +117,13 @@ variable "ui_ingress_certificate_name" {
 }
 
 variable "host_name" {
-  description = "Host name for which Ingress Certificate is to be generated for"
+  description = "Host name for which Ingress Certificate is to be generated for the Garage Storage Solution"
   type        = string
   default     = "storage"
 }
 
 variable "domain" {
-  description = "Domain for which Ingress Certificate is to be generated for"
+  description = "Domain for which Ingress Certificate is to be generated for the Garage Storage Solution"
   type        = string
   nullable    = false
 }
@@ -297,7 +297,7 @@ variable "enable_internal_tls_certificates" {
 }
 
 variable "enable_ui" {
-  description = "Enable or disable deployment of PGAdmin for the Garage Cluster"
+  description = "Enable or disable deployment of UI component for the Garage Storage Solution"
   type        = bool
   default     = true
 }
