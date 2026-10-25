@@ -19,6 +19,6 @@ The following modules have been implemented and their usage instructions written
 4. [MAIN MODULE] [OpenBao Secrets Management](modules/openbao)
 5. [OPTIONAL MODULE] [Garage Storage](modules/garage)
 6. [OPTIONAL MODULE] [Cloudnative PG PostgreSQL Database](modules/cnpg)
-7. [OPTIONAL MODULE] [FerretDB (MongoDB) Database](modules/ferretdb)
+7. [DEPRECATED MODULE] [FerretDB (MongoDB) Database](modules/ferretdb)
 8. [OPTIONAL MODULE] [Valkey In Memory Database](modules/valkey)
 9. [OPTIONAL MODULE] [Keycloak Identity Management](modules/keycloak)

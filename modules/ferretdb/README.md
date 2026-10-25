@@ -1,4 +1,4 @@
-## [OPTIONAL MODULE] necronizer's cloud ferret module
+## [DEPRECATED MODULE] necronizer's cloud ferret module
 
 OpenTofu Module to deploy [FerretDB](https://www.ferretdb.com/) (MongoDB) Database on the Kubernetes Cluster
 

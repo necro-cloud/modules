@@ -88,7 +88,7 @@ module "garage" {
   domain              = var.domain
 
   // Granting required namespaces access to the Garage cluster
-  access_namespaces = "postgres,ferret"
+  access_namespaces = "postgres"
 
   // Observability details
   observability_namespace = module.observability.observability_namespace
@@ -145,54 +145,6 @@ module "cnpg" {
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
   cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-
-  // Whitelisting Kubernetes API Endpoints in the Network Policy
-  kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
-  kubernetes_api_protocol = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].protocol))
-  kubernetes_api_port     = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].port[*].port))
-
-  // Enabling and disabling features
-  enable_internal_tls_certificates = true
-  enable_ui                        = true
-  enable_pitr_backups              = true
-  enable_observability             = true
-
-  // Dependency on Garage Deployment
-  depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]
-}
-
-# FerretDB Deployment for MongoDB Database Solution
-module "ferretdb" {
-  source = "../modules/ferretdb"
-
-  // Cluster Secret Store Details
-  cluster_secret_store_name = module.openbao.cluster_secret_store_name
-
-  // Garage Cluster Details for configuration of PITR Backups
-  garage_certificate_authority = module.garage.garage_internal_certificate_secret
-  garage_namespace             = module.garage.garage_namespace
-  garage_configuration         = "walbackups"
-  backup_bucket_name           = "ferret"
-
-  // Observability details
-  observability_namespace = module.observability.observability_namespace
-
-  // Cluster sizing details
-  cluster_size = "small"
-
-  // Required client details to allow access and generate credentials and certificates for
-  clients = [
-    {
-      namespace = "cloud"
-      user      = "cloud"
-    }
-  ]
-
-  // Certificate details for internal and ingress certificates
-  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-  cloudflare_token    = var.cloudflare_token
-  cloudflare_email    = var.cloudflare_email
-  domain              = var.domain
 
   // Whitelisting Kubernetes API Endpoints in the Network Policy
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
