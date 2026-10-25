@@ -41,12 +41,6 @@ variable "garage_required_access_keys" {
           owner  = true,
           read   = true,
           write  = true
-        },
-        {
-          bucket = "ferret",
-          owner  = true,
-          read   = true,
-          write  = true
         }
       ]
     },
@@ -84,7 +78,7 @@ variable "garage_required_access_keys" {
 variable "garage_required_buckets" {
   description = "Buckets to deploy in the Garage Cluster"
   type        = list(string)
-  default     = ["cloud", "postgresql", "ferret"]
+  default     = ["cloud", "postgresql"]
 }
 
 # --------------- KEYCLOAK REALM CONFIGURATION VARIABLES --------------- #
