@@ -1,3 +1,11 @@
+// Fetching Traefik's Ingress IP address
+data "kubernetes_service_v1" "ingress_ip_address" {
+  metadata {
+    name      = "traefik"
+    namespace = "traefik"
+  }
+}
+
 // OpenBao Deployment Configuration
 resource "helm_release" "openbao" {
   name       = var.openbao_configuration.name
@@ -106,6 +114,9 @@ resource "helm_release" "openbao" {
             config = local.openbao_configuration
           }
         }
+
+        // Hostname configuration for SSO
+        hostAliases = local.ingress_hosts
 
         // Data Storage Configuration
         dataStorage = {

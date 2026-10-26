@@ -194,6 +194,25 @@ variable "kubernetes_api_port" {
 }
 
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
+variable "ingress_namespace" {
+  description = "Name of the namespace where the ingress controller is deployed"
+  type        = string
+  default     = "ingress"
+}
+
+variable "ingress_service_name" {
+  description = "Name of the load balancer service fronting the ingress controller"
+  type        = string
+  default     = "ingress"
+}
+
+variable "sso_host_name" {
+  description = "Host name for the authentication service for SSO configuration"
+  type        = string
+  default     = "auth"
+}
+
+# --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
   description = "Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster"
   type        = bool
