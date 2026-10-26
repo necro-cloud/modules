@@ -20,4 +20,12 @@ locals {
     large  = 3
   }
   cluster_secret_store_name = var.enable_internal_tls_certificates ? kubernetes_manifest.cluster_store[0].manifest.metadata.name : kubernetes_manifest.cluster_store_no_tls[0].manifest.metadata.name
+
+
+  ingress_hosts = [
+    for ip in data.kubernetes_service_v1.ingress_ip_address.status[0].load_balancer[0].ingress : {
+      ip        = ip.ip
+      hostnames = ["${var.sso_host_name}.${var.domain}"]
+    }
+  ]
 }

@@ -39,7 +39,10 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | [kubernetes_manifest.middleware_rewrite](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.public_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.push_sso_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_static_unseal_key](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.static_unseal_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.static_unseal_key_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -49,6 +52,7 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | [kubernetes_role_binding.configurator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [kubernetes_secret.cloudflare_token](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_service_account.configurator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
+| [kubernetes_service_v1.ingress_ip_address](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service_v1) | data source |
 
 ## Inputs
 
@@ -73,6 +77,8 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the FerretDB Cluster | `bool` | `true` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"secrets"` | no |
 | <a name="input_ingress_certificate_name"></a> [ingress\_certificate\_name](#input\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-ingress-certificate"` | no |
+| <a name="input_ingress_namespace"></a> [ingress\_namespace](#input\_ingress\_namespace) | Name of the namespace where the ingress controller is deployed | `string` | `"ingress"` | no |
+| <a name="input_ingress_service_name"></a> [ingress\_service\_name](#input\_ingress\_service\_name) | Name of the load balancer service fronting the ingress controller | `string` | `"ingress"` | no |
 | <a name="input_internal_certificate_name"></a> [internal\_certificate\_name](#input\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-internal-certificate"` | no |
 | <a name="input_issuer_name"></a> [issuer\_name](#input\_issuer\_name) | Name of the Issuer to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-certificate-issuer"` | no |
 | <a name="input_kubernetes_api_ip"></a> [kubernetes\_api\_ip](#input\_kubernetes\_api\_ip) | IP Address for the Kubernetes API | `string` | n/a | yes |
@@ -82,6 +88,7 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | `null` | no |
 | <a name="input_openbao_configuration"></a> [openbao\_configuration](#input\_openbao\_configuration) | Dictionary filled with OpenBao Configuration Details | `map(string)` | <pre>{<br/>  "chart": "openbao",<br/>  "name": "openbao",<br/>  "repository": "https://openbao.github.io/openbao-helm",<br/>  "version": "0.25.6"<br/>}</pre> | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying OpenBao Secrets Management Solution | `string` | `"cloud"` | no |
+| <a name="input_sso_host_name"></a> [sso\_host\_name](#input\_sso\_host\_name) | Host name for the authentication service for SSO configuration | `string` | `"auth"` | no |
 
 ## Outputs
 

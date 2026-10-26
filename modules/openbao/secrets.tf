@@ -79,3 +79,87 @@ resource "kubernetes_manifest" "push_static_unseal_key" {
 
   depends_on = [kubernetes_manifest.static_unseal_key_sync]
 }
+
+// SSO Client Secret Generation
+resource "kubernetes_manifest" "sso_client_secret_generator" {
+  manifest = {
+    apiVersion = "generators.external-secrets.io/v1alpha1"
+    kind       = "Password"
+    metadata = {
+      name      = "sso-client-secret-generator"
+      namespace = var.namespace
+    }
+    spec = {
+      length  = 20
+      digits  = 10
+      symbols = 0
+      noUpper = true
+    }
+  }
+}
+
+resource "kubernetes_manifest" "sso_client_secret_sync" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "sso-client-secret"
+      namespace = var.namespace
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "sso-client-secret"
+        template = {
+          data = {
+            "SSO_CLIENT_KEY" = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.sso_client_secret_generator.object.metadata.name
+          }
+        }
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "push_sso_client_secret" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${kubernetes_manifest.sso_client_secret_sync.object.spec.target.name}"
+      namespace = var.namespace
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = local.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.sso_client_secret_sync.object.spec.target.name
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "sso/openbao/${kubernetes_manifest.sso_client_secret_sync.object.spec.target.name}"
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  depends_on = [kubernetes_manifest.sso_client_secret_sync]
+}
