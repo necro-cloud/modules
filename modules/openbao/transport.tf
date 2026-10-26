@@ -9,7 +9,7 @@ resource "kubernetes_manifest" "transport" {
       namespace = kubernetes_namespace.namespace.metadata[0].name
     }
     spec = {
-      insecureSkipVerify = true
+      serverName = "openbao-internal.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
       rootCAs = var.enable_internal_tls_certificates ? [
         {
           secret = kubernetes_manifest.internal_certificate[0].manifest.spec.secretName
