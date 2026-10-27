@@ -1,5 +1,6 @@
 // Fetching Traefik's Ingress IP address
 data "kubernetes_service_v1" "ingress_ip_address" {
+  count = var.enable_sso ? 1 : 0
   metadata {
     name      = "traefik"
     namespace = "traefik"

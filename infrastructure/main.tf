@@ -67,6 +67,7 @@ module "openbao" {
   enable_internal_tls_certificates = true
   enable_ui                        = true
   enable_observability             = true
+  enable_sso                       = true
 
   depends_on = [module.helm, module.cluster-issuer]
 }

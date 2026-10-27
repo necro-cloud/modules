@@ -214,19 +214,25 @@ variable "sso_host_name" {
 
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
-  description = "Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster"
+  description = "Enable or disable deployment of Internal TLS Certificates for the OpenBao Secret Management Platform"
   type        = bool
   default     = true
 }
 
 variable "enable_ui" {
-  description = "Enable or disable deployment of PGAdmin for the FerretDB Cluster"
+  description = "Enable or disable deployment of PGAdmin for the OpenBao Secret Management Platform"
   type        = bool
   default     = true
 }
 
 variable "enable_observability" {
-  description = "Enable or disable observability reporting for the FerretDB Cluster"
+  description = "Enable or disable observability reporting for the OpenBao Secret Management Platform"
+  type        = bool
+  default     = true
+}
+
+variable "enable_sso" {
+  description = "Enable or disable SSO features for the OpenBao Secret Management Platform"
   type        = bool
   default     = true
 }

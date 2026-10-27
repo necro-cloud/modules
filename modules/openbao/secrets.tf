@@ -82,6 +82,7 @@ resource "kubernetes_manifest" "push_static_unseal_key" {
 
 // SSO Client Secret Generation
 resource "kubernetes_manifest" "sso_client_secret_generator" {
+  count = var.enable_sso ? 1 : 0
   manifest = {
     apiVersion = "generators.external-secrets.io/v1alpha1"
     kind       = "Password"
@@ -99,6 +100,7 @@ resource "kubernetes_manifest" "sso_client_secret_generator" {
 }
 
 resource "kubernetes_manifest" "sso_client_secret_sync" {
+  count = var.enable_sso ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1"
     kind       = "ExternalSecret"
@@ -121,7 +123,7 @@ resource "kubernetes_manifest" "sso_client_secret_sync" {
           generatorRef = {
             apiVersion = "generators.external-secrets.io/v1alpha1"
             kind       = "Password"
-            name       = kubernetes_manifest.sso_client_secret_generator.object.metadata.name
+            name       = kubernetes_manifest.sso_client_secret_generator[0].object.metadata.name
           }
         }
       }]
@@ -130,11 +132,12 @@ resource "kubernetes_manifest" "sso_client_secret_sync" {
 }
 
 resource "kubernetes_manifest" "push_sso_client_secret" {
+  count = var.enable_sso ? 1 : 0
   manifest = {
     apiVersion = "external-secrets.io/v1alpha1"
     kind       = "PushSecret"
     metadata = {
-      name      = "push-${kubernetes_manifest.sso_client_secret_sync.object.spec.target.name}"
+      name      = "push-${kubernetes_manifest.sso_client_secret_sync[0].object.spec.target.name}"
       namespace = var.namespace
     }
     spec = {
@@ -146,14 +149,14 @@ resource "kubernetes_manifest" "push_sso_client_secret" {
       }]
       selector = {
         secret = {
-          name = kubernetes_manifest.sso_client_secret_sync.object.spec.target.name
+          name = kubernetes_manifest.sso_client_secret_sync[0].object.spec.target.name
         }
       }
       data = [
         {
           match = {
             remoteRef = {
-              remoteKey = "sso/openbao/${kubernetes_manifest.sso_client_secret_sync.object.spec.target.name}"
+              remoteKey = "sso/openbao/${kubernetes_manifest.sso_client_secret_sync[0].object.spec.target.name}"
             }
           }
         }
