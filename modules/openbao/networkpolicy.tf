@@ -202,5 +202,23 @@ resource "kubernetes_network_policy" "openbao_network_access_policy" {
         port     = var.kubernetes_api_port
       }
     }
+
+    # Rule 4: Allow egress to the Ingress Load Balancer for SSO
+    dynamic "egress" {
+      for_each = var.enable_sso ? [true] : []
+      content {
+        to {
+          namespace_selector {
+            match_labels = {
+              "kubernetes.io/metadata.name" = "traefik"
+            }
+          }
+        }
+        ports {
+          protocol = "TCP"
+          port     = "8443"
+        }
+      }
+    }
   }
 }
