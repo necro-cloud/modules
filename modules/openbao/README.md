@@ -72,9 +72,10 @@ Required Modules to deploy OpenBao Secrets Management Solution:
 | <a name="input_configurator_tag"></a> [configurator\_tag](#input\_configurator\_tag) | Docker tag to be used for deployment of OpenBao Configurator | `string` | `"2.5.1"` | no |
 | <a name="input_country_name"></a> [country\_name](#input\_country\_name) | Country name for deploying OpenBao Secrets Management Solution | `string` | `"India"` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | `null` | no |
-| <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the FerretDB Cluster | `bool` | `true` | no |
-| <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the FerretDB Cluster | `bool` | `true` | no |
-| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the FerretDB Cluster | `bool` | `true` | no |
+| <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the OpenBao Secret Management Platform | `bool` | `true` | no |
+| <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the OpenBao Secret Management Platform | `bool` | `true` | no |
+| <a name="input_enable_sso"></a> [enable\_sso](#input\_enable\_sso) | Enable or disable SSO features for the OpenBao Secret Management Platform | `bool` | `true` | no |
+| <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the OpenBao Secret Management Platform | `bool` | `true` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"secrets"` | no |
 | <a name="input_ingress_certificate_name"></a> [ingress\_certificate\_name](#input\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with OpenBao Secrets Management Solution | `string` | `"secrets-ingress-certificate"` | no |
 | <a name="input_ingress_namespace"></a> [ingress\_namespace](#input\_ingress\_namespace) | Name of the namespace where the ingress controller is deployed | `string` | `"ingress"` | no |
