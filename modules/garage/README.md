@@ -23,7 +23,7 @@ Required Modules to deploy Garage Object Storage:
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_cluster_role.garage_crds](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role) | resource |
 | [kubernetes_cluster_role_binding.garage_crds_rolebindings](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_config_map.configurator-options](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
@@ -51,7 +51,10 @@ Required Modules to deploy Garage Object Storage:
 | [kubernetes_manifest.push_admin_password](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_garage_rpc_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.push_sso_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_ui_admin_password](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_admin_password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_admin_password_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_ingress_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -69,11 +72,12 @@ Required Modules to deploy Garage Object Storage:
 | [kubernetes_service_account.garage_configurator_service_account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 | [kubernetes_service_account.garage_service_account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 | [kubernetes_stateful_set.statefulset](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/stateful_set) | resource |
+| [kubernetes_service_v1.ingress_ip_address](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service_v1) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_namespaces"></a> [access\_namespaces](#input\_access\_namespaces) | Namespaces that require internal access to Garage | `string` | `"postgres"` | no |
 | <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used for generating certificates for the Garage Storage Solution, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_api_ingress_certificate_name"></a> [api\_ingress\_certificate\_name](#input\_api\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Garage API | `string` | `"garage-api-ingress-certificate"` | no |
@@ -92,6 +96,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for the Garage Storage Solution | `string` | n/a | yes |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the Garage Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the Garage Cluster | `bool` | `true` | no |
+| <a name="input_enable_sso"></a> [enable\_sso](#input\_enable\_sso) | Enable or disable SSO features for the Garage Cluster | `bool` | `true` | no |
 | <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of UI component for the Garage Storage Solution | `bool` | `true` | no |
 | <a name="input_garage_cluster_name"></a> [garage\_cluster\_name](#input\_garage\_cluster\_name) | Name of the Garage Cluster | `string` | `"garage"` | no |
 | <a name="input_garage_node_tags"></a> [garage\_node\_tags](#input\_garage\_node\_tags) | Node Tags to use to configure Garage nodes with | `list(string)` | <pre>[<br/>  "garage",<br/>  "node"<br/>]</pre> | no |
@@ -113,6 +118,7 @@ Required Modules to deploy Garage Object Storage:
 | <a name="input_required_access_keys"></a> [required\_access\_keys](#input\_required\_access\_keys) | Access Keys required to be configured within the Garage Cluster | <pre>list(object({<br/>    name         = string<br/>    createBucket = bool<br/>    permissions = list(object({<br/>      bucket = string<br/>      owner  = bool<br/>      read   = bool<br/>      write  = bool<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_required_buckets"></a> [required\_buckets](#input\_required\_buckets) | Buckets to deploy in the Garage Cluster | `list(string)` | n/a | yes |
 | <a name="input_required_storage"></a> [required\_storage](#input\_required\_storage) | Size of the disks to configure Garage Storage with | `number` | `5` | no |
+| <a name="input_sso_host_name"></a> [sso\_host\_name](#input\_sso\_host\_name) | Host name for the authentication service for SSO configuration | `string` | `"auth"` | no |
 | <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage class to be used for the deployment of Garage Storage Solution | `string` | `"local-path"` | no |
 | <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Garage Storage Solution | `string` | `"v2.4.1"` | no |
 | <a name="input_ui_image"></a> [ui\_image](#input\_ui\_image) | Docker image to be used for deployment of Garage UI | `string` | `"garage-ui"` | no |
@@ -124,7 +130,7 @@ Required Modules to deploy Garage Object Storage:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_garage_internal_certificate_secret"></a> [garage\_internal\_certificate\_secret](#output\_garage\_internal\_certificate\_secret) | Secret name where the Internal Certificate for Garage is stored in |
 | <a name="output_garage_namespace"></a> [garage\_namespace](#output\_garage\_namespace) | Namespace where Garage Storage Solution is deployed in |
 

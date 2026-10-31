@@ -156,7 +156,7 @@ resource "kubernetes_manifest" "push_sso_client_secret" {
         {
           match = {
             remoteRef = {
-              remoteKey = "sso/openbao/${kubernetes_manifest.sso_client_secret_sync[0].object.spec.target.name}"
+              remoteKey = "sso/${kubernetes_namespace.namespace.metadata[0].name}/${kubernetes_manifest.sso_client_secret_sync[0].object.spec.target.name}"
             }
           }
         }
