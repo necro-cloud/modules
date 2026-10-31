@@ -270,6 +270,12 @@ variable "required_access_keys" {
   }))
 }
 
+variable "sso_host_name" {
+  description = "Host name for the authentication service for SSO configuration"
+  type        = string
+  default     = "auth"
+}
+
 # --------------- NETWORK POLICY VARIABLES --------------- #
 variable "kubernetes_api_ip" {
   description = "IP Address for the Kubernetes API"
@@ -304,6 +310,12 @@ variable "enable_ui" {
 
 variable "enable_observability" {
   description = "Enable or disable observability reporting for the Garage Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_sso" {
+  description = "Enable or disable SSO features for the Garage Cluster"
   type        = bool
   default     = true
 }

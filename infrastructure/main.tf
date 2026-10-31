@@ -107,6 +107,7 @@ module "garage" {
   enable_internal_tls_certificates = true
   enable_ui                        = true
   enable_observability             = true
+  enable_sso                       = false
 
   depends_on = [module.observability, module.openbao]
 }
