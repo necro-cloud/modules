@@ -104,9 +104,22 @@ variable "domain" {
   nullable    = false
 }
 
+# --------------- SSO CONFIGURATION VARIABLES --------------- #
+variable "sso_host_name" {
+  description = "Host name for the authentication service for SSO configuration"
+  type        = string
+  default     = "auth"
+}
+
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
-  description = "Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster"
+  description = "Enable or disable deployment of Internal TLS Certificates for the Observability Platform"
+  type        = bool
+  default     = true
+}
+
+variable "enable_sso" {
+  description = "Enable or disable SSO features for the Observability Platform"
   type        = bool
   default     = true
 }

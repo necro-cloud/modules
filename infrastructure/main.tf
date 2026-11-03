@@ -35,6 +35,7 @@ module "observability" {
 
   // Enabling and disabling features
   enable_internal_tls_certificates = true
+  enable_sso                       = true
 
   depends_on = [module.helm, module.cluster-issuer]
 }
