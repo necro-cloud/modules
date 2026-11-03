@@ -1,3 +1,13 @@
+// Fetching Traefik's Ingress IP address
+data "kubernetes_service_v1" "ingress_ip_address" {
+  count = var.enable_sso ? 1 : 0
+  metadata {
+    name      = "traefik"
+    namespace = "traefik"
+  }
+}
+
+// Grafana Deployment using the helm chart
 resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana-community.github.io/helm-charts"
@@ -78,6 +88,8 @@ resource "helm_release" "grafana" {
         }
       ] : []
 
+      // Hostname configuration for SSO
+      hostAliases = local.ingress_hosts
 
       "grafana.ini" = {
         server = var.enable_internal_tls_certificates ? {
@@ -203,17 +215,6 @@ resource "helm_release" "grafana" {
               options = {
                 path = "/var/lib/grafana/dashboards/openbao"
               },
-            },
-            {
-              name            = "FerretDB NoSQL Database Monitoring Dashboard"
-              orgId           = 1
-              folder          = "Database Dashboards"
-              type            = "file"
-              disableDeletion = false
-              editable        = true
-              options = {
-                path = "/var/lib/grafana/dashboards/ferretdb"
-              },
             }
           ]
         }
@@ -259,11 +260,6 @@ resource "helm_release" "grafana" {
         openbao = {
           network-dashboard = {
             json = file("${path.module}/dashboards/openbao.json")
-          }
-        }
-        ferretdb = {
-          ferretdb-dashboard = {
-            json = file("${path.module}/dashboards/ferretdb.json")
           }
         }
       }
