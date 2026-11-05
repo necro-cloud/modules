@@ -159,6 +159,7 @@ module "cnpg" {
   enable_ui                        = true
   enable_pitr_backups              = true
   enable_observability             = true
+  enable_sso                       = true
 
   // Dependency on Garage Deployment
   depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]

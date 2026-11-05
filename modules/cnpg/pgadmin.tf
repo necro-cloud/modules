@@ -1,3 +1,13 @@
+// Fetching Traefik's Ingress IP address
+data "kubernetes_service_v1" "ingress_ip_address" {
+  count = var.enable_sso ? 1 : 0
+  metadata {
+    name      = "traefik"
+    namespace = "traefik"
+  }
+}
+
+// PG Admin Deployment for PostgreSQL UI Service
 resource "kubernetes_deployment" "pgadmin" {
   count = var.enable_ui ? 1 : 0
   metadata {
@@ -25,6 +35,16 @@ resource "kubernetes_deployment" "pgadmin" {
         }
       }
       spec {
+
+        // Host Aliases for SSO Configuration
+        dynamic "host_aliases" {
+          for_each = local.ingress_hosts
+          content {
+            ip = host_aliases.value.ip
+            hostnames = host_aliases.value.hostnames
+          }
+        }
+        
         container {
           name  = "pgadmin"
           image = "${var.repository}/${var.image}:${var.tag}"
