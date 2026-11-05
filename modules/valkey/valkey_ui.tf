@@ -1,4 +1,13 @@
-# UI Component for Valkey
+// Fetching Traefik's Ingress IP address
+data "kubernetes_service_v1" "ingress_ip_address" {
+  count = var.enable_sso ? 1 : 0
+  metadata {
+    name      = "traefik"
+    namespace = "traefik"
+  }
+}
+
+// UI Component for Valkey
 resource "kubernetes_deployment" "valkey_ui" {
   count = var.enable_ui ? 1 : 0
   metadata {
@@ -35,6 +44,15 @@ resource "kubernetes_deployment" "valkey_ui" {
       }
 
       spec {
+
+        // Host Aliases for SSO Configuration
+        dynamic "host_aliases" {
+          for_each = local.ingress_hosts
+          content {
+            ip = host_aliases.value.ip
+            hostnames = host_aliases.value.hostnames
+          }
+        }
 
         // Node Affinity rule to run only on worker nodes
         affinity {
