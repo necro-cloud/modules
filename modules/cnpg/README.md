@@ -25,7 +25,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_config_map.nginx_conf](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_config_map.pgadmin_servers_configuration](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_deployment.pgadmin](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment) | resource |
@@ -58,20 +58,24 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | [kubernetes_manifest.push_keycloak_database_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_pgadmin_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_server_certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.push_sso_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.server_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.server_certificate_authority](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.server_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace.namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_network_policy.cnpg_network_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_pod_disruption_budget_v1.cnpg_pdb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/pod_disruption_budget_v1) | resource |
 | [kubernetes_secret.cloudflare_token](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_service.pgadmin4](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
+| [kubernetes_service_v1.ingress_ip_address](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service_v1) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying PostgreSQL Database | `string` | `"postgres"` | no |
 | <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the bucket for storing PITR Backups in Garage | `string` | `null` | no |
@@ -92,6 +96,7 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_pitr_backups"></a> [enable\_pitr\_backups](#input\_enable\_pitr\_backups) | Enable or disable PITR Backups to the Garage Instance for the PostgreSQL Cluster | `bool` | `true` | no |
+| <a name="input_enable_sso"></a> [enable\_sso](#input\_enable\_sso) | Enable or disable SSO features for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of PGAdmin for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_garage_certificate_authority"></a> [garage\_certificate\_authority](#input\_garage\_certificate\_authority) | Name of the Certificate Authority associated with the Garage Storage Solution | `string` | `null` | no |
 | <a name="input_garage_configuration"></a> [garage\_configuration](#input\_garage\_configuration) | Garage Configuration for storing PITR Backups | `string` | `null` | no |
@@ -112,12 +117,13 @@ Required Modules to deploy Cloudnative PG PostgreSQL Database:
 | <a name="input_server_certificate_authority_name"></a> [server\_certificate\_authority\_name](#input\_server\_certificate\_authority\_name) | Name of the Certificate Authority to be used with PostgreSQL Server | `string` | `"postgresql-server-certificate-authority"` | no |
 | <a name="input_server_certificate_name"></a> [server\_certificate\_name](#input\_server\_certificate\_name) | Name of the Certificate to be used with PostgreSQL Server | `string` | `"postgresql-server-certificate"` | no |
 | <a name="input_server_issuer_name"></a> [server\_issuer\_name](#input\_server\_issuer\_name) | Name of the Issuer to be used with PostgreSQL Server | `string` | `"postgresql-server-issuer"` | no |
+| <a name="input_sso_host_name"></a> [sso\_host\_name](#input\_sso\_host\_name) | Host name for the authentication service for SSO configuration | `string` | `"auth"` | no |
 | <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of PGAdmin | `string` | `"9.7.0"` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the CNPG PostgreSQL Cluster |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | Namespace where the PostgreSQL Database is deployed in |
 | <a name="output_server-certificate-authority"></a> [server-certificate-authority](#output\_server-certificate-authority) | Certificate Authority being used with PostgreSQL Database |

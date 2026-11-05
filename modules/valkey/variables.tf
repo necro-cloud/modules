@@ -233,6 +233,13 @@ variable "proxy_tag" {
   default     = "1.29.0"
 }
 
+# --------------- SSO CONFIGURATION VARIABLES --------------- #
+variable "sso_host_name" {
+  description = "Host name for the authentication service for SSO configuration"
+  type        = string
+  default     = "auth"
+}
+
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
   description = "Enable or disable deployment of Internal TLS Certificates for the Valkey Cluster"
@@ -248,6 +255,12 @@ variable "enable_ui" {
 
 variable "enable_observability" {
   description = "Enable or disable observability reporting for the Valkey Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_sso" {
+  description = "Enable or disable SSO features for the PostgreSQL Cluster"
   type        = bool
   default     = true
 }

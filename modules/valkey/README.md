@@ -23,7 +23,7 @@ Required Modules to deploy Valkey In Memory Database:
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [kubernetes_config_map.ui_nginx_conf](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_config_map.valkey_conf](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [kubernetes_config_map.valkey_conf_no_tls](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
@@ -38,8 +38,11 @@ Required Modules to deploy Valkey In Memory Database:
 | [kubernetes_manifest.password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.public_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.push_sso_client_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_ui_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_valkey_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_client_secret_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_credentials_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ui_internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
@@ -54,11 +57,12 @@ Required Modules to deploy Valkey In Memory Database:
 | [kubernetes_service.replica_service](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
 | [kubernetes_service.ui_service](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service) | resource |
 | [kubernetes_stateful_set.valkey_cluster](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/stateful_set) | resource |
+| [kubernetes_service_v1.ingress_ip_address](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service_v1) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_namespaces"></a> [access\_namespaces](#input\_access\_namespaces) | Namespaces which require access to Valkey through certificates and network | `string` | n/a | yes |
 | <a name="input_acme_server"></a> [acme\_server](#input\_acme\_server) | URL for the ACME Server to be used, defaults to production URL for LetsEncrypt | `string` | `"https://acme-v02.api.letsencrypt.org/directory"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | App name for deploying Valkey Cache Solution | `string` | `"valkey"` | no |
@@ -73,6 +77,7 @@ Required Modules to deploy Valkey In Memory Database:
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | `null` | no |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the Valkey Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the Valkey Cluster | `bool` | `true` | no |
+| <a name="input_enable_sso"></a> [enable\_sso](#input\_enable\_sso) | Enable or disable SSO features for the PostgreSQL Cluster | `bool` | `true` | no |
 | <a name="input_enable_ui"></a> [enable\_ui](#input\_enable\_ui) | Enable or disable deployment of Redis Commander for the UI Component | `bool` | `true` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"memory"` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of Valkey | `string` | `"valkey"` | no |
@@ -89,6 +94,7 @@ Required Modules to deploy Valkey In Memory Database:
 | <a name="input_proxy_repository"></a> [proxy\_repository](#input\_proxy\_repository) | Repository to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"docker.io/library"` | no |
 | <a name="input_proxy_tag"></a> [proxy\_tag](#input\_proxy\_tag) | Docker tag to be used for deployment of Garage NGINX Proxy for TLS | `string` | `"1.29.0"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of Valkey | `string` | `"docker.io/valkey"` | no |
+| <a name="input_sso_host_name"></a> [sso\_host\_name](#input\_sso\_host\_name) | Host name for the authentication service for SSO configuration | `string` | `"auth"` | no |
 | <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Valkey | `string` | `"9.0"` | no |
 | <a name="input_ui_image"></a> [ui\_image](#input\_ui\_image) | Docker image to be used for deployment of Redis Commander | `string` | `"redis-commander"` | no |
 | <a name="input_ui_internal_certificate_name"></a> [ui\_internal\_certificate\_name](#input\_ui\_internal\_certificate\_name) | Name of the Internal Certificate to be associated with Redis Commander | `string` | `"ui-internal-certificate"` | no |
@@ -98,7 +104,7 @@ Required Modules to deploy Valkey In Memory Database:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_valkey_certificates_name"></a> [valkey\_certificates\_name](#output\_valkey\_certificates\_name) | Name of the Internal Certificate to be associated with Valkey Cache Solution |
 | <a name="output_valkey_credentials_name"></a> [valkey\_credentials\_name](#output\_valkey\_credentials\_name) | Name of the secret where credentials for Valkey Cache Solution is stored |
 | <a name="output_valkey_namespace"></a> [valkey\_namespace](#output\_valkey\_namespace) | Namespace to be used for deploying Valkey Cache Solution |
