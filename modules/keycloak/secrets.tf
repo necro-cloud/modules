@@ -125,6 +125,75 @@ resource "kubernetes_manifest" "push_keycloak_credentials" {
   depends_on = [kubernetes_manifest.keycloak_credentials_sync]
 }
 
+// Keycloak SSO Credentials Configuration
+resource "kubernetes_manifest" "keycloak_sso_credentials_sync" {
+  count = var.enable_sso ? 1 : 0
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "keycloak-sso-credentials"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "0"
+      target = {
+        name = "keycloak-sso-credentials"
+        template = {
+          data = {
+            SSO_USERNAME = "necronizer.admin"
+            SSO_PASSWORD = "{{ .password }}"
+          }
+        }
+      }
+      dataFrom = [{
+        sourceRef = {
+          generatorRef = {
+            apiVersion = "generators.external-secrets.io/v1alpha1"
+            kind       = "Password"
+            name       = kubernetes_manifest.password_generator.object.metadata.name
+          }
+        }
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "push_keycloak_sso_credentials" {
+  count = var.enable_sso ? 1 : 0
+  manifest = {
+    apiVersion = "external-secrets.io/v1alpha1"
+    kind       = "PushSecret"
+    metadata = {
+      name      = "push-${kubernetes_manifest.keycloak_sso_credentials_sync[0].object.spec.target.name}"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+    }
+    spec = {
+      refreshInterval = "1h"
+      deletionPolicy  = "None"
+      secretStoreRefs = [{
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }]
+      selector = {
+        secret = {
+          name = kubernetes_manifest.keycloak_sso_credentials_sync[0].object.spec.target.name
+        }
+      }
+      data = [
+        {
+          match = {
+            remoteRef = {
+              remoteKey = "${kubernetes_namespace.namespace.metadata[0].name}/credentials/ui/${kubernetes_manifest.keycloak_sso_credentials_sync[0].object.spec.target.name}"
+            }
+          }
+        }
+      ]
+    }
+  }
+  depends_on = [kubernetes_manifest.keycloak_sso_credentials_sync]
+}
+
 # Keycloak Realm Configuration
 resource "kubernetes_manifest" "realm_secrets_sync" {
   manifest = {
@@ -199,4 +268,59 @@ resource "kubernetes_manifest" "push_realm_secrets" {
     }
   }
   depends_on = [kubernetes_manifest.realm_secrets_sync]
+}
+
+// Fetch all the generated SSO credentials
+resource "kubernetes_manifest" "sso_credentials_sync" {
+  count = var.enable_sso ? 1 : 0
+  manifest = {
+    apiVersion = "external-secrets.io/v1"
+    kind       = "ExternalSecret"
+    metadata = {
+      name      = "sso-credentials"
+      namespace = kubernetes_namespace.namespace.metadata[0].name
+      labels = {
+        app       = var.app_name
+        component = "secret"
+      }
+    }
+    spec = {
+      refreshInterval = "1h"
+      secretStoreRef = {
+        name = var.cluster_secret_store_name
+        kind = "ClusterSecretStore"
+      }
+      target = {
+        name = "sso-credentials"
+        template = {
+          type          = "Opaque"
+          engineVersion = "v2"
+          templateFrom = [{
+            target  = "Data"
+            literal = <<-EOT
+              {{- range $key, $val := . }}
+              {{- $service := $key | trimPrefix "sso_" |  trimSuffix "_sso-client-secret" | upper }}
+              {{- $json := $val | fromJson }}
+              {{ $service }}_SSO_CLIENT_SECRET: "{{ $json.SSO_CLIENT_KEY }}"
+              {{- end }}
+            EOT
+          }]
+        }
+      }
+      dataFrom = [{
+        find = {
+          name = {
+            regexp = "sso/*"
+          }
+        }
+      }]
+    }
+  }
+
+  wait {
+    condition {
+      type   = "Ready"
+      status = "True"
+    }
+  }
 }
