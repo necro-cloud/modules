@@ -35,13 +35,16 @@ Required Modules to deploy Keycloak Identity Management:
 | [kubernetes_manifest.internal_certificate](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.keycloak_credentials_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.keycloak_sso_credentials_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.middleware_buffering](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.middleware_rewrite](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.password_generator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.public_issuer](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_keycloak_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.push_keycloak_sso_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.push_realm_secrets](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.realm_secrets_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.sso_credentials_sync](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.transport](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace.namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_network_policy.keycloak_network_access_policy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
@@ -73,6 +76,7 @@ Required Modules to deploy Keycloak Identity Management:
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain for which Ingress Certificate is to be generated for | `string` | n/a | yes |
 | <a name="input_enable_internal_tls_certificates"></a> [enable\_internal\_tls\_certificates](#input\_enable\_internal\_tls\_certificates) | Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster | `bool` | `true` | no |
 | <a name="input_enable_observability"></a> [enable\_observability](#input\_enable\_observability) | Enable or disable observability reporting for the Keycloak Cluster | `bool` | `true` | no |
+| <a name="input_enable_sso"></a> [enable\_sso](#input\_enable\_sso) | Enable or disable SSO features for the entire platform | `bool` | `true` | no |
 | <a name="input_host_name"></a> [host\_name](#input\_host\_name) | Host name for which Ingress Certificate is to be generated for | `string` | `"auth"` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image to be used for deployment of Keycloak | `string` | `"keycloak"` | no |
 | <a name="input_ingress_certificate_name"></a> [ingress\_certificate\_name](#input\_ingress\_certificate\_name) | Name of the Ingress Certificate to be associated with Keycloak Identity Platform solution | `string` | `"keycloak-ingress-certificate"` | no |
@@ -81,12 +85,17 @@ Required Modules to deploy Keycloak Identity Management:
 | <a name="input_keycloak_credentials"></a> [keycloak\_credentials](#input\_keycloak\_credentials) | Name of the secret which contains the credentials for the Keycloak Cluster | `string` | `"default-credentials"` | no |
 | <a name="input_keycloak_environment_variables"></a> [keycloak\_environment\_variables](#input\_keycloak\_environment\_variables) | Environment variables for Keycloak Configuration | `list` | <pre>[<br/>  {<br/>    "name": "KC_HTTP_PORT",<br/>    "value": "8080"<br/>  },<br/>  {<br/>    "name": "KC_HTTPS_PORT",<br/>    "value": "8443"<br/>  },<br/>  {<br/>    "name": "KC_DB_POOL_INITIAL_SIZE",<br/>    "value": "1"<br/>  },<br/>  {<br/>    "name": "KC_DB_POOL_MIN_SIZE",<br/>    "value": "1"<br/>  },<br/>  {<br/>    "name": "KC_DB_POOL_MAX_SIZE",<br/>    "value": "3"<br/>  },<br/>  {<br/>    "name": "KC_HEALTH_ENABLED",<br/>    "value": "true"<br/>  },<br/>  {<br/>    "name": "KC_CACHE",<br/>    "value": "ispn"<br/>  },<br/>  {<br/>    "name": "KC_CACHE_STACK",<br/>    "value": "jdbc-ping"<br/>  },<br/>  {<br/>    "name": "KC_PROXY",<br/>    "value": "passthrough"<br/>  },<br/>  {<br/>    "name": "KC_TRUSTSTORE_PATHS",<br/>    "value": "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"<br/>  }<br/>]</pre> | no |
 | <a name="input_keycloak_ports"></a> [keycloak\_ports](#input\_keycloak\_ports) | Keycloak Ports Configuration | `list` | <pre>[<br/>  {<br/>    "containerPort": "8443",<br/>    "name": "https",<br/>    "protocol": "TCP"<br/>  },<br/>  {<br/>    "containerPort": "8080",<br/>    "name": "http",<br/>    "protocol": "TCP"<br/>  },<br/>  {<br/>    "containerPort": "9000",<br/>    "name": "management",<br/>    "protocol": "TCP"<br/>  },<br/>  {<br/>    "containerPort": "7800",<br/>    "name": "discovery",<br/>    "protocol": "TCP"<br/>  }<br/>]</pre> | no |
+| <a name="input_memory_service_subdomain"></a> [memory\_service\_subdomain](#input\_memory\_service\_subdomain) | Subdomain for the In-Memory Database Administration Platform | `string` | `"memory"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace to be used for deploying Keycloak Identity Platform solution | `string` | `"keycloak"` | no |
 | <a name="input_observability_namespace"></a> [observability\_namespace](#input\_observability\_namespace) | Namespace where all components for observability are deployed | `string` | `null` | no |
+| <a name="input_observability_service_subdomain"></a> [observability\_service\_subdomain](#input\_observability\_service\_subdomain) | Subdomain for the Observability Platform | `string` | `"observability"` | no |
 | <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | Organization name for deploying Keycloak Identity Platform solution | `string` | `"cloud"` | no |
 | <a name="input_postgres_namespace"></a> [postgres\_namespace](#input\_postgres\_namespace) | Namespace for the PostgreSQL Deployment for database connections | `string` | n/a | yes |
 | <a name="input_realm_settings"></a> [realm\_settings](#input\_realm\_settings) | Realm Settings for pre-installing a realm with Keycloak | <pre>object({<br/>    display_name               = string<br/>    application_name           = string<br/>    base_url                   = string<br/>    valid_login_redirect_path  = string<br/>    valid_logout_redirect_path = string<br/>    smtp_host                  = string<br/>    smtp_port                  = number<br/>    smtp_mail                  = string<br/>    smtp_username              = string<br/>    smtp_password              = string<br/>  })</pre> | n/a | yes |
 | <a name="input_repository"></a> [repository](#input\_repository) | Repository to be used for deployment of Keycloak | `string` | `"quay.io/keycloak"` | no |
+| <a name="input_secret_service_subdomain"></a> [secret\_service\_subdomain](#input\_secret\_service\_subdomain) | Subdomain for the Secrets Management Platform | `string` | `"secrets"` | no |
+| <a name="input_sql_service_subdomain"></a> [sql\_service\_subdomain](#input\_sql\_service\_subdomain) | Subdomain for the SQL Database Administration Platform | `string` | `"sql"` | no |
+| <a name="input_storage_service_subdomain"></a> [storage\_service\_subdomain](#input\_storage\_service\_subdomain) | Subdomain for the Object Storage Platform | `string` | `"storage"` | no |
 | <a name="input_tag"></a> [tag](#input\_tag) | Docker tag to be used for deployment of Keycloak | `string` | `"26.4.5"` | no |
 
 ## Outputs
@@ -679,4 +688,3 @@ module "keycloak" {
   depends_on = [module.cnpg, module.observability, module.openbao]
 }
 ```
-
