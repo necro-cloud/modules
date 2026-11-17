@@ -285,6 +285,37 @@ variable "keycloak_ports" {
   description = "Keycloak Ports Configuration"
 }
 
+# --------------- SSO CUSTOMIZATION VARIABLES --------------- #
+variable "secret_service_subdomain" {
+  description = "Subdomain for the Secrets Management Platform"
+  type        = string
+  default     = "secrets"
+}
+
+variable "observability_service_subdomain" {
+  description = "Subdomain for the Observability Platform"
+  type        = string
+  default     = "observability"
+}
+
+variable "storage_service_subdomain" {
+  description = "Subdomain for the Object Storage Platform"
+  type        = string
+  default     = "storage"
+}
+
+variable "sql_service_subdomain" {
+  description = "Subdomain for the SQL Database Administration Platform"
+  type        = string
+  default     = "sql"
+}
+
+variable "memory_service_subdomain" {
+  description = "Subdomain for the In-Memory Database Administration Platform"
+  type        = string
+  default     = "memory"
+}
+
 # --------------- DEPLOYMENT CUSTOMIZATION VARIABLES --------------- #
 variable "enable_internal_tls_certificates" {
   description = "Enable or disable deployment of Internal TLS Certificates for the Keycloak Cluster"
@@ -294,6 +325,12 @@ variable "enable_internal_tls_certificates" {
 
 variable "enable_observability" {
   description = "Enable or disable observability reporting for the Keycloak Cluster"
+  type        = bool
+  default     = true
+}
+
+variable "enable_sso" {
+  description = "Enable or disable SSO features for the entire platform"
   type        = bool
   default     = true
 }
