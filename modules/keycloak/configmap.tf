@@ -9,7 +9,10 @@ resource "kubernetes_config_map" "realm_configuration" {
     }
   }
 
-  data = {
-    "realm.json" = "${file("${path.module}/realm.json")}"
+  data = var.enable_sso ? {
+    "external.json" = "${file("${path.module}/realms/external.json")}"
+    "internal.json" = "${file("${path.module}/realms/internal.json")}"
+    } : {
+    "external.json" = "${file("${path.module}/realms/external.json")}"
   }
 }

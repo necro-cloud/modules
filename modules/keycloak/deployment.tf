@@ -123,7 +123,23 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           }
 
           dynamic "env" {
+            for_each = var.enable_sso ? [true] : []
+            content {
+              name  = "SERVICES_SUBDOMAIN"
+              value = var.domain
+            }
+          }
+
+          dynamic "env" {
             for_each = var.keycloak_environment_variables
+            content {
+              name  = env.value["name"]
+              value = env.value["value"]
+            }
+          }
+
+          dynamic "env" {
+            for_each = var.enable_sso ? local.service_subdomains : []
             content {
               name  = env.value["name"]
               value = env.value["value"]
@@ -133,6 +149,24 @@ resource "kubernetes_stateful_set" "keycloak_cluster" {
           env_from {
             secret_ref {
               name = kubernetes_manifest.keycloak_credentials_sync.object.spec.target.name
+            }
+          }
+
+          dynamic "env_from" {
+            for_each = var.enable_sso ? [true] : []
+            content {
+              secret_ref {
+                name = kubernetes_manifest.keycloak_sso_credentials_sync[0].object.spec.target.name
+              }
+            }
+          }
+
+          dynamic "env_from" {
+            for_each = var.enable_sso ? [true] : []
+            content {
+              secret_ref {
+                name = kubernetes_manifest.sso_credentials_sync[0].object.spec.target.name
+              }
             }
           }
 
