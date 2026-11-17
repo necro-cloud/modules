@@ -32,10 +32,14 @@ module "observability" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
+  host_name           = "observability"
 
   // Enabling and disabling features
   enable_internal_tls_certificates = true
   enable_sso                       = true
+
+  // SSO Configuration details
+  sso_host_name = "auth"
 
   depends_on = [module.helm, module.cluster-issuer]
 }
@@ -49,6 +53,7 @@ module "openbao" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
+  host_name           = "secrets"
 
   // Cluster sizing details
   cluster_size = "small"
@@ -70,6 +75,9 @@ module "openbao" {
   enable_observability             = true
   enable_sso                       = true
 
+  // SSO Configuration details
+  sso_host_name = "auth"
+
   depends_on = [module.helm, module.cluster-issuer]
 }
 
@@ -88,6 +96,7 @@ module "garage" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
+  host_name           = "storage"
 
   // Granting required namespaces access to the Garage cluster
   access_namespaces = "postgres"
@@ -109,6 +118,9 @@ module "garage" {
   enable_ui                        = true
   enable_observability             = true
   enable_sso                       = true
+
+  // SSO Configuration details
+  sso_host_name = "auth"
 
   depends_on = [module.observability, module.openbao]
 }
@@ -144,10 +156,11 @@ module "cnpg" {
   ]
 
   // Certificate details for internal and ingress(pgadmin) certificates
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  host_name           = "sql"
 
   // Whitelisting Kubernetes API Endpoints in the Network Policy
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
@@ -161,8 +174,46 @@ module "cnpg" {
   enable_observability             = true
   enable_sso                       = true
 
+  // SSO Configuration details
+  sso_host_name = "auth"
+
   // Dependency on Garage Deployment
   depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]
+}
+
+# Valkey Deployment for In Memory Storage Solution
+module "valkey" {
+  source = "../modules/valkey"
+
+  // Cluster Secret Store Details
+  cluster_secret_store_name = module.openbao.cluster_secret_store_name
+
+  // Cluster sizing details
+  cluster_size = "small"
+
+  // Certificates Details
+  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
+  cloudflare_token    = var.cloudflare_token
+  cloudflare_email    = var.cloudflare_email
+  domain              = var.domain
+  host_name           = "memory"
+
+  // Granting required namespaces access to the Valkey
+  access_namespaces = "cloud"
+
+  // Observability details
+  observability_namespace = module.observability.observability_namespace
+
+  // Enabling and disabling features
+  enable_internal_tls_certificates = true
+  enable_ui                        = true
+  enable_observability             = true
+  enable_sso                       = true
+
+  // SSO Configuration details
+  sso_host_name = "auth"
+
+  depends_on = [module.observability, module.openbao]
 }
 
 # Keycloak Cluster Deployment for Identity Solution
@@ -188,6 +239,7 @@ module "keycloak" {
   cloudflare_token = var.cloudflare_token
   cloudflare_email = var.cloudflare_email
   domain           = var.domain
+  host_name        = "auth"
 
   // Observability details
   observability_namespace = module.observability.observability_namespace
@@ -198,38 +250,15 @@ module "keycloak" {
   // Enabling and disabling features
   enable_internal_tls_certificates = true
   enable_observability             = true
-
-  // Dependency on CNPG PostgreSQL Deployment
-  depends_on = [module.cnpg, module.observability, module.openbao]
-}
-
-# Valkey Deployment for In Memory Storage Solution
-module "valkey" {
-  source = "../modules/valkey"
-
-  // Cluster Secret Store Details
-  cluster_secret_store_name = module.openbao.cluster_secret_store_name
-
-  // Cluster sizing details
-  cluster_size = "small"
-
-  // Certificates Details
-  cluster_issuer_name = module.cluster-issuer.cluster-issuer-name
-  cloudflare_token    = var.cloudflare_token
-  cloudflare_email    = var.cloudflare_email
-  domain              = var.domain
-
-  // Granting required namespaces access to the Valkey
-  access_namespaces = "cloud"
-
-  // Observability details
-  observability_namespace = module.observability.observability_namespace
-
-  // Enabling and disabling features
-  enable_internal_tls_certificates = true
-  enable_ui                        = true
-  enable_observability             = true
   enable_sso                       = true
 
-  depends_on = [module.observability, module.openbao]
+  // SSO Configuration details
+  secret_service_subdomain        = "secrets"
+  observability_service_subdomain = "observability"
+  storage_service_subdomain       = "storage"
+  sql_service_subdomain           = "sql"
+  memory_service_subdomain        = "memory"
+
+  // Dependency on CNPG PostgreSQL Deployment
+  depends_on = [module.cnpg, module.observability, module.openbao, module.valkey]
 }
