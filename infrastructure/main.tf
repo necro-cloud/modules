@@ -32,7 +32,7 @@ module "observability" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  host_name           = "observability"
+  host_name           = var.observability_service_subdomain
 
   // Enabling and disabling features
   enable_internal_tls_certificates = true
@@ -53,7 +53,7 @@ module "openbao" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  host_name           = "secrets"
+  host_name           = var.secret_service_subdomain
 
   // Cluster sizing details
   cluster_size = "small"
@@ -96,7 +96,7 @@ module "garage" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  host_name           = "storage"
+  host_name           = var.storage_service_subdomain
 
   // Granting required namespaces access to the Garage cluster
   access_namespaces = "postgres"
@@ -160,7 +160,7 @@ module "cnpg" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  host_name           = "sql"
+  host_name           = var.sql_service_subdomain
 
   // Whitelisting Kubernetes API Endpoints in the Network Policy
   kubernetes_api_ip       = one(flatten(data.kubernetes_endpoints_v1.kubernetes_api_endpoint.subset[*].address[*].ip))
@@ -196,7 +196,7 @@ module "valkey" {
   cloudflare_token    = var.cloudflare_token
   cloudflare_email    = var.cloudflare_email
   domain              = var.domain
-  host_name           = "memory"
+  host_name           = var.memory_service_subdomain
 
   // Granting required namespaces access to the Valkey
   access_namespaces = "cloud"
@@ -253,11 +253,11 @@ module "keycloak" {
   enable_sso                       = true
 
   // SSO Configuration details
-  secret_service_subdomain        = "secrets"
-  observability_service_subdomain = "observability"
-  storage_service_subdomain       = "storage"
-  sql_service_subdomain           = "sql"
-  memory_service_subdomain        = "memory"
+  secret_service_subdomain        = var.secret_service_subdomain
+  observability_service_subdomain = var.observability_service_subdomain
+  storage_service_subdomain       = var.storage_service_subdomain
+  sql_service_subdomain           = var.sql_service_subdomain
+  memory_service_subdomain        = var.memory_service_subdomain
 
   // Dependency on CNPG PostgreSQL Deployment
   depends_on = [module.cnpg, module.observability, module.openbao, module.valkey]

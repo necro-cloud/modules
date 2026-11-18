@@ -1,4 +1,5 @@
 # --------------- DNS SETTINGS VARIABLES --------------- #
+
 variable "cloudflare_token" {
   description = "Token for generating Ingress Certificates to be associated with MinIO Storage Solution"
   type        = string
@@ -9,6 +10,36 @@ variable "cloudflare_email" {
   description = "Email for generating Ingress Certificates to be associated with MinIO Storage Solution"
   type        = string
   nullable    = false
+}
+
+variable "secret_service_subdomain" {
+  description = "Subdomain for the Secrets Management Platform"
+  type        = string
+  default     = "secrets"
+}
+
+variable "observability_service_subdomain" {
+  description = "Subdomain for the Observability Platform"
+  type        = string
+  default     = "observability"
+}
+
+variable "storage_service_subdomain" {
+  description = "Subdomain for the Object Storage Platform"
+  type        = string
+  default     = "storage"
+}
+
+variable "sql_service_subdomain" {
+  description = "Subdomain for the SQL Database Administration Platform"
+  type        = string
+  default     = "sql"
+}
+
+variable "memory_service_subdomain" {
+  description = "Subdomain for the In-Memory Database Administration Platform"
+  type        = string
+  default     = "memory"
 }
 
 variable "domain" {
