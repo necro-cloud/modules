@@ -12,6 +12,12 @@ variable "cloudflare_email" {
   nullable    = false
 }
 
+variable "auth_service_subdomain" {
+  description = "Subdomain for the Identity Platform"
+  type        = string
+  default     = "auth"
+}
+
 variable "secret_service_subdomain" {
   description = "Subdomain for the Secrets Management Platform"
   type        = string

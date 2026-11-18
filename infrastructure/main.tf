@@ -39,7 +39,7 @@ module "observability" {
   enable_sso                       = true
 
   // SSO Configuration details
-  sso_host_name = "auth"
+  sso_host_name = var.auth_service_subdomain
 
   depends_on = [module.helm, module.cluster-issuer]
 }
@@ -76,7 +76,7 @@ module "openbao" {
   enable_sso                       = true
 
   // SSO Configuration details
-  sso_host_name = "auth"
+  sso_host_name = var.auth_service_subdomain
 
   depends_on = [module.helm, module.cluster-issuer]
 }
@@ -120,7 +120,7 @@ module "garage" {
   enable_sso                       = true
 
   // SSO Configuration details
-  sso_host_name = "auth"
+  sso_host_name = var.auth_service_subdomain
 
   depends_on = [module.observability, module.openbao]
 }
@@ -175,7 +175,7 @@ module "cnpg" {
   enable_sso                       = true
 
   // SSO Configuration details
-  sso_host_name = "auth"
+  sso_host_name = var.auth_service_subdomain
 
   // Dependency on Garage Deployment
   depends_on = [module.helm, module.openbao, module.observability, module.cluster-issuer, module.garage]
@@ -211,7 +211,7 @@ module "valkey" {
   enable_sso                       = true
 
   // SSO Configuration details
-  sso_host_name = "auth"
+  sso_host_name = var.auth_service_subdomain
 
   depends_on = [module.observability, module.openbao]
 }
@@ -239,7 +239,7 @@ module "keycloak" {
   cloudflare_token = var.cloudflare_token
   cloudflare_email = var.cloudflare_email
   domain           = var.domain
-  host_name        = "auth"
+  host_name        = var.auth_service_subdomain
 
   // Observability details
   observability_namespace = module.observability.observability_namespace
